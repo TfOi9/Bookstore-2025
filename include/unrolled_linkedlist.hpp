@@ -20,7 +20,7 @@ private:
     };
 
     MemoryRiver<Block> block_file_;
-    int head_index_ = 0;
+    int head_index_ = -1;
     int total_blocks_ = 0;
     int total_size_ = 0;
 
@@ -42,8 +42,44 @@ private:
         }
     }
 
-    void find_block(const KeyType& key) const {
-        
+    Block create_block(const KeyType& key, const ValueType& value) {
+        Block new_block;
+        new_block.data_[0] = std::make_pair(key, value);
+        new_block.size_ = 1;
+        new_block.index_ = total_blocks_;
+        total_blocks_++;
+        total_size_++;
+        new_block.min_key_ = key;
+        new_block.max_key_ = key;
+        return new_block;
+    }
+
+    int find_block(const KeyType& key) {
+        if (head_index_ == -1) {
+            return -1;
+        }
+        Block cur_block, next_block;
+        read_block(cur_block, head_index_);
+        if (cur_block.next_block_ == -1) {
+            return cur_block.index_;
+        }
+        else {
+            next_block = read_block(next_block, cur_block.next_block_);
+        }
+        while (1) {
+            if (key < next_block.min_key_) {
+                return cur_block.index_;
+            }
+            else {
+                if (next_block.next_block_ == -1) {
+                    return next_block.index_;
+                }
+                else {
+                    cur_block = next_block;
+                    read_block(next_block, next_block.next_block_);
+                }
+            }
+        }
     }
 
     bool block_insert(Block& block, const KeyType& key, const ValueType& value) {
@@ -189,7 +225,44 @@ private:
 
 public:
     void insert(const KeyType& key, const ValueType& value) {
+        int index = find_block(key);
+        if (index == -1) {
+            Block head = create_block(key, value);
+            head_index_ = 0;
+        }
+        else {
+            Block block;
+            read_block(block, index);
+            if (!block_insert(block, key, value)) {
+                block_split(block);
+            }
+        }
+    }
 
+    void erase(const KeyType& key) {
+        int index = find_block(key);
+        if (index == -1) {
+            return;
+        }
+        Block block;
+        read_block(block, index);
+        block_erase(block, key);
+    }
+
+    void find(const KeyType& key) {
+        int index = find_block(key);
+        if (index == -1) {
+            return;
+        }
+        Block block;
+        read_block(block, index);
+        block_find(block, key, std::cout);
+    }
+
+    void print(std::ostream& os) {
+        os << "Total blocks: " << total_blocks_ << std::endl;
+        os << "Total size: " << total_size_ << std::endl;
+        os << "Head index: " << head_index_ << std::endl;
     }
 };
 
