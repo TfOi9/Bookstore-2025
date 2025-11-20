@@ -23,6 +23,7 @@ private:
     int head_index_ = -1;
     int total_blocks_ = 0;
     int total_size_ = 0;
+    int spare_index = 0;
 
     bool read_block(Block& block, int index) {
         if (index < 0) {
@@ -35,6 +36,7 @@ private:
     void write_block(Block& block, int index = -1) {
         if (index < 0) {
             total_blocks_++;
+            spare_index++;
             block_file_.write(block);
         }
         else {
@@ -49,6 +51,7 @@ private:
         new_block.index_ = total_blocks_;
         total_blocks_++;
         total_size_++;
+        spare_index++;
         new_block.min_key_ = key;
         new_block.max_key_ = key;
         return new_block;
@@ -107,8 +110,9 @@ private:
         std::cerr << "spliting from pos " << mid << std::endl;
         Block new_block;
         new_block.size_ = block.size_ - mid;
-        new_block.index_ = total_blocks_;
         total_blocks_++;
+        spare_index++;
+        new_block.index_ = spare_index;
         for (int i = mid; i < block.size_; i++) {
             new_block.data_[i - mid] = block.data_[i];
         }
@@ -255,6 +259,7 @@ public:
         head.index_ = 0;
         write_block(head, 0);
         total_blocks_++;
+        spare_index++;
     }
 
     void insert(const KeyType& key, const ValueType& value) {

@@ -22,7 +22,7 @@ istream& operator>>(istream& is, StringKey& str) {
     return is;
 }
 int main() {
-    UnrolledLinkedList<StringKey, int, 4> mp;
+    UnrolledLinkedList<StringKey, int, 200> mp;
     int t;
     cin >> t;
     for (int i = 0; i < t; i++) {
@@ -46,7 +46,7 @@ int main() {
             cin >> key;
             mp.find(key);
         }
-        // mp.print(cerr);
+        mp.print(cerr);
     }
     return 0;
 }
