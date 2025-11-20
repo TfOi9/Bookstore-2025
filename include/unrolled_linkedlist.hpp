@@ -123,6 +123,21 @@ private:
         write_block(new_block, new_block.index_);
     }
 
+    int block_lower_bound(Block& block, const KeyType& key, const ValueType& value) const {
+        int l = 0, r = block.size_ - 1, mid = 0;
+        auto p = std::make_pair(key, value);
+        while (l <= r) {
+            mid = (l + r) / 2;
+            if (block.data_[mid] < p) {
+                l = mid + 1;
+            }
+            else {
+                r = mid - 1;
+            }
+        }
+        return l;
+    }
+
     int block_lower_bound(Block& block, const KeyType& key) const {
         int l = 0, r = block.size_ - 1, mid = 0;
         while (l <= r) {
@@ -132,6 +147,21 @@ private:
             }
             else {
                 r = mid - 1;
+            }
+        }
+        return l;
+    }
+
+    int block_upper_bound(Block& block, const KeyType& key, const ValueType& value) const {
+        int l = 0, r = block.size_ - 1, mid = 0;
+        auto p = std::make_pair(key, value);
+        while (l <= r) {
+            mid = (l + r) / 2;
+            if (p < block.data_[mid]) {
+                r = mid - 1;
+            }
+            else {
+                l = mid + 1;
             }
         }
         return l;
@@ -167,9 +197,9 @@ private:
         total_blocks_--;
     }
 
-    void block_erase(Block& block, const KeyType& key) {
-        int l = block_lower_bound(block, key);
-        int r = block_upper_bound(block, key);
+    void block_erase(Block& block, const KeyType& key, const ValueType& value) {
+        int l = block_lower_bound(block, key, value);
+        int r = block_upper_bound(block, key, value);
         std::cerr << "lbound: " << l << ", rbound: " << r << std::endl;
         int del_size = r - l;
         if (!del_size) {
@@ -193,6 +223,10 @@ private:
     void block_find(Block& block, const KeyType& key, std::ostream& os) const {
         int l = block_lower_bound(block, key);
         int r = block_upper_bound(block, key);
+        if (l == r) {
+            os << "null" << std::endl;
+            return;
+        }
         for (int i = l; i < r; i++) {
             os << block.data_[i].second << " ";
         }
@@ -251,14 +285,14 @@ public:
         }
     }
 
-    void erase(const KeyType& key) {
+    void erase(const KeyType& key, const ValueType& value) {
         int index = find_block(key);
         if (index == -1) {
             return;
         }
         Block block;
         read_block(block, index);
-        block_erase(block, key);
+        block_erase(block, key, value);
     }
 
     void find(const KeyType& key) {
