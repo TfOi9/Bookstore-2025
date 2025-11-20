@@ -1,5 +1,5 @@
-#ifndef MEMORYRIVER_HPP
-#define MEMORYRIVER_HPP
+#ifndef MEMORY_RIVER_HPP
+#define MEMORY_RIVER_HPP
 
 #include <iostream>
 #include <fstream>
