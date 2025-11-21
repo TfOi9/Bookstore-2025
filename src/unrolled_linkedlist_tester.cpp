@@ -2,8 +2,6 @@
 #include <string>
 #include <cstring>
 #include "../include/unrolled_linkedlist.hpp"
-using namespace std;
-
 struct StringKey {
     char ch[68];
     StringKey() {
@@ -13,40 +11,39 @@ struct StringKey {
 bool operator<(const StringKey& a, const StringKey& b) {
     return strcmp(a.ch, b.ch) < 0;
 }
-ostream& operator<<(ostream& os, StringKey str) {
+std::ostream& operator<<(std::ostream& os, StringKey str) {
     os << str.ch;
     return os;
 }
-istream& operator>>(istream& is, StringKey& str) {
+std::istream& operator>>(std::istream& is, StringKey& str) {
     is >> str.ch;
     return is;
 }
 int main() {
     UnrolledLinkedList<StringKey, int, 200> mp;
     int t;
-    cin >> t;
+    std::cin >> t;
     for (int i = 0; i < t; i++) {
         string op;
-        cin >> op;
+        std::cin >> op;
         if (op == "insert") {
             StringKey key;
             int val;
-            cin >> key >> val;
-            cerr << key << endl;
+            std::cin >> key >> val;
             mp.insert(key, val);
         }
         else if (op == "delete") {
             StringKey key;
             int val;
-            cin >> key >> val;
+            std::cin >> key >> val;
             mp.erase(key, val);
         }
         else if (op == "find") {
             StringKey key;
-            cin >> key;
+            std::cin >> key;
             mp.find(key);
         }
-        mp.print(cerr);
+        // mp.print(cerr);
     }
     return 0;
 }
