@@ -20,7 +20,7 @@ std::istream& operator>>(std::istream& is, StringKey& str) {
     return is;
 }
 int main() {
-    UnrolledLinkedList<StringKey, int, 200> mp;
+    UnrolledLinkedList<StringKey, int, 360> mp;
     int t;
     std::cin >> t;
     for (int i = 0; i < t; i++) {
@@ -30,20 +30,23 @@ int main() {
             StringKey key;
             int val;
             std::cin >> key >> val;
+            std::cerr << i << " " << op << " " << key << " " << val << std::endl;
             mp.insert(key, val);
         }
         else if (op == "delete") {
             StringKey key;
             int val;
             std::cin >> key >> val;
+            std::cerr << i << " " << op << " " << key << " " << val << std::endl;
             mp.erase(key, val);
         }
         else if (op == "find") {
             StringKey key;
             std::cin >> key;
+            std::cerr << i << " " << op << " " << key << std::endl;
             mp.find(key);
         }
-        // mp.print(cerr);
+        mp.print(std::cerr);
     }
     return 0;
 }

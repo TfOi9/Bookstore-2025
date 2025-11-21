@@ -4,6 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <utility>
+#include <fstream>
 #include "memory_river.hpp"
 
 template <typename KeyType, typename ValueType, int BlockCapacity = 100>
@@ -263,13 +264,28 @@ private:
 
 public:
     UnrolledLinkedList() {
+        std::ifstream fin("list_file");
         block_file_.initialise("block_file");
+        if (fin) {
+            fin >> head_index_ >> total_blocks_ >> total_size_ >> spare_index;
+            return;
+        }
         Block head;
         head_index_ = 0;
         head.index_ = 0;
         write_block(head, 0);
         total_blocks_++;
         spare_index++;
+    }
+
+    ~UnrolledLinkedList() {
+        std::ofstream fout("list_file");
+        if (!fout) {
+            return;
+        }
+        fout << head_index_ << std::endl;
+        fout << total_blocks_ << " " << total_size_ << std::endl;
+        fout << spare_index << std::endl;
     }
 
     void insert(const KeyType& key, const ValueType& value) {

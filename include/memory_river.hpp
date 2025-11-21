@@ -9,7 +9,7 @@ using std::fstream;
 using std::ifstream;
 using std::ofstream;
 
-template<class T, int info_len = 2>
+template<class T, int info_len = 2, bool auto_clear = 0>
 class MemoryRiver {
 private:
     /* your code here */
@@ -40,6 +40,9 @@ public:
     void initialise(string FN = "") {
         if (FN != "") file_name = FN;
         open_file();
+        if (!auto_clear) {
+            return;
+        }
         int tmp = 0;
         for (int i = 0; i < info_len; ++i)
             file.write(reinterpret_cast<char *>(&tmp), sizeof(int));

@@ -1,16 +1,15 @@
 #include <iostream>
 #include <fstream>
-#include <vector>
-#include <utility>
 #include <string>
 #include <cstring>
+#include <utility>
 
 using std::string;
 using std::fstream;
 using std::ifstream;
 using std::ofstream;
 
-template<class T, int info_len = 2>
+template<class T, int info_len = 2, bool auto_clear = 0>
 class MemoryRiver {
 private:
     /* your code here */
@@ -41,6 +40,9 @@ public:
     void initialise(string FN = "") {
         if (FN != "") file_name = FN;
         open_file();
+        if (!auto_clear) {
+            return;
+        }
         int tmp = 0;
         for (int i = 0; i < info_len; ++i)
             file.write(reinterpret_cast<char *>(&tmp), sizeof(int));
@@ -386,13 +388,28 @@ private:
 
 public:
     UnrolledLinkedList() {
+        std::ifstream fin("list_file");
         block_file_.initialise("block_file");
+        if (fin) {
+            fin >> head_index_ >> total_blocks_ >> total_size_ >> spare_index;
+            return;
+        }
         Block head;
         head_index_ = 0;
         head.index_ = 0;
         write_block(head, 0);
         total_blocks_++;
         spare_index++;
+    }
+
+    ~UnrolledLinkedList() {
+        std::ofstream fout("list_file");
+        if (!fout) {
+            return;
+        }
+        fout << head_index_ << std::endl;
+        fout << total_blocks_ << " " << total_size_ << std::endl;
+        fout << spare_index << std::endl;
     }
 
     void insert(const KeyType& key, const ValueType& value) {
@@ -498,7 +515,6 @@ public:
         }
     }
 };
-
 struct StringKey {
     char ch[68];
     StringKey() {
@@ -527,20 +543,23 @@ int main() {
             StringKey key;
             int val;
             std::cin >> key >> val;
+            // std::cerr << i << " " << op << " " << key << " " << val << std::endl;
             mp.insert(key, val);
         }
         else if (op == "delete") {
             StringKey key;
             int val;
             std::cin >> key >> val;
+            // std::cerr << i << " " << op << " " << key << " " << val << std::endl;
             mp.erase(key, val);
         }
         else if (op == "find") {
             StringKey key;
             std::cin >> key;
+            // std::cerr << i << " " << op << " " << key << std::endl;
             mp.find(key);
         }
-        // mp.print(cerr);
+        // mp.print(std::cerr);
     }
     return 0;
 }
