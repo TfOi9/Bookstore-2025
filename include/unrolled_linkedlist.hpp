@@ -5,9 +5,10 @@
 #include <vector>
 #include <utility>
 #include <fstream>
+#include <unordered_map>
 #include "memory_river.hpp"
 
-template <typename KeyType, typename ValueType, int BlockCapacity = 100>
+template <typename KeyType, typename ValueType, int BlockCapacity = 200>
 class UnrolledLinkedList {
 private:
     struct Block {
@@ -20,13 +21,64 @@ private:
         int prev_block_ = -1;
     };
 
+    struct CachedBlock {
+        Block block_;
+        int access_cnt_;
+        bool dirty_;
+        CachedBlock(const Block& block) : block_(block), dirty_(0), access_cnt_(0) {}
+    };
+
     MemoryRiver<Block> block_file_;
     int head_index_ = -1;
     int total_blocks_ = 0;
     int total_size_ = 0;
-    int spare_index = 0;
+    int spare_index_ = 0;
 
-    bool read_block(Block& block, int index) {
+    std::unordered_map<int, CachedBlock> cache_;
+    const int CACHE_LIMIT_ = 1258291;
+    int max_cache_cnt_ = CACHE_LIMIT_ / sizeof(CachedBlock);
+    int cache_cnt_ = 0;
+
+    void cache_flush() {
+        for (auto it = cache_.begin(); it != cache_.end(); it++) {
+            if (it->second.dirty_) {
+                write_block_file(it->second.block_, it->first);
+            }
+        }
+    }
+
+    int find_victim() {
+        int min_cnt = -1, min_pos = -1;
+        for (auto it = cache_.begin(); it != cache_.end(); it++) {
+            if (min_cnt == -1 || it->second.access_cnt_ < min_cnt) {
+                min_cnt = it->second.access_cnt_;
+                min_pos = it->first;
+            }
+        }
+        return min_pos;
+    }
+
+    void evict_block() {
+        int victim_index = find_victim();
+        auto it = cache_.find(victim_index);
+        if (it->second.dirty_) {
+            write_block_file(it->second.block_, victim_index);
+        }
+        cache_.erase(victim_index);
+        cache_cnt_--;
+    }
+
+    bool read_cached_block(Block& block, int index) {
+        auto it = cache_.find(index);
+        if (it == cache_.end()) {
+            return 0;
+        }
+        it->second.access_cnt_++;
+        block = it->second.block_;
+        return 1;
+    }
+
+    bool read_block_file(Block& block, int index) {
         if (index < 0) {
             return 0;
         }
@@ -34,10 +86,41 @@ private:
         return 1;
     }
 
-    void write_block(Block& block, int index = -1) {
+    bool read_block(Block& block, int index) {
+        if (index < 0) {
+            return 0;
+        }
+        if (read_cached_block(block, index)) {
+            return 1;
+        }
+        block_file_.read(block, index);
+        if (cache_cnt_ < max_cache_cnt_) {
+            cache_.insert(std::make_pair(index, block));
+            cache_cnt_++;
+        }
+        else {
+            evict_block();
+            cache_.insert(std::make_pair(index, block));
+            cache_cnt_++;
+        }
+        return 1;
+    }
+
+    bool write_cached_block(Block& block, int index) {
+        auto it = cache_.find(index);
+        if (it == cache_.end()) {
+            return 0;
+        }
+        it->second.access_cnt_++;
+        it->second.block_ = block;
+        it->second.dirty_ = 1;
+        return 1;
+    }
+
+    void write_block_file(Block& block, int index = -1) {
         if (index < 0) {
             total_blocks_++;
-            spare_index++;
+            spare_index_++;
             block_file_.write(block);
         }
         else {
@@ -45,14 +128,37 @@ private:
         }
     }
 
+    void write_block(Block& block, int index = -1) {
+        if (index < 0) {
+            total_blocks_++;
+            spare_index_++;
+            block_file_.write(block);
+        }
+        else {
+            if (write_cached_block(block, index)) {
+                return;
+            }
+            block_file_.update(block, index);
+            if (cache_cnt_ < max_cache_cnt_) {
+                cache_.insert(std::make_pair(index, block));
+                cache_cnt_++;
+            }
+            else {
+                evict_block();
+                cache_.insert(std::make_pair(index, block));
+                cache_cnt_++;
+            }
+        }
+    }
+
     Block create_block(const KeyType& key, const ValueType& value) {
         Block new_block;
         new_block.data_[0] = std::make_pair(key, value);
         new_block.size_ = 1;
-        new_block.index_ = spare_index;
+        new_block.index_ = spare_index_;
         total_blocks_++;
         total_size_++;
-        spare_index++;
+        spare_index_++;
         new_block.min_key_ = std::make_pair(key, value);
         new_block.max_key_ = std::make_pair(key, value);
         return new_block;
@@ -122,8 +228,8 @@ private:
         Block new_block;
         new_block.size_ = block.size_ - mid;
         total_blocks_++;
-        spare_index++;
-        new_block.index_ = spare_index;
+        spare_index_++;
+        new_block.index_ = spare_index_;
         for (int i = mid; i < block.size_; i++) {
             new_block.data_[i - mid] = block.data_[i];
         }
@@ -267,7 +373,7 @@ public:
         std::ifstream fin("list_file");
         block_file_.initialise("block_file");
         if (fin) {
-            fin >> head_index_ >> total_blocks_ >> total_size_ >> spare_index;
+            fin >> head_index_ >> total_blocks_ >> total_size_ >> spare_index_;
             return;
         }
         Block head;
@@ -275,7 +381,7 @@ public:
         head.index_ = 0;
         write_block(head, 0);
         total_blocks_++;
-        spare_index++;
+        spare_index_++;
     }
 
     ~UnrolledLinkedList() {
@@ -285,7 +391,8 @@ public:
         }
         fout << head_index_ << std::endl;
         fout << total_blocks_ << " " << total_size_ << std::endl;
-        fout << spare_index << std::endl;
+        fout << spare_index_ << std::endl;
+        cache_flush();
     }
 
     void insert(const KeyType& key, const ValueType& value) {
