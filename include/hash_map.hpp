@@ -118,6 +118,59 @@ public:
         }
     }
 
+    void erase(const char* str, int size, const ValueType& val) {
+        int hash_val = hash(str, size);
+        Bucket bucket;
+        bucket_file_.read(bucket, hash_val);
+        Block block;
+        int pos = bucket.head_, last = -1;
+        while (pos) {
+            block_file_.read(block, pos);
+            int found_pos = -1;
+            for (int i = 0; i < block.head_.size_; i++) {
+                if (strcmp(block.data_[i].str_, str) == 0 && block.data_[i].val_ == val) {
+                    found_pos = i;
+                    break;
+                }
+            }
+            if (found_pos != -1) {
+                // found keypair in block
+                if (block.head_.size_ == 1) {
+                    // only one pair in block, delete it
+                    if (last == -1) {
+                        // first block in bucket
+                        bucket.head_ = block.head_.next_;
+                        if (bucket.head_ == 0) {
+                            // bucket now empty
+                            bucket.tail_ = 0;
+                        }
+                        bucket_file_.update(bucket, hash_val);
+                    }
+                    else {
+                        // block in the middle
+                        Block last_block;
+                        block_file_.read(last_block, last);
+                        last_block.head_.next_ = block.head_.next_;
+                        block_file_.update(last_block, last);
+                        if (block.head_.next_ == 0) {
+                            // last block
+                            bucket.tail_ = last;
+                        }
+                    }
+                    return;
+                }
+                for (int i = found_pos; i < block.head_.size_ - 1; i++) {
+                    block.data_[i] = block.data_[i + 1];
+                }
+                block.head_.size_--;
+                block_file_.update(block, pos);
+                return;
+            }
+            last = pos;
+            pos = block.head_.next_;
+        }
+    }
+
 };
 
 #endif
