@@ -5,6 +5,7 @@
 #include <vector>
 #include <cstring>
 #include <cstdint>
+#include <algorithm>
 #include "memory_river.hpp"
 
 template<typename ValueType, int BlockCapacity = 200, int HashSize = 10007>
@@ -170,6 +171,26 @@ public:
             pos = block.head_.next_;
         }
     }
+
+    std::vector<ValueType> find(const char* str, int size) {
+        int hash_val = hash(str, size);
+        Bucket bucket;
+        bucket_file_.read(bucket, hash_val);
+        Block block;
+        int pos = bucket.head_;
+        std::vector<ValueType> vec;
+        while (pos) {
+            block_file_.read(block, pos);
+            for (int i = 0; i < block.head_.size_; i++) {
+                if (strcmp(block.data_[i].str_, str) == 0) {
+                    vec.push_back(block.data_[i].val_);
+                }
+            }
+            pos = block.head_.next_;
+        }
+        std::sort(vec.begin(), vec.end());
+        return vec;
+    } 
 
 };
 
