@@ -4,3 +4,6 @@ build/*
 *.out
 *.ans
 *.err
+*.exe
+block
+bucket

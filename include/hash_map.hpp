@@ -49,7 +49,9 @@ private:
 
     int new_block() {
         Block block;
-        return block_file_.write(block);
+        int pos =  block_file_.write(block);
+        // std::cerr << "new block numbered " << pos << std::endl;
+        return pos;
     }
 
 public:
@@ -66,6 +68,7 @@ public:
 
     void insert(const char* str, int size, const ValueType& val) {
         int hash_val = hash(str, size);
+        // std::cerr << hash_val << std::endl;
         Bucket bucket;
         bucket_file_.read(bucket, hash_val);
         Block block;
@@ -97,8 +100,10 @@ public:
             block_file_.read(tail_block, bucket.tail_);
             if (tail_block.head_.size_ < BlockCapacity) {
                 // tail has space, put data into tail block
-                strncpy(block.data_[tail_block.head_.size_].str_, str, 64);
-                block.data_[tail_block.head_.size_].val_ = val;
+                // std::cerr << "inserting to " << tail_block.head_.size_ << std::endl;
+                // std::cerr << str << std::endl;
+                strncpy(tail_block.data_[tail_block.head_.size_].str_, str, 64);
+                tail_block.data_[tail_block.head_.size_].val_ = val;
                 tail_block.head_.size_++;
                 block_file_.update(tail_block, bucket.tail_);
             }
@@ -174,14 +179,19 @@ public:
 
     std::vector<ValueType> find(const char* str, int size) {
         int hash_val = hash(str, size);
+        // std::cerr << "hashed " << hash_val << std::endl;
         Bucket bucket;
         bucket_file_.read(bucket, hash_val);
         Block block;
         int pos = bucket.head_;
+        // std::cerr << "head at " << pos << std::endl;
         std::vector<ValueType> vec;
         while (pos) {
+            // std::cerr << "now at " << pos << std::endl;
             block_file_.read(block, pos);
+            // std::cerr << "block sized " << block.head_.size_ << std::endl;
             for (int i = 0; i < block.head_.size_; i++) {
+                // std::cerr << block.data_[i].str_ << std::endl;
                 if (strcmp(block.data_[i].str_, str) == 0) {
                     vec.push_back(block.data_[i].val_);
                 }
