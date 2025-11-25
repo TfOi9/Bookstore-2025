@@ -1,0 +1,6 @@
+.DS_Store
+build/*
+*.in
+*.out
+*.ans
+*.err
