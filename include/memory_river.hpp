@@ -9,7 +9,7 @@ using std::fstream;
 using std::ifstream;
 using std::ofstream;
 
-template<class T, int info_len = 2, bool auto_clear = 0>
+template<class T, int info_len = 2>
 class MemoryRiver {
 private:
     /* your code here */
@@ -28,24 +28,20 @@ public:
         }
     }
 
-    void open_file() {
+    bool open_file() {
         file.open(file_name, std::ios::in | std::ios::out | std::ios::binary);
         if (!file) {
             file.open(file_name, std::ios::out | std::ios::binary);
             file.close();
             file.open(file_name, std::ios::in | std::ios::out | std::ios::binary);
+            return 0;
         }
+        return 1;
     }
 
-    void initialise(string FN = "") {
+    bool initialise(string FN = "") {
         if (FN != "") file_name = FN;
-        open_file();
-        if (!auto_clear) {
-            return;
-        }
-        int tmp = 0;
-        for (int i = 0; i < info_len; ++i)
-            file.write(reinterpret_cast<char *>(&tmp), sizeof(int));
+        return open_file();
     }
 
     //读出第n个int的值赋给tmp，1_base
