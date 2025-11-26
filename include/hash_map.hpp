@@ -8,7 +8,7 @@
 #include <algorithm>
 #include "memory_river.hpp"
 
-template<typename ValueType, int BlockCapacity = 200, int HashSize = 199999>
+template<typename ValueType, int BlockCapacity = 200, int HashSize = 199999, int StringSize = 64>
 class HashMap {
     typedef long long ll;
 private:
@@ -18,7 +18,7 @@ private:
         Bucket() : head_(0), tail_(0) {}
     };
     struct KeyPair {
-        char str_[64];
+        char str_[StringSize];
         ValueType val_;
         KeyPair() : val_() {
             memset(str_, 0, sizeof(str_));
@@ -48,6 +48,8 @@ private:
     MemoryRiver<Bucket> bucket_file_;
     MemoryRiver<Block> block_file_;
 
+    std::string file_name_;
+
     ll new_block() {
         Block block;
         ll pos =  block_file_.write(block);
@@ -56,9 +58,9 @@ private:
     }
 
 public:
-    HashMap() {
-        bool f = bucket_file_.initialise("bucket");
-        block_file_.initialise("block");
+    HashMap(const std::string& file_name = "hash") : file_name_(file_name) {
+        bool f = bucket_file_.initialise(file_name_ + "_bucket");
+        block_file_.initialise(file_name_ + "block");
         if (!f) {
             Bucket bucket;
             for (int i = 0; i < HashSize; i++) {
@@ -69,11 +71,8 @@ public:
 
     void insert(const char* str, int size, const ValueType& val) {
         int hash_val = hash(str, size);
-        // std::cerr << "now inserting " << str << " " << size << std::endl;
-        // std::cerr << "hash value is " << hash_val << std::endl;
         Bucket bucket;
         bucket_file_.read(bucket, hash_val * sizeof(Bucket));
-        // std::cerr << "bucket head " << bucket.head_ << ", tail " << bucket.tail_ << std::endl;
         Block block;
         ll pos = bucket.head_;
         while (pos) {
@@ -85,19 +84,16 @@ public:
             }
             pos = block.head_.next_;
         }
-        // std::cerr << "not found, now insert" << std::endl;
         if (!bucket.tail_) {
             // empty bucket, create a new block
             ll new_pos = new_block();
             Block new_block;
-            // std::cerr << "create new block " << new_pos << std::endl;
             new_block.head_.size_ = 1;
             new_block.head_.next_ = 0;
             strncpy(new_block.data_[0].str_, str, 64);
             new_block.data_[0].val_ = val;
             bucket.head_ = new_pos;
             bucket.tail_ = new_pos;
-            // std::cerr << "bucket head " << bucket.head_ << ", tail " << bucket.tail_ << std::endl;
             bucket_file_.update(bucket, hash_val * sizeof(Bucket));
             block_file_.update(new_block, new_pos);
         }
@@ -106,11 +102,9 @@ public:
             block_file_.read(tail_block, bucket.tail_);
             if (tail_block.head_.size_ < BlockCapacity) {
                 // tail has space, put data into tail block
-                // std::cerr << "inserting to pos (in block) " << tail_block.head_.size_ << std::endl;
                 strncpy(tail_block.data_[tail_block.head_.size_].str_, str, 64);
                 tail_block.data_[tail_block.head_.size_].val_ = val;
                 tail_block.head_.size_++;
-                // std::cerr << "block now sized " << tail_block.head_.size_ << std::endl;
                 block_file_.update(tail_block, bucket.tail_);
             }
             else {
@@ -145,7 +139,6 @@ public:
                     break;
                 }
             }
-            // std::cerr << "found at pos " << found_pos << std::endl;
             if (found_pos != -1) {
                 // found keypair in block
                 if (block.head_.size_ == 1) {
@@ -187,20 +180,14 @@ public:
 
     std::vector<ValueType> find(const char* str, int size) {
         int hash_val = hash(str, size);
-        // std::cerr << str << " " << size << std::endl;
-        // std::cerr << "hashed " << hash_val << std::endl;
         Bucket bucket;
         bucket_file_.read(bucket, hash_val * sizeof(Bucket));
         Block block;
         ll pos = bucket.head_;
-        // std::cerr << "head at " << pos << std::endl;
         std::vector<ValueType> vec;
         while (pos) {
-            // std::cerr << "now at " << pos << std::endl;
             block_file_.read(block, pos);
-            // std::cerr << "block sized " << block.head_.size_ << std::endl;
             for (int i = 0; i < block.head_.size_; i++) {
-                // std::cerr << block.data_[i].str_ << std::endl;
                 if (strcmp(block.data_[i].str_, str) == 0) {
                     vec.push_back(block.data_[i].val_);
                 }
