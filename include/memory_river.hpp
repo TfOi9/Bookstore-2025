@@ -11,6 +11,7 @@ using std::ofstream;
 
 template<class T, int info_len = 2, bool auto_clear = 0>
 class MemoryRiver {
+    typedef long long ll;
 private:
     /* your code here */
     fstream file;
@@ -44,19 +45,19 @@ public:
         return open_file();
     }
 
-    int write(T &t) {
+    ll write(T &t) {
         file.seekp(0, std::ios::end);
-        int pos = file.tellp();
+        ll pos = file.tellp();
         file.write(reinterpret_cast<const char*>(&t), sizeof(T));
         return pos + 1;
     }
 
-    void update(T &t, const int pos) {
+    void update(T &t, const ll pos) {
         file.seekp(pos - 1);
         file.write(reinterpret_cast<char *>(&t), sizeofT);
     }
 
-    void read(T &t, const int pos) {
+    void read(T &t, const ll pos) {
         file.seekg(pos - 1);
         file.read(reinterpret_cast<char *>(&t), sizeofT);
     }

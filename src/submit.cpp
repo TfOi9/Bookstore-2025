@@ -12,6 +12,7 @@ using std::ofstream;
 
 template<class T, int info_len = 2, bool auto_clear = 0>
 class MemoryRiver {
+    typedef long long ll;
 private:
     /* your code here */
     fstream file;
@@ -45,30 +46,32 @@ public:
         return open_file();
     }
 
-    int write(T &t) {
+    ll write(T &t) {
         file.seekp(0, std::ios::end);
-        int pos = file.tellp();
+        ll pos = file.tellp();
         file.write(reinterpret_cast<const char*>(&t), sizeof(T));
         return pos + 1;
     }
 
-    void update(T &t, const int pos) {
+    void update(T &t, const ll pos) {
         file.seekp(pos - 1);
         file.write(reinterpret_cast<char *>(&t), sizeofT);
     }
 
-    void read(T &t, const int pos) {
+    void read(T &t, const ll pos) {
         file.seekg(pos - 1);
         file.read(reinterpret_cast<char *>(&t), sizeofT);
     }
 };
 
+
 template<typename ValueType, int BlockCapacity = 200, int HashSize = 10007>
 class HashMap {
+    typedef long long ll;
 private:
     struct Bucket {
-        int head_;
-        int tail_;
+        ll head_;
+        ll tail_;
         Bucket() : head_(0), tail_(0) {}
     };
     struct KeyPair {
@@ -80,7 +83,7 @@ private:
     };
     struct BlockHead {
         int size_;
-        int next_;
+        ll next_;
         BlockHead() : size_(0), next_(0) {}
     };
     struct Block {
@@ -102,9 +105,9 @@ private:
     MemoryRiver<Bucket> bucket_file_;
     MemoryRiver<Block> block_file_;
 
-    int new_block() {
+    ll new_block() {
         Block block;
-        int pos =  block_file_.write(block);
+        ll pos =  block_file_.write(block);
         // std::cerr << "new block numbered " << pos << std::endl;
         return pos;
     }
@@ -129,7 +132,7 @@ public:
         bucket_file_.read(bucket, hash_val * sizeof(Bucket));
         // std::cerr << "bucket head " << bucket.head_ << ", tail " << bucket.tail_ << std::endl;
         Block block;
-        int pos = bucket.head_;
+        ll pos = bucket.head_;
         while (pos) {
             block_file_.read(block, pos);
             for (int i = 0; i < block.head_.size_; i++) {
@@ -142,7 +145,7 @@ public:
         // std::cerr << "not found, now insert" << std::endl;
         if (!bucket.tail_) {
             // empty bucket, create a new block
-            int new_pos = new_block();
+            ll new_pos = new_block();
             Block new_block;
             // std::cerr << "create new block " << new_pos << std::endl;
             new_block.head_.size_ = 1;
@@ -169,7 +172,7 @@ public:
             }
             else {
                 // tail is full, create a new block
-                int new_pos = new_block();
+                ll new_pos = new_block();
                 Block new_block;
                 new_block.head_.size_ = 1;
                 new_block.head_.next_ = 0;
@@ -189,10 +192,10 @@ public:
         Bucket bucket;
         bucket_file_.read(bucket, hash_val * sizeof(Bucket));
         Block block;
-        int pos = bucket.head_, last = -1;
+        ll pos = bucket.head_, last = -1;
         while (pos) {
             block_file_.read(block, pos);
-            int found_pos = -1;
+            ll found_pos = -1;
             for (int i = 0; i < block.head_.size_; i++) {
                 if (strcmp(block.data_[i].str_, str) == 0 && block.data_[i].val_ == val) {
                     found_pos = i;
@@ -222,6 +225,7 @@ public:
                         if (block.head_.next_ == 0) {
                             // last block
                             bucket.tail_ = last;
+                            bucket_file_.update(bucket, hash_val * sizeof(Bucket));
                         }
                     }
                     return;
@@ -245,7 +249,7 @@ public:
         Bucket bucket;
         bucket_file_.read(bucket, hash_val * sizeof(Bucket));
         Block block;
-        int pos = bucket.head_;
+        ll pos = bucket.head_;
         // std::cerr << "head at " << pos << std::endl;
         std::vector<ValueType> vec;
         while (pos) {
@@ -265,6 +269,7 @@ public:
     } 
 
 };
+
 using namespace std;
 
 int main() {
