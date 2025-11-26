@@ -275,7 +275,7 @@ using namespace std;
 int main() {
     int t;
     cin >> t;
-    HashMap<int> hshmp;
+    HashMap<int, 200, 199999> hshmp;
     while (t--) {
         string op, s;
         int x;

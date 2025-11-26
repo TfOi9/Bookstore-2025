@@ -8,7 +8,7 @@
 #include <algorithm>
 #include "memory_river.hpp"
 
-template<typename ValueType, int BlockCapacity = 200, int HashSize = 10007>
+template<typename ValueType, int BlockCapacity = 200, int HashSize = 199999>
 class HashMap {
     typedef long long ll;
 private:

@@ -49,16 +49,16 @@ public:
         file.seekp(0, std::ios::end);
         ll pos = file.tellp();
         file.write(reinterpret_cast<const char*>(&t), sizeof(T));
-        return pos + 1;
+        return pos;
     }
 
     void update(T &t, const ll pos) {
-        file.seekp(pos - 1);
+        file.seekp(pos);
         file.write(reinterpret_cast<char *>(&t), sizeofT);
     }
 
     void read(T &t, const ll pos) {
-        file.seekg(pos - 1);
+        file.seekg(pos);
         file.read(reinterpret_cast<char *>(&t), sizeofT);
     }
 };
