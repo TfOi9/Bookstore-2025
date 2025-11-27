@@ -5,5 +5,5 @@ build/*
 *.ans
 *.err
 *.exe
-block
-bucket
+hash_block
+hash_bucket
