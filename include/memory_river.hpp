@@ -11,7 +11,6 @@ using std::ofstream;
 
 template<class T, int info_len = 2>
 class MemoryRiver {
-    typedef long long ll;
 private:
     /* your code here */
     fstream file;

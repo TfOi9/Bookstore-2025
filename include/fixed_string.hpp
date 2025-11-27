@@ -68,7 +68,7 @@ public:
             pos++;
             index++;
             if (index == StringSize) {
-                return;
+                return *this;
             }
         }
         return *this;
