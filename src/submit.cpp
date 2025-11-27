@@ -95,7 +95,7 @@ public:
     }
 };
 
-template<typename ValueType, int BlockCapacity = 200, int HashSize = 199999, int StringSize = 64>
+template<typename ValueType, int BlockCapacity = 200, int HashSize = 1999, int StringSize = 64>
 class HashMap {
 private:
     struct Bucket {
@@ -287,7 +287,7 @@ using namespace std;
 int main() {
     int t;
     cin >> t;
-    HashMap<int, 200, 199999> hshmp;
+    HashMap<int, 200, 1007> hshmp;
     while (t--) {
         string op, s;
         int x;
