@@ -9,7 +9,7 @@ using std::fstream;
 using std::ifstream;
 using std::ofstream;
 
-template<class T, int info_len = 2, bool auto_clear = 0>
+template<class T, int info_len = 2>
 class MemoryRiver {
     typedef long long ll;
 private:
@@ -18,12 +18,15 @@ private:
     string file_name;
     int sizeofT = sizeof(T);
     int info_offset = info_len * sizeof(int);
+
+    int size_;
 public:
-    MemoryRiver() = default;
+    MemoryRiver() : size_(1) {}
 
     MemoryRiver(const string& file_name) : file_name(file_name) {}
 
     ~MemoryRiver() {
+        write_info(size_, 1);
         if (file.is_open()) {
             file.close();
         }
@@ -42,23 +45,52 @@ public:
 
     bool initialise(string FN = "") {
         if (FN != "") file_name = FN;
-        return open_file();
+        bool f = open_file();
+        if (f) {
+            get_info(size_, 1);
+        }
+        return f;
     }
 
-    ll write(T &t) {
-        file.seekp(0, std::ios::end);
-        ll pos = file.tellp();
-        file.write(reinterpret_cast<const char*>(&t), sizeof(T));
-        return pos + 1;
+    void get_info(int &tmp, int n) {
+        if (n > info_len) return;
+        if (!file.is_open()) {
+            open_file();
+        }
+        if (!file) {
+            return;
+        }
+        file.seekg((n - 1) * sizeof(int));
+        file.read(reinterpret_cast<char *>(&tmp), sizeof(int));
     }
 
-    void update(T &t, const ll pos) {
-        file.seekp(pos - 1);
+    void write_info(int tmp, int n) {
+        if (n > info_len) return;
+        if (!file.is_open()) {
+            open_file();
+        }
+        if (!file) {
+            return;
+        }
+        file.seekp((n - 1) * sizeof(int));
+        file.write(reinterpret_cast<char *>(&tmp), sizeof(int));
+    }
+
+    int write(T &t) {
+        int siz = size_;
+        size_++;
+        file.seekp(info_offset + siz * sizeofT);
+        file.write(reinterpret_cast<char *>(&t), sizeofT);
+        return siz;
+    }
+
+    void update(T &t, const int pos) {
+        file.seekp(info_offset + pos * sizeofT);
         file.write(reinterpret_cast<char *>(&t), sizeofT);
     }
 
-    void read(T &t, const ll pos) {
-        file.seekg(pos - 1);
+    void read(T &t, const int pos) {
+        file.seekg(info_offset + pos * sizeofT);
         file.read(reinterpret_cast<char *>(&t), sizeofT);
     }
 };
