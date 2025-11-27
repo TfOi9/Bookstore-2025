@@ -17,7 +17,7 @@ struct MemoryHash {
     }
 };
 
-template<typename KeyType, typename ValueType, typename Hasher = MemoryHash<KeyType>, int BlockCapacity = 200, int HashSize = 199999>
+template<typename KeyType, typename ValueType, typename Hasher = MemoryHash<KeyType>, int BlockCapacity = 200, int HashSize = 1007>
 class HashMap {
 private:
     struct Bucket {

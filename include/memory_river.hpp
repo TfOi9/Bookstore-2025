@@ -12,7 +12,6 @@ using std::ofstream;
 template<class T, int info_len = 2>
 class MemoryRiver {
 private:
-    /* your code here */
     fstream file;
     string file_name;
     int sizeofT = sizeof(T);

@@ -8,7 +8,7 @@
 #include <algorithm>
 #include "memory_river.hpp"
 
-template<typename ValueType, int BlockCapacity = 200, int HashSize = 199999, int StringSize = 64>
+template<typename ValueType, int BlockCapacity = 200, int HashSize = 1007, int StringSize = 64>
 class HashMap {
 private:
     struct Bucket {
