@@ -1,7 +1,7 @@
 #include <iostream>
 #include <cstring>
 #include <string>
-#include "../include/hash_map.hpp"
+#include "../include/string_map.hpp"
 using namespace std;
 
 int main() {
