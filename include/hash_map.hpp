@@ -68,6 +68,7 @@ public:
 
     ~HashMap() = default;
 
+    // inserts KeyPair(key, val) into the hash map.
     void insert(const KeyType& key, const ValueType& val) {
         int hash_val = hash(key);
         // std::cerr << "hash value " << hash_val << std::endl;
@@ -124,6 +125,7 @@ public:
         }
     }
 
+    // erases KeyPair(key, val) from the hash map.
     void erase(const KeyType& key, const ValueType& val) {
         int hash_val = hash(key);
         Bucket bucket;
@@ -178,6 +180,8 @@ public:
         }
     }
 
+    // erases one KeyPair with key in the hash map.
+    // WARNING: this function ONLY erases the first KeyPair it meets.
     void erase(const KeyType& key) {
         int hash_val = hash(key);
         Bucket bucket;
@@ -232,6 +236,7 @@ public:
         }
     }
 
+    // counts all the KeyPairs with key in the hash map.
     int count(const KeyType& key) {
         int hash_val = hash(key);
         Bucket bucket;
@@ -251,6 +256,8 @@ public:
         return cnt;
     }
 
+    // returns all KeyPairs with key in the hash map.
+    // WARNING: the returned list is NOT sorted.
     std::vector<ValueType> find(const KeyType& key) {
         int hash_val = hash(key);
         Bucket bucket;
