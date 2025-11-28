@@ -42,7 +42,7 @@ private:
         return hasher_(key) % HashSize;
     }
 
-    HashMemoryRiver<Bucket, Block> file_;
+    HashMemoryRiver<Bucket, Block, 2, HashSize> file_;
 
     std::string file_name_;
 
