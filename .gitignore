@@ -1,6 +1,7 @@
 .DS_Store
 .clangd
 build/*
+temp/*
 *.in
 *.out
 *.ans
