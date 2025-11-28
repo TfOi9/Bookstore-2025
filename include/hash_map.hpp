@@ -56,7 +56,7 @@ private:
     }
 
 public:
-    HashMap(const std::string& file_name = "hash") : file_name_(file_name), hasher_() {
+    HashMap(const std::string& file_name = "hash.dat") : file_name_(file_name), hasher_() {
         bool f = file_.initialise(file_name_);
         if (!f) {
             Bucket bucket;
