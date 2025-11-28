@@ -1,0 +1,62 @@
+#include "../include/account.hpp"
+
+Account::Account(const std::string& user_id, int previlege, const std::string& username, const std::string& password) {
+    user_id_ = string_to_array<30>(user_id);
+    username_ = string_to_array<30>(username);
+    password_ = string_to_array<30>(password);
+    previlege_ = previlege;
+}
+
+bool Account::verify_password(const std::string& password) const {
+    return array_to_string<30>(password_) == password;
+}
+
+std::string Account::username() const {
+    return array_to_string<30>(username_);
+}
+
+std::string Account::password() const {
+    return array_to_string<30>(password_);
+}
+
+std::string Account::user_id() const {
+    return array_to_string<30>(user_id_);
+}
+
+int Account::previlege() const {
+    return previlege_;
+}
+
+AccountManager::AccountManager(const std::string& file_name)
+    : account_file_(file_name), account_count_(0) {}
+
+bool AccountManager::login(const std::string& user_id, const std::string& password) {
+    std::vector<Account> accounts = account_file_.find(string_to_array<30>(user_id));
+    if (accounts.empty()) {
+        return false;
+    }
+    Account& account = accounts[0];
+    if (account.verify_password(password)) {
+        login_stack_.push_back(account);
+        return true;
+    }
+    return false;
+}
+
+bool AccountManager::logout() {
+    if (login_stack_.empty()) {
+        return false;
+    }
+    login_stack_.pop_back();
+    return true;
+}
+
+bool AccountManager::register_account(const std::string& user_id, const std::string& username, const std::string& password, int previlege) {
+    if (account_file_.find(string_to_array<30>(user_id)).empty()) {
+        Account new_account(user_id, previlege, username, password);
+        account_file_.insert(string_to_array<30>(user_id), new_account);
+        account_count_++;
+        return true;
+    }
+    return false;
+}

@@ -5,35 +5,30 @@
 #include <array>
 #include <vector>
 #include "hash_map.hpp"
+#include "utils.hpp"
 
 class Account {
 private:
-    int user_id_;
+    std::array<char, 30> user_id_;
+    std::array<char, 30> username_;
+    std::array<char, 30> password_;
     int previlege_;
-    std::string username_;
-    std::string password_;
-    enum class Previlege {
-        kTourist = 0,
-        kCustomer = 1,
-        kAdmin = 3,
-        kRoot = 7
-    };
 public:
     Account() = delete;
-    Account(int user_id, int previlege, const std::string& username, const std::string& password);
+    Account(const std::string& user_id, int previlege, const std::string& username, const std::string& password);
     ~Account() = default;
     bool verify_password(const std::string& password) const;
-    int user_id() const;
-    int previlege() const;
+    std::string user_id() const;
     std::string username() const;
     std::string password() const;
+    int previlege() const;
 };
 
 class AccountManager {
 private:
     HashMap<std::array<char, 30>, Account> account_file_;
     int account_count_;
-    Account current_account_;
+    std::vector<Account> login_stack_;
 public:
     AccountManager() = delete;
     AccountManager(const std::string& file_name = "account.dat");
