@@ -79,7 +79,7 @@ public:
         while (pos) {
             file_.read_block(block, pos);
             for (int i = 0; i < block.size_; i++) {
-                if (block.data_[i].key_ == key && block.data_[i].val_ == val) {
+                if (block.data_[i].key_ == key) {
                     return;
                 }
             }

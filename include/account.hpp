@@ -16,9 +16,7 @@ private:
     int previlege_;
     // previleges: 0 - tourist, 1 - customer, 3 - administrator, 7 - root.
 public:
-    Account() = delete;
-
-    Account(const std::string& user_id, int previlege, const std::string& username, const std::string& password);
+    Account(const std::string& user_id = "", int previlege = 0, const std::string& username = "", const std::string& password = "");
 
     ~Account() = default;
 
@@ -44,9 +42,7 @@ private:
     int account_count_;
     std::vector<Account> login_stack_;
 public:
-    AccountManager() = delete;
-
-    AccountManager(const std::string& file_name = "account.dat");
+    AccountManager(const std::string& file_name = "account.dat", const std::string& root_password = "root");
 
     ~AccountManager() = default;
 

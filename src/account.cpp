@@ -27,8 +27,12 @@ int Account::previlege() const {
     return previlege_;
 }
 
-AccountManager::AccountManager(const std::string& file_name)
-    : account_file_(file_name), account_count_(0) {}
+AccountManager::AccountManager(const std::string& file_name, const std::string& root_password)
+    : account_file_(file_name), account_count_(1) {
+    Account root("root", 7, "root", root_password);
+    account_file_.insert(string_to_array<30>("root"), root);
+    login_stack_.push_back(Account());
+}
 
 bool AccountManager::login(const std::string& user_id, const std::string& password) {
     std::vector<Account> accounts = account_file_.find(string_to_array<30>(user_id));
@@ -36,7 +40,7 @@ bool AccountManager::login(const std::string& user_id, const std::string& passwo
         return false;
     }
     Account& account = accounts[0];
-    if (account.verify_password(password)) {
+    if (account.verify_password(password) || account.previlege_ < login_stack_.back().previlege()) {
         login_stack_.push_back(account);
         return true;
     }
