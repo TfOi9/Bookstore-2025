@@ -178,6 +178,79 @@ public:
         }
     }
 
+    void erase(const KeyType& key) {
+        int hash_val = hash(key);
+        Bucket bucket;
+        file_.read_bucket(bucket, hash_val);
+        Block block;
+        int pos = bucket.head_, last = -1;
+        while (pos) {
+            file_.read_block(block, pos);
+            int found_pos = -1;
+            for (int i = 0; i < block.size_; i++) {
+                if (block.data_[i].key_ == key) {
+                    found_pos = i;
+                    break;
+                }
+            }
+            if (found_pos != -1) {
+                // found keypair in block
+                if (block.size_ == 1) {
+                    // only one pair in block, delete it
+                    if (last == -1) {
+                        // first block in bucket
+                        bucket.head_ = block.next_;
+                        if (bucket.head_ == 0) {
+                            // bucket now empty
+                            bucket.tail_ = 0;
+                        }
+                        file_.update_bucket(bucket, hash_val);
+                    }
+                    else {
+                        // block in the middle
+                        Block last_block;
+                        file_.read_block(last_block, last);
+                        last_block.next_ = block.next_;
+                        file_.update_block(last_block, last);
+                        if (block.next_ == 0) {
+                            // last block
+                            bucket.tail_ = last;
+                            file_.update_bucket(bucket, hash_val);
+                        }
+                    }
+                    return;
+                }
+                for (int i = found_pos; i < block.size_ - 1; i++) {
+                    block.data_[i] = block.data_[i + 1];
+                }
+                block.size_--;
+                file_.update_block(block, pos);
+                return;
+            }
+            last = pos;
+            pos = block.next_;
+        }
+    }
+
+    int count(const KeyType& key) {
+        int hash_val = hash(key);
+        Bucket bucket;
+        file_.read_bucket(bucket, hash_val);
+        Block block;
+        int pos = bucket.head_;
+        int cnt = 0;
+        while (pos) {
+            file_.read_block(block, pos);
+            for (int i = 0; i < block.size_; i++) {
+                if (block.data_[i].key_ == key) {
+                    cnt++;
+                }
+            }
+            pos = block.next_;
+        }
+        return cnt;
+    }
+
     std::vector<ValueType> find(const KeyType& key) {
         int hash_val = hash(key);
         Bucket bucket;

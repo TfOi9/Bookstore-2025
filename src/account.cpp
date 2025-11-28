@@ -44,6 +44,9 @@ bool AccountManager::login(const std::string& user_id, const std::string& passwo
 }
 
 bool AccountManager::logout() {
+    if (login_stack_.back().previlege_ < 1) {
+        return false;
+    }
     if (login_stack_.empty()) {
         return false;
     }
@@ -52,11 +55,66 @@ bool AccountManager::logout() {
 }
 
 bool AccountManager::register_account(const std::string& user_id, const std::string& username, const std::string& password, int previlege) {
-    if (account_file_.find(string_to_array<30>(user_id)).empty()) {
+    std::array<char, 30> arr = string_to_array<30>(user_id);
+    if (account_file_.find(arr).empty()) {
         Account new_account(user_id, previlege, username, password);
-        account_file_.insert(string_to_array<30>(user_id), new_account);
+        account_file_.insert(arr, new_account);
         account_count_++;
         return true;
     }
     return false;
+}
+
+bool AccountManager::change_password(const std::string& user_id, const std::string& new_password, const std::string& old_password) {
+    if (login_stack_.back().previlege_ < 1) {
+        return false;
+    }
+    std::array<char, 30> arr = string_to_array<30>(user_id);
+    std::vector<Account> accounts = account_file_.find(arr);
+    if (accounts.empty()) {
+        return false;
+    }
+    Account& account = accounts[0];
+    if (account.verify_password(old_password) || login_stack_.back().previlege() == 7) {
+        account.password_ = string_to_array<30>(new_password);
+        account_file_.erase(arr);
+        account_file_.insert(arr, account);
+        return true;
+    }
+    return false;
+}
+
+bool AccountManager::add_account(const std::string& user_id, const std::string& username, const std::string& password, int previlege) {
+    if (login_stack_.back().previlege_ < 3) {
+        return false;
+    }
+    std::array<char, 30> arr = string_to_array<30>(user_id);
+    if (login_stack_.back().previlege_ <= previlege) {
+        return false;
+    }
+    if (account_file_.count(arr)) {
+        return false;
+    }
+    Account account(user_id, previlege, username, password);
+    account_file_.insert(arr, account);
+    account_count_++;
+    return true;
+}
+
+bool AccountManager::delete_account(const std::string& user_id) {
+    if (login_stack_.back().previlege_ < 7) {
+        return false;
+    }
+    std::array<char, 30> arr = string_to_array<30>(user_id);
+    if (!account_file_.count(arr)) {
+        return false;
+    }
+    for (int i = 0; i < login_stack_.size(); i++) {
+        if (login_stack_[i].user_id_ == arr) {
+            return false;
+        }
+    }
+    account_file_.erase(arr);
+    account_count_--;
+    return true;
 }

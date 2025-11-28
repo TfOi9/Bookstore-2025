@@ -8,6 +8,7 @@
 #include "utils.hpp"
 
 class Account {
+    friend class AccountManager;
 private:
     std::array<char, 30> user_id_;
     std::array<char, 30> username_;
@@ -36,7 +37,7 @@ public:
     bool login(const std::string& user_id, const std::string& password);
     bool logout();
     bool register_account(const std::string& user_id, const std::string& username, const std::string& password, int previlege);
-    bool change_password(const std::string& new_password, const std::string& old_password = "");
+    bool change_password(const std::string& user_id, const std::string& new_password, const std::string& old_password = "");
     bool add_account(const std::string& user_id, const std::string& username, const std::string& password, int previlege);
     bool delete_account(const std::string& user_id);
 };
