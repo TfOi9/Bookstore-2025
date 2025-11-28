@@ -93,4 +93,99 @@ public:
     }
 };
 
+template<typename BucketType, typename BlockType, int info_len = 2, int HashSize = 1007>
+class HashMemoryRiver {
+private:
+    fstream file;
+    string file_name;
+    int sizeofBucket = sizeof(BucketType);
+    int sizeofBlock = sizeof(BlockType);
+    int info_offset = info_len * sizeof(int);
+    int bucket_offset = info_offset + HashSize * sizeofBucket;
+    int size_;
+public:
+    HashMemoryRiver() : size_(1) {}
+
+    HashMemoryRiver(const string& file_name) : file_name(file_name) {}
+
+    ~HashMemoryRiver() {
+        write_info(size_, 1);
+        if (file.is_open()) {
+            file.close();
+        }
+    }
+
+    bool open_file() {
+        file.open(file_name, std::ios::in | std::ios::out | std::ios::binary);
+        if (!file) {
+            file.open(file_name, std::ios::out | std::ios::binary);
+            file.close();
+            file.open(file_name, std::ios::in | std::ios::out | std::ios::binary);
+            return 0;
+        }
+        return 1;
+    }
+
+    bool initialise(string FN = "") {
+        if (FN != "") file_name = FN;
+        bool f = open_file();
+        if (f) {
+            get_info(size_, 1);
+        }
+        return f;
+    }
+
+    void get_info(int &tmp, int n) {
+        if (n > info_len) return;
+        if (!file.is_open()) {
+            open_file();
+        }
+        if (!file) {
+            return;
+        }
+        file.seekg((n - 1) * sizeof(int));
+        file.read(reinterpret_cast<char *>(&tmp), sizeof(int));
+    }
+
+    void write_info(int tmp, int n) {
+        if (n > info_len) return;
+        if (!file.is_open()) {
+            open_file();
+        }
+        if (!file) {
+            return;
+        }
+        file.seekp((n - 1) * sizeof(int));
+        file.write(reinterpret_cast<char *>(&tmp), sizeof(int));
+    }
+
+    void update_bucket(BucketType &t, const int pos) {
+        file.seekp(info_offset + pos * sizeofBucket);
+        file.write(reinterpret_cast<char *>(&t), sizeofBucket);
+    }
+
+    void read_bucket(BucketType &t, const int pos) {
+        file.seekg(info_offset + pos * sizeofBucket);
+        file.read(reinterpret_cast<char *>(&t), sizeofBucket);
+    }
+
+    int write_block(BlockType &t) {
+        int siz = size_;
+        size_++;
+        file.seekp(bucket_offset + siz * sizeofBlock);
+        file.write(reinterpret_cast<char *>(&t), sizeofBlock);
+        return siz;
+    }
+
+    void update_block(BlockType &t, const int pos) {
+        file.seekp(bucket_offset + pos * sizeofBlock);
+        file.write(reinterpret_cast<char *>(&t), sizeofBlock);
+    }
+
+    void read_block(BlockType &t, const int pos) {
+        file.seekg(bucket_offset + pos * sizeofBlock);
+        file.read(reinterpret_cast<char *>(&t), sizeofBlock);
+    }
+};
+
 #endif

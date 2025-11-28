@@ -1,28 +1,44 @@
 #include <iostream>
 #include <cstring>
 #include <string>
-#include "../include/string_map.hpp"
+#include "../include/hash_map.hpp"
 using namespace std;
+
+void read_arr(array<char, 64>& arr) {
+    string s;
+    cin >> s;
+    for (int i = 0; i < 64; i++) {
+        if (i < s.size()) {
+            arr[i] = s[i];
+        }
+        else {
+            arr[i] = 0;
+        }
+    }
+}
 
 int main() {
     int t;
     cin >> t;
-    HashMap<int> hshmp;
+    HashMap<array<char, 64>, int, MemoryHash<array<char, 64> >, 200, 1007> hshmp;
     while (t--) {
-        string op, s;
+        string op, str;
+        array<char, 64> s;
         int x;
         cin >> op;
         if (op == "insert") {
-            cin >> s >> x;
-            hshmp.insert(s.c_str(), s.size(), x);
+            read_arr(s);
+            cin >> x;
+            hshmp.insert(s, x);
         }
         else if (op == "delete") {
-            cin >> s >> x;
-            hshmp.erase(s.c_str(), s.size(), x);
+            read_arr(s);
+            cin >> x;
+            hshmp.erase(s, x);
         }
         else if (op == "find") {
-            cin >> s;
-            std::vector<int> vec = hshmp.find(s.c_str(), s.size());
+            read_arr(s);
+            std::vector<int> vec = hshmp.find(s);
             if (!vec.size()) {
                 cout << "null" << endl;
                 continue;
@@ -33,4 +49,5 @@ int main() {
             cout << endl;
         }
     }
+    return 0;
 }

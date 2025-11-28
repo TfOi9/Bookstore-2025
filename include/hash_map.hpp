@@ -42,8 +42,7 @@ private:
         return hasher_(key) % HashSize;
     }
 
-    MemoryRiver<Bucket> bucket_file_;
-    MemoryRiver<Block> block_file_;
+    HashMemoryRiver<Bucket, Block> file_;
 
     std::string file_name_;
 
@@ -51,19 +50,18 @@ private:
 
     int new_block() {
         Block block;
-        int pos =  block_file_.write(block);
+        int pos =  file_.write_block(block);
         // std::cerr << "new block numbered " << pos << std::endl;
         return pos;
     }
 
 public:
     HashMap(const std::string& file_name = "hash") : file_name_(file_name), hasher_() {
-        bool f = bucket_file_.initialise(file_name_ + "_bucket");
-        block_file_.initialise(file_name_ + "_block");
+        bool f = file_.initialise(file_name_);
         if (!f) {
             Bucket bucket;
             for (int i = 0; i < HashSize; i++) {
-                bucket_file_.write(bucket);
+                file_.update_bucket(bucket, i);
             }
         }
     }
@@ -74,11 +72,11 @@ public:
         int hash_val = hash(key);
         // std::cerr << "hash value " << hash_val << std::endl;
         Bucket bucket;
-        bucket_file_.read(bucket, hash_val);
+        file_.read_bucket(bucket, hash_val);
         Block block;
         int pos = bucket.head_;
         while (pos) {
-            block_file_.read(block, pos);
+            file_.read_block(block, pos);
             for (int i = 0; i < block.size_; i++) {
                 if (block.data_[i].key_ == key && block.data_[i].val_ == val) {
                     return;
@@ -96,18 +94,18 @@ public:
             new_block.data_[0].val_ = val;
             bucket.head_ = new_pos;
             bucket.tail_ = new_pos;
-            bucket_file_.update(bucket, hash_val);
-            block_file_.update(new_block, new_pos);
+            file_.update_bucket(bucket, hash_val);
+            file_.update_block(new_block, new_pos);
         }
         else {
             Block tail_block;
-            block_file_.read(tail_block, bucket.tail_);
+            file_.read_block(tail_block, bucket.tail_);
             if (tail_block.size_ < BlockCapacity) {
                 // tail has space, put data into tail block
                 tail_block.data_[tail_block.size_].key_ = key;
                 tail_block.data_[tail_block.size_].val_ = val;
                 tail_block.size_++;
-                block_file_.update(tail_block, bucket.tail_);
+                file_.update_block(tail_block, bucket.tail_);
             }
             else {
                 // tail is full, create a new block
@@ -118,10 +116,10 @@ public:
                 new_block.data_[0].key_ = key;
                 new_block.data_[0].val_ = val;
                 tail_block.next_ = new_pos;
-                block_file_.update(tail_block, bucket.tail_);
-                block_file_.update(new_block, new_pos);
+                file_.update_block(tail_block, bucket.tail_);
+                file_.update_block(new_block, new_pos);
                 bucket.tail_ = new_pos;
-                bucket_file_.update(bucket, hash_val);
+                file_.update_bucket(bucket, hash_val);
             }
         }
     }
@@ -129,11 +127,11 @@ public:
     void erase(const KeyType& key, const ValueType& val) {
         int hash_val = hash(key);
         Bucket bucket;
-        bucket_file_.read(bucket, hash_val);
+        file_.read_bucket(bucket, hash_val);
         Block block;
         int pos = bucket.head_, last = -1;
         while (pos) {
-            block_file_.read(block, pos);
+            file_.read_block(block, pos);
             int found_pos = -1;
             for (int i = 0; i < block.size_; i++) {
                 if (block.data_[i].key_ == key && block.data_[i].val_ == val) {
@@ -152,18 +150,18 @@ public:
                             // bucket now empty
                             bucket.tail_ = 0;
                         }
-                        bucket_file_.update(bucket, hash_val);
+                        file_.update_bucket(bucket, hash_val);
                     }
                     else {
                         // block in the middle
                         Block last_block;
-                        block_file_.read(last_block, last);
+                        file_.read_block(last_block, last);
                         last_block.next_ = block.next_;
-                        block_file_.update(last_block, last);
+                        file_.update_block(last_block, last);
                         if (block.next_ == 0) {
                             // last block
                             bucket.tail_ = last;
-                            bucket_file_.update(bucket, hash_val);
+                            file_.update_bucket(bucket, hash_val);
                         }
                     }
                     return;
@@ -172,7 +170,7 @@ public:
                     block.data_[i] = block.data_[i + 1];
                 }
                 block.size_--;
-                block_file_.update(block, pos);
+                file_.update_block(block, pos);
                 return;
             }
             last = pos;
@@ -180,15 +178,15 @@ public:
         }
     }
 
-    virtual std::vector<ValueType> find(const KeyType& key) {
+    std::vector<ValueType> find(const KeyType& key) {
         int hash_val = hash(key);
         Bucket bucket;
-        bucket_file_.read(bucket, hash_val);
+        file_.read_bucket(bucket, hash_val);
         Block block;
         int pos = bucket.head_;
         std::vector<ValueType> vec;
         while (pos) {
-            block_file_.read(block, pos);
+            file_.read_block(block, pos);
             for (int i = 0; i < block.size_; i++) {
                 if (block.data_[i].key_ == key) {
                     vec.push_back(block.data_[i].val_);
