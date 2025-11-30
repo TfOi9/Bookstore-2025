@@ -5,27 +5,37 @@
 #include <vector>
 #include <utility>
 #include "memory_river.hpp"
+#include "hash_map.hpp"
 
 class FinanceLog {
     friend class LogManager;
 private:
-    std::array<char, 30> user_id_;
-    std::array<char, 20> ISBN_;
     int count_;
     double cost_;
     // + for income, - for outcome
 public:
-    FinanceLog(int count, const std::string& user_id, const std::string& ISBN, double cost);
+    FinanceLog(int count, double cost);
 
     ~FinanceLog() = default;
-
-    std::string user_id() const;
-
-    std::string ISBN() const;
 
     int count() const;
 
     double cost() const;
+};
+
+class EmployeeLog {
+    friend class LogManager;
+private:
+    std::array<char, 30> user_id_;
+    std::array<char, 200> msg_;
+public:
+    EmployeeLog(const std::string& user_id, const std::string& msg);
+
+    ~EmployeeLog();
+
+    std::string user_id() const;
+
+    std::string msg() const;
 };
 
 class Log {
@@ -43,6 +53,7 @@ public:
 class LogManager {
 private:
     MemoryRiver<FinanceLog> finance_file_;
+    HashMap<std::array<char, 30>, EmployeeLog> employee_file_;
     MemoryRiver<Log> log_file_;
     int current_count_;
 public:
@@ -50,11 +61,15 @@ public:
 
     ~LogManager() = default;
 
-    void add_finance_log(const std::string& user_id, const std::string& ISBN, double cost);
+    void add_finance_log(double cost);
+
+    void add_employee_log(const std::string& user_id, const std::string& msg);
 
     void add_log(const std::string& msg);
 
-    std::pair<double, double> finance();
+    std::pair<double, double> finance(int count = -1);
+
+    void report_finance();
 
     void report_employee(const std::string& user_id);
 
