@@ -42,7 +42,7 @@ private:
     int account_count_;
     std::vector<Account> login_stack_;
 public:
-    AccountManager(const std::string& file_name = "account.dat", const std::string& root_password = "root");
+    AccountManager(const std::string& file_name = "account.dat", const std::string& root_password = "sjtu");
 
     ~AccountManager() = default;
 
