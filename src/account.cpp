@@ -29,6 +29,9 @@ int Account::previlege() const {
 
 AccountManager::AccountManager(const std::string& file_name, const std::string& root_password)
     : account_file_(file_name), account_count_(1) {
+    if (account_file_.count(string_to_array<30>("root"))) {
+        return;
+    }
     Account root("root", 7, "root", root_password);
     account_file_.insert(string_to_array<30>("root"), root);
     login_stack_.push_back(Account());
