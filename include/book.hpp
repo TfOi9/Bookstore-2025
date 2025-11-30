@@ -41,6 +41,7 @@ private:
     HashMap<std::array<char, 60>, Book> author_file_;
     HashMap<std::array<char, 60>, Book> keyword_file_;
     Book selected_book_;
+    bool has_selected_ = false;
 public:
     BookManager();
 
@@ -48,13 +49,15 @@ public:
 
     std::vector<Book> find(const std::string& ISBN, const std::string& book_name, const std::string& author, const std::string& keyword);
 
-    bool buy(const std::string& ISBN, int quant);
+    bool buy(const std::string& ISBN, int quant, double& cost);
 
-    bool select(const std::string& ISBN);
+    void select(const std::string& ISBN);
 
-    std::vector<Book> modify(const std::string& ISBN, const std::string& book_name, const std::string& author, const std::string& keyword, int price);
+    bool modify(const std::string& ISBN, const std::string& book_name, const std::string& author, const std::string& keyword, int price);
 
-    bool import(const std::string ISBN, int quant);
+    bool import(const std::string& ISBN, int quant);
+
+    bool import(const std::string& ISBN, double cost);
 };
 
 #endif

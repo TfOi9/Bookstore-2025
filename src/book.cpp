@@ -32,3 +32,107 @@ double Book::price() const {
 int Book::quant() const {
     return quant_;
 }
+
+BookManager::BookManager() : ISBN_file_("ISBN.dat"), book_name_file_("book.dat"), author_file_("author.dat"), keyword_file_("keyword.dat") , selected_book_() {}
+
+bool BookManager::buy(const std::string& ISBN, int quant, double& cost) {
+    if (quant <= 0) {
+        return false;
+    }
+    std::array<char, 20> arr = string_to_array<20>(ISBN);
+    std::vector<Book> books = ISBN_file_.find(arr);
+    if (books.empty()) {
+        return false;
+    }
+    Book& book = books[0];
+    if (book.quant_ < quant) {
+        return false;
+    }
+    cost = book.price_ * quant;
+    ISBN_file_.erase(book.ISBN_, book);
+    book_name_file_.erase(book.book_name_, book);
+    author_file_.erase(book.author_, book);
+    keyword_file_.erase(book.keyword_, book);
+    book.quant_ -= quant;
+    ISBN_file_.insert(book.ISBN_, book);
+    book_name_file_.insert(book.book_name_, book);
+    author_file_.insert(book.author_, book);
+    keyword_file_.insert(book.keyword_, book);
+    return true;
+}
+
+void BookManager::select(const std::string& ISBN) {
+    std::array<char, 20> arr = string_to_array<20>(ISBN);
+    std::vector<Book> books = ISBN_file_.find(arr);
+    has_selected_ = true;
+    if (books.empty()) {
+        Book book = Book(ISBN);
+        ISBN_file_.insert(arr, book);
+        selected_book_ = book;
+        return;
+    }
+    selected_book_ = books[0];
+}
+
+bool BookManager::modify(const std::string& ISBN, const std::string& book_name, const std::string& author, const std::string& keyword, int price) {
+    if (!has_selected_) {
+        return false;
+    }
+    Book& book = selected_book_;
+    ISBN_file_.erase(book.ISBN_, book);
+    book_name_file_.erase(book.book_name_, book);
+    author_file_.erase(book.author_, book);
+    keyword_file_.erase(book.keyword_, book);
+    Book new_book = Book(ISBN, book_name, author, keyword, price, book.quant_);
+    book = new_book;
+    ISBN_file_.insert(book.ISBN_, book);
+    book_name_file_.insert(book.book_name_, book);
+    author_file_.insert(book.author_, book);
+    keyword_file_.insert(book.keyword_, book);
+    return true;
+}
+
+bool BookManager::import(const std::string& ISBN, int quant) {
+    if (quant <= 0) {
+        return false;
+    }
+    std::array<char, 20> arr = string_to_array<20>(ISBN);
+    std::vector<Book> books = ISBN_file_.find(arr);
+    if (books.empty()) {
+        return false;
+    }
+    Book& book = books[0];
+    ISBN_file_.erase(book.ISBN_, book);
+    book_name_file_.erase(book.book_name_, book);
+    author_file_.erase(book.author_, book);
+    keyword_file_.erase(book.keyword_, book);
+    book.quant_ += quant;
+    ISBN_file_.insert(book.ISBN_, book);
+    book_name_file_.insert(book.book_name_, book);
+    author_file_.insert(book.author_, book);
+    keyword_file_.insert(book.keyword_, book);
+    return true;
+}
+
+bool BookManager::import(const std::string& ISBN, double cost) {
+    if (cost <= 0) {
+        return false;
+    }
+    std::array<char, 20> arr = string_to_array<20>(ISBN);
+    std::vector<Book> books = ISBN_file_.find(arr);
+    if (books.empty()) {
+        return false;
+    }
+    Book& book = books[0];
+    int quant = cost / book.price_;
+    ISBN_file_.erase(book.ISBN_, book);
+    book_name_file_.erase(book.book_name_, book);
+    author_file_.erase(book.author_, book);
+    keyword_file_.erase(book.keyword_, book);
+    book.quant_ += quant;
+    ISBN_file_.insert(book.ISBN_, book);
+    book_name_file_.insert(book.book_name_, book);
+    author_file_.insert(book.author_, book);
+    keyword_file_.insert(book.keyword_, book);
+    return true;
+}
