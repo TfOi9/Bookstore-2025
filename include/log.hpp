@@ -6,7 +6,7 @@
 #include <utility>
 #include "memory_river.hpp"
 
-class Log {
+class FinanceLog {
     friend class LogManager;
 private:
     std::array<char, 30> user_id_;
@@ -15,9 +15,9 @@ private:
     double cost_;
     // + for income, - for outcome
 public:
-    Log(int count, const std::string& user_id, const std::string& ISBN, double cost);
+    FinanceLog(int count, const std::string& user_id, const std::string& ISBN, double cost);
 
-    ~Log() = default;
+    ~FinanceLog() = default;
 
     std::string user_id() const;
 
@@ -28,12 +28,31 @@ public:
     double cost() const;
 };
 
+class Log {
+    friend class LogManager;
+private:
+    std::array<char, 200> msg_;
+public:
+    Log(const std::string& msg);
+
+    ~Log() = default;
+
+    std::string msg() const;
+};
+
 class LogManager {
 private:
+    MemoryRiver<FinanceLog> finance_file_;
     MemoryRiver<Log> log_file_;
     int current_count_;
 public:
-    LogManager(const std::string& file_name = "log.dat");
+    LogManager();
+
+    ~LogManager() = default;
+
+    void add_finance_log(const std::string& user_id, const std::string& ISBN, double cost);
+
+    void add_log(const std::string& msg);
 
     std::pair<double, double> finance();
 
