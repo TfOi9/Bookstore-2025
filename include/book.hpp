@@ -17,7 +17,7 @@ private:
     double price_;
     int quant_;
 public:
-    Book(const std::string& ISBN = "", const std::string& book_name = "", const std::string& author = "", const std::string keyword = "", double price = 0.00, int quant = 0) {}
+    Book(const std::string& ISBN = "", const std::string& book_name = "", const std::string& author = "", const std::string keyword = "", double price = 0.00, int quant = 0);
 
     ~Book() = default;
 
@@ -36,10 +36,13 @@ public:
 
 class BookManager {
 private:
-    HashMap<std::array<char, 20>, Book> book_file_;
+    HashMap<std::array<char, 20>, Book> ISBN_file_;
+    HashMap<std::array<char, 60>, Book> book_name_file_;
+    HashMap<std::array<char, 60>, Book> author_file_;
+    HashMap<std::array<char, 60>, Book> keyword_file_;
     Book selected_book_;
 public:
-    BookManager(const std::string& file_name = "book.dat") {}
+    BookManager();
 
     ~BookManager() = default;
 
