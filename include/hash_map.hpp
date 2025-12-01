@@ -285,6 +285,24 @@ public:
         // std::sort(vec.begin(), vec.end());
         return vec;
     }
+
+    std::vector<ValueType> serialize() {
+        std::vector<ValueType> vec;
+        for (int i = 0; i < HashSize; i++) {
+            Bucket bucket;
+            file_.read_bucket(bucket, i);
+            Block block;
+            int pos = bucket.head_;
+            while (pos) {
+                file_.read_block(block, pos);
+                for (int j = 0; j < block.size_; j++) {
+                    vec.push_back(block.data_[j].val_);
+                }
+                pos = block.next_;
+            }
+        }
+        return vec;
+    }
 };
 
 #endif

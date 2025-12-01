@@ -4,8 +4,11 @@
 #include <array>
 #include <string>
 #include <vector>
+#include <algorithm>
 #include "hash_map.hpp"
 #include "utils.hpp"
+
+std::vector<std::array<char, 60>> parse_keywords(const std::array<char, 60>& keyword);
 
 class Book {
     friend class BookManager;
@@ -33,7 +36,11 @@ public:
 
     int quant() const;
 
+    bool operator<(const Book& oth) const;
+
     bool operator==(const Book& oth) const;
+
+    friend std::ostream& operator<<(std::ostream& os, const Book& book);
 };
 
 class BookManager {
@@ -42,28 +49,41 @@ private:
     HashMap<std::array<char, 60>, Book> book_name_file_;
     HashMap<std::array<char, 60>, Book> author_file_;
     HashMap<std::array<char, 60>, Book> keyword_file_;
-    Book selected_book_;
-    bool has_selected_ = false;
+    // Book selected_book_;
+    // bool has_selected_ = false;
+    void update_book(const Book& book, const Book& new_book);
 public:
     BookManager();
 
     ~BookManager() = default;
 
-    std::vector<Book> find(const std::string& ISBN, const std::string& book_name, const std::string& author, const std::string& keyword);
+    bool add(const std::string& ISBN);
+
+    std::vector<Book> find_ISBN(const std::string& ISBN);
+
+    std::vector<Book> find_book_name(const std::string& book_name);
+
+    std::vector<Book> find_author(const std::string& author);
+
+    std::vector<Book> find_keyword(const std::string& keyword);
+
+    std::vector<Book> find_all();
 
     bool buy(const std::string& ISBN, int quant, double& cost);
 
-    void select(const std::string& ISBN);
+    bool modify_ISBN(const std::string& ISBN, const std::string& new_ISBN);
 
-    bool modify(const std::string& ISBN, const std::string& book_name, const std::string& author, const std::string& keyword, double price);
+    bool modify_book_name(const std::string& ISBN, const std::string& new_name);
 
-    bool import(const std::string& ISBN, int quant);
+    bool modify_author(const std::string& ISBN, const std::string& new_author);
 
-    bool import(const std::string& ISBN, double cost);
+    bool modify_keyword(const std::string& ISBN, const std::string& new_keyword);
 
-    void load(const std::array<char, 20>& ISBN);
+    bool modify_price(const std::string& ISBN, double new_price);
+    
+    bool import_by_quantity(const std::string& ISBN, int quant);
 
-    Book selected_book() const;
+    bool import_by_cost(const std::string& ISBN, double cost);
 };
 
 #endif
