@@ -136,3 +136,12 @@ bool BookManager::import(const std::string& ISBN, double cost) {
     keyword_file_.insert(book.keyword_, book);
     return true;
 }
+
+void BookManager::load(const std::array<char, 20>& ISBN) {
+    std::vector<Book> books = ISBN_file_.find(ISBN);
+    has_selected_ = true;
+    if (books.empty()) {
+        return;
+    }
+    selected_book_ = books[0];
+}

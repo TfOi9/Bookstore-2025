@@ -58,6 +58,8 @@ public:
     bool import(const std::string& ISBN, int quant);
 
     bool import(const std::string& ISBN, double cost);
+
+    void load(const std::array<char, 20>& ISBN);
 };
 
 #endif
