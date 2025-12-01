@@ -35,6 +35,7 @@ AccountManager::AccountManager(const std::string& file_name, const std::string& 
     Account root("root", 7, "root", root_password);
     account_file_.insert(string_to_array<30>("root"), root);
     login_stack_.push_back(Account());
+    book_stack_.push_back(std::array<char, 20>());
 }
 
 bool AccountManager::login(const std::string& user_id, const std::string& password) {
@@ -45,6 +46,7 @@ bool AccountManager::login(const std::string& user_id, const std::string& passwo
     Account& account = accounts[0];
     if (account.verify_password(password) || account.previlege_ < login_stack_.back().previlege()) {
         login_stack_.push_back(account);
+        book_stack_.push_back(std::array<char, 20>());
         return true;
     }
     return false;
@@ -58,6 +60,7 @@ bool AccountManager::logout() {
         return false;
     }
     login_stack_.pop_back();
+    book_stack_.pop_back();
     return true;
 }
 
@@ -123,5 +126,13 @@ bool AccountManager::delete_account(const std::string& user_id) {
     }
     account_file_.erase(arr);
     account_count_--;
+    return true;
+}
+
+bool AccountManager::select_book(const std::string& ISBN) {
+    if (login_stack_.back().previlege_ < 3) {
+        return false;
+    }
+    book_stack_.back() = string_to_array<20>(ISBN);
     return true;
 }

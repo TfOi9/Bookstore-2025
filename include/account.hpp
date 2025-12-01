@@ -41,6 +41,7 @@ private:
     HashMap<std::array<char, 30>, Account> account_file_;
     int account_count_;
     std::vector<Account> login_stack_;
+    std::vector<std::array<char, 20>> book_stack_;
 public:
     AccountManager(const std::string& file_name = "account.dat", const std::string& root_password = "sjtu");
 
@@ -63,6 +64,9 @@ public:
 
     // trys to delete an account. requires previlege 7.
     bool delete_account(const std::string& user_id);
+
+    // selects book for the current account. requires previlege 3.
+    bool select_book(const std::string& ISBN);
 };
 
 #endif
