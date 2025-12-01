@@ -55,7 +55,7 @@ public:
 
     void select(const std::string& ISBN);
 
-    bool modify(const std::string& ISBN, const std::string& book_name, const std::string& author, const std::string& keyword, int price);
+    bool modify(const std::string& ISBN, const std::string& book_name, const std::string& author, const std::string& keyword, double price);
 
     bool import(const std::string& ISBN, int quant);
 

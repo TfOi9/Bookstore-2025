@@ -140,6 +140,7 @@ public:
             for (int i = 0; i < block.size_; i++) {
                 if (block.data_[i].key_ == key && block.data_[i].val_ == val) {
                     found_pos = i;
+                    // std::cerr << "found" << std::endl;
                     break;
                 }
             }
@@ -180,6 +181,7 @@ public:
             last = pos;
             pos = block.next_;
         }
+        // std::cerr << "not found" << std::endl;
     }
 
     // erases one KeyPair with key in the hash map.

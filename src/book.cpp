@@ -46,9 +46,12 @@ bool BookManager::buy(const std::string& ISBN, int quant, double& cost) {
     std::array<char, 20> arr = string_to_array<20>(ISBN);
     std::vector<Book> books = ISBN_file_.find(arr);
     if (books.empty()) {
+        // std::cerr << "not found" << std::endl;
         return false;
     }
+    // std::cerr << "sized " << books.size() << std::endl;
     Book& book = books[0];
+    // std::cerr << book.quant_ << std::endl;
     if (book.quant_ < quant) {
         return false;
     }
@@ -63,6 +66,8 @@ bool BookManager::buy(const std::string& ISBN, int quant, double& cost) {
     book_name_file_.erase(book.book_name_, book);
     author_file_.erase(book.author_, book);
     keyword_file_.erase(book.keyword_, book);
+    // std::vector<Book> test = ISBN_file_.find(arr);
+    // std::cerr << "now sized " << test.size() << std::endl;
     return true;
 }
 
@@ -79,11 +84,14 @@ void BookManager::select(const std::string& ISBN) {
     selected_book_ = books[0];
 }
 
-bool BookManager::modify(const std::string& ISBN, const std::string& book_name, const std::string& author, const std::string& keyword, int price) {
+bool BookManager::modify(const std::string& ISBN, const std::string& book_name, const std::string& author, const std::string& keyword, double price) {
     if (!has_selected_) {
         return false;
     }
     Book& book = selected_book_;
+    if (ISBN != book.ISBN() && ISBN_file_.count(string_to_array<20>(ISBN))) {
+        return false;
+    }
     Book new_book = Book(ISBN, book_name, author, keyword, price, book.quant_);
     ISBN_file_.insert(new_book.ISBN_, new_book);
     book_name_file_.insert(new_book.book_name_, new_book);
@@ -109,14 +117,18 @@ bool BookManager::import(const std::string& ISBN, int quant) {
     Book& book = books[0];
     Book new_book = book;
     new_book.quant_ += quant;
+    // std::cerr << book.quant_ << " " << new_book.quant_ << std::endl;
     ISBN_file_.insert(new_book.ISBN_, new_book);
     book_name_file_.insert(new_book.book_name_, new_book);
     author_file_.insert(new_book.author_, new_book);
     keyword_file_.insert(new_book.keyword_, new_book);
+    // std::cerr << "now delete old" << std::endl;
     ISBN_file_.erase(book.ISBN_, book);
     book_name_file_.erase(book.book_name_, book);
     author_file_.erase(book.author_, book);
     keyword_file_.erase(book.keyword_, book);
+    // std::vector<Book> test = ISBN_file_.find(arr);
+    // std::cerr << "now sized " << test.size() << std::endl;
     return true;
 }
 
