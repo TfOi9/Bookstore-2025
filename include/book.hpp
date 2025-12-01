@@ -32,6 +32,8 @@ public:
     double price() const;
 
     int quant() const;
+
+    bool operator==(const Book& oth) const;
 };
 
 class BookManager {

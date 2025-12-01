@@ -10,7 +10,7 @@ include_directories(include)
 
 set(SOURCES
     src/account.cpp
-    src/book.hpp
+    src/book.cpp
     src/account_tester.cpp
 )
 

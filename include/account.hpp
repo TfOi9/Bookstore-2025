@@ -34,6 +34,9 @@ public:
 
     // returns previlege.
     int previlege() const;
+
+    // == operator.
+    bool operator==(const Account& oth) const;
 };
 
 class AccountManager {

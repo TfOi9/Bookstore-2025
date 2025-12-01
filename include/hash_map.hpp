@@ -79,7 +79,8 @@ public:
         while (pos) {
             file_.read_block(block, pos);
             for (int i = 0; i < block.size_; i++) {
-                if (block.data_[i].key_ == key) {
+                if (block.data_[i].key_ == key && block.data_[i].val_ == val) {
+                    // std::cerr << "duplicated" << std::endl;
                     return;
                 }
             }
@@ -128,6 +129,7 @@ public:
     // erases KeyPair(key, val) from the hash map.
     void erase(const KeyType& key, const ValueType& val) {
         int hash_val = hash(key);
+        // std::cerr << "hash value " << hash_val << std::endl;
         Bucket bucket;
         file_.read_bucket(bucket, hash_val);
         Block block;
@@ -239,6 +241,7 @@ public:
     // counts all the KeyPairs with key in the hash map.
     int count(const KeyType& key) {
         int hash_val = hash(key);
+        // std::cerr << "hash value " << hash_val << std::endl;
         Bucket bucket;
         file_.read_bucket(bucket, hash_val);
         Block block;
@@ -246,6 +249,7 @@ public:
         int cnt = 0;
         while (pos) {
             file_.read_block(block, pos);
+            // std::cerr << "size " << block.size_ << std::endl;
             for (int i = 0; i < block.size_; i++) {
                 if (block.data_[i].key_ == key) {
                     cnt++;
@@ -260,6 +264,7 @@ public:
     // WARNING: the returned list is NOT sorted.
     std::vector<ValueType> find(const KeyType& key) {
         int hash_val = hash(key);
+        // std::cerr << "hash value " << hash_val << std::endl;
         Bucket bucket;
         file_.read_bucket(bucket, hash_val);
         Block block;
@@ -267,6 +272,7 @@ public:
         std::vector<ValueType> vec;
         while (pos) {
             file_.read_block(block, pos);
+            // std::cerr << "size " << block.size_ << std::endl;
             for (int i = 0; i < block.size_; i++) {
                 if (block.data_[i].key_ == key) {
                     vec.push_back(block.data_[i].val_);

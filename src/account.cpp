@@ -27,6 +27,10 @@ int Account::previlege() const {
     return previlege_;
 }
 
+bool Account::operator==(const Account& oth) const {
+    return (user_id_ == oth.user_id_ && username_ == oth.username_ && password_ == oth.password_ && previlege_ == oth.previlege_);
+}
+
 AccountManager::AccountManager(const std::string& file_name, const std::string& root_password)
     : account_file_(file_name), account_count_(1) {
     if (account_file_.count(string_to_array<30>("root"))) {
@@ -86,9 +90,10 @@ bool AccountManager::change_password(const std::string& user_id, const std::stri
     }
     Account& account = accounts[0];
     if (account.verify_password(old_password) || login_stack_.back().previlege() == 7) {
-        account.password_ = string_to_array<30>(new_password);
-        account_file_.erase(arr);
-        account_file_.insert(arr, account);
+        Account new_account = account;
+        new_account.password_ = string_to_array<30>(new_password);
+        account_file_.insert(arr, new_account);
+        account_file_.erase(arr, account);
         return true;
     }
     return false;
