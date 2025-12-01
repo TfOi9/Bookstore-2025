@@ -93,6 +93,7 @@ bool BookManager::modify(const std::string& ISBN, const std::string& book_name, 
     book_name_file_.erase(book.book_name_, book);
     author_file_.erase(book.author_, book);
     keyword_file_.erase(book.keyword_, book);
+    selected_book_ = new_book;
     return true;
 }
 
@@ -150,4 +151,8 @@ void BookManager::load(const std::array<char, 20>& ISBN) {
         return;
     }
     selected_book_ = books[0];
+}
+
+Book BookManager::selected_book() const {
+    return selected_book_;
 }

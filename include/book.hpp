@@ -62,6 +62,8 @@ public:
     bool import(const std::string& ISBN, double cost);
 
     void load(const std::array<char, 20>& ISBN);
+
+    Book selected_book() const;
 };
 
 #endif

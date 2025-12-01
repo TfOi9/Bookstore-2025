@@ -8,10 +8,6 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
 
 include_directories(include)
 
-set(SOURCES
-    src/account.cpp
-    src/book.cpp
-    src/account_tester.cpp
-)
+add_executable(ac src/account.cpp src/book.cpp src/account_tester.cpp)
 
-add_executable(code ${SOURCES})
+add_executable(bk src/account.cpp src/book.cpp src/book_tester.cpp)
