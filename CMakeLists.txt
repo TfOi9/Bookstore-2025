@@ -10,6 +10,8 @@ include_directories(include)
 
 add_executable(account src/account.cpp src/book.cpp src/account_tester.cpp)
 
-add_executable(book src/account.cpp src/book.cpp src/book_tester.cpp)
+add_executable(book src/book.cpp src/book_tester.cpp)
+
+add_executable(log src/log.cpp src/log_tester.cpp)
 
 add_executable(cleanup src/cleanup.cpp)

@@ -6,15 +6,16 @@
 #include <utility>
 #include "memory_river.hpp"
 #include "hash_map.hpp"
+#include "utils.hpp"
 
 class FinanceLog {
     friend class LogManager;
 private:
     int count_;
     double cost_;
-    // + for income, - for outcome
+    // + for income, - for expenditure
 public:
-    FinanceLog(int count, double cost);
+    FinanceLog(int count = 0, double cost = 0.00);
 
     ~FinanceLog() = default;
 
@@ -29,13 +30,15 @@ private:
     std::array<char, 30> user_id_;
     std::array<char, 200> msg_;
 public:
-    EmployeeLog(const std::string& user_id, const std::string& msg);
+    EmployeeLog(const std::string& user_id = "", const std::string& msg = "");
 
-    ~EmployeeLog();
+    ~EmployeeLog() = default;
 
     std::string user_id() const;
 
     std::string msg() const;
+
+    bool operator==(const EmployeeLog& oth) const;
 };
 
 class Log {
@@ -43,7 +46,7 @@ class Log {
 private:
     std::array<char, 200> msg_;
 public:
-    Log(const std::string& msg);
+    Log(const std::string& msg = "");
 
     ~Log() = default;
 
