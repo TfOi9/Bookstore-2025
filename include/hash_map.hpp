@@ -286,6 +286,7 @@ public:
         return vec;
     }
 
+    // serialize the whole hashmap into a vector, containing all values.
     std::vector<ValueType> serialize() {
         std::vector<ValueType> vec;
         for (int i = 0; i < HashSize; i++) {

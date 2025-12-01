@@ -141,3 +141,24 @@ bool AccountManager::select_book(const std::string& ISBN) {
     book_stack_.back() = string_to_array<20>(ISBN);
     return true;
 }
+
+std::string AccountManager::current_user() const {
+    if (login_stack_.empty()) {
+        return "";
+    }
+    return login_stack_.back().user_id();
+}
+
+int AccountManager::current_previlege() const {
+    if (login_stack_.empty()) {
+        return 0;
+    }
+    return login_stack_.back().previlege();
+}
+
+std::string AccountManager::selected_book() const {
+    if (book_stack_.empty()) {
+        return "";
+    }
+    return array_to_string<20>(book_stack_.back());
+}

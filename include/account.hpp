@@ -70,6 +70,15 @@ public:
 
     // selects book for the current account. requires previlege 3.
     bool select_book(const std::string& ISBN);
+
+    // returns the current user's id.
+    std::string current_user() const;
+
+    // returns the current user's previlege.
+    int current_previlege() const;
+
+    // returns the selected book's ISBN.
+    std::string selected_book() const;
 };
 
 #endif

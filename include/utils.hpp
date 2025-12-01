@@ -3,6 +3,9 @@
 
 #include <string>
 #include <array>
+#include <chrono>
+#include <ctime>
+#include <sstream>
 
 template<int StringSize>
 std::array<char, StringSize> string_to_array(const std::string& str) {
@@ -31,4 +34,7 @@ std::string array_to_string(const std::array<char, StringSize>& arr) {
     }
     return str;
 }
+
+std::string current_time();
+
 #endif
