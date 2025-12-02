@@ -33,7 +33,7 @@ int main() {
             }
             else {
                 std::clog << "Exiting system.\n";
-                std::string msg = current_time() + " [EXIT]User " + account_manager.current_user() + "exited system.";
+                std::string msg = current_time() + " [EXIT]User " + account_manager.current_user() + " exited system.";
                 std::clog << msg << '\n';
                 log_manager.add_log(msg);
                 break;

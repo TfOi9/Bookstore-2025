@@ -58,7 +58,7 @@ private:
     MemoryRiver<FinanceLog> finance_file_;
     HashMap<std::array<char, 30>, EmployeeLog> employee_file_;
     MemoryRiver<Log> log_file_;
-    int current_count_;
+    // int current_count_;
 public:
     LogManager();
 

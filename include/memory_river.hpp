@@ -47,6 +47,10 @@ public:
         if (f) {
             get_info(size_, 1);
         }
+        else {
+            size_ = 0;
+        }
+        std::cerr << file_name << " " << size_ << std::endl;
         return f;
     }
 
@@ -90,6 +94,10 @@ public:
     void read(T &t, const int pos) {
         file.seekg(info_offset + pos * sizeofT);
         file.read(reinterpret_cast<char *>(&t), sizeofT);
+    }
+
+    int size() const {
+        return size_;
     }
 };
 

@@ -35,14 +35,14 @@ std::string Log::msg() const {
     return array_to_string<200>(msg_);
 }
 
-LogManager::LogManager() : finance_file_("finance.dat"), employee_file_("employee.dat"), log_file_("log.dat"), current_count_(0) {
+LogManager::LogManager() : finance_file_("finance.dat"), employee_file_("employee.dat"), log_file_("log.dat") {
     finance_file_.initialise();
     log_file_.initialise();
 }
 
 void LogManager::add_finance_log(double cost) {
-    FinanceLog finance_log(current_count_, cost);
-    finance_file_.update(finance_log, current_count_++);
+    FinanceLog finance_log(finance_file_.size(), cost);
+    finance_file_.write(finance_log);
 }
 
 void LogManager::add_employee_log(const std::string& user_id, const std::string& msg) {
@@ -59,9 +59,9 @@ std::pair<double, double> LogManager::finance(int count) {
     double income = 0.00, expenditure = 0.00;
     int pos = 0;
     if (count >= 0) {
-        pos = current_count_ - count;
+        pos = finance_file_.size() - count;
     }
-    for (int i = pos; i < current_count_; i++) {
+    for (int i = pos; i < finance_file_.size(); i++) {
         FinanceLog finance_log;
         finance_file_.read(finance_log, i);
         if (finance_log.cost_ > 0) {
