@@ -175,6 +175,117 @@ int main() {
                 std::cerr << "Delete user failed.\n";
             }
         }
+        else if (op == "show") {
+            if (account_manager.current_previlege() < 1) {
+                std::cout << "Invalid\n";
+                continue;
+            }
+            if (tokens.size() < 1 || tokens.size() > 2) {
+                std::cout << "Invalid\n";
+                continue;
+            }
+            if (tokens.size() == 1) {
+                auto vec = book_manager.find_all();
+                for (auto book : vec) {
+                    std::cout << book.ISBN() << '\t' << book.book_name() << '\t' << book.author() << '\t' << book.keyword() << '\t' << book.price() << '\t' << book.quant() << '\n';
+                }
+                std::string msg = current_time() + " [FIND]User " + account_manager.current_user() + " found all books.";
+                std::cerr << msg << '\n';
+                log_manager.add_log(msg);
+                continue;
+            }
+            std::string key, val;
+            bool valid = parse_argument(tokens[1], key, val);
+            if (!valid) {
+                std::cout << "Invalid\n";
+                continue;
+            }
+            if (key != "ISBN" && key != "name" && key != "author" && key != "keyword") {
+                std::cout << "Invalid\n";
+                continue;
+            }
+            bool key_valid, val_valid;
+            if (key == "ISBN") {
+                key_valid = Validator(key).max_len(20).normal_char_only();
+            }
+            else {
+                key_valid = Validator(key).max_len(60).normal_char_only().no_commas();
+            }
+            std::vector<Book> vec;
+            if (key == "ISBN") {
+                vec = book_manager.find_ISBN(key);
+            }
+            else if (key == "name") {
+                vec = book_manager.find_book_name(key);
+            }
+            else if (key == "author") {
+                vec = book_manager.find_author(key);
+            }
+            else if (key == "keyword") {
+                vec = book_manager.find_keyword(key);
+            }
+            for (auto book : vec) {
+                std::cout << book.ISBN() << '\t' << book.book_name() << '\t' << book.author() << '\t' << book.keyword() << '\t' << book.price() << '\t' << book.quant() << '\n';
+            }
+            std::string msg = current_time() + " [FIND]User " + account_manager.current_user() + " found books by " + key + '.';
+            std::cerr << msg << '\n';
+            log_manager.add_log(msg);
+        }
+        else if (op == "buy") {
+            if (account_manager.current_previlege() < 1) {
+                std::cout << "Invalid\n";
+                continue;
+            }
+            if (tokens.size() != 3) {
+                std::cout << "Invalid\n";
+                continue;
+            }
+            std::string ISBN = tokens[1], q = tokens[2];
+            bool ISBN_valid = Validator(ISBN).max_len(20).visible_only();
+            bool q_valid = Validator(q).max_len(10).number_only();
+            if (ISBN_valid == 0 || q_valid == 0) {
+                std::cout << "Invalid\n";
+                continue;
+            }
+            int quant = std::stoi(q);
+            double cost = 0.00;
+            bool buy_success = book_manager.buy(ISBN, buy_success, cost);
+            if (buy_success) {
+                std::cerr << "Buy book success, costing " << cost << ".\n";
+                std::string msg = current_time() + " [BUY]User " + account_manager.current_user() + " bought " + q + " book(s). ISBN:" + ISBN;
+                std::cerr << msg << '\n';
+                log_manager.add_log(msg);
+                log_manager.add_finance_log(cost);
+            }
+            else {
+                std::cerr << "Buy book failed.\n";
+            }
+        }
+        else if (op == "select") {
+            if (account_manager.current_previlege() < 3) {
+                std::cout << "Invalid\n";
+                continue;
+            }
+            if (tokens.size() != 2) {
+                std::cout << "Invalid\n";
+                continue;
+            }
+            std::string ISBN = tokens[1];
+            bool ISBN_valid = Validator(ISBN).max_len(20).visible_only();
+            if (!ISBN_valid) {
+                std::cout << "Invalid\n";
+                continue;
+            }
+            book_manager.add(ISBN);
+            account_manager.select_book(ISBN);
+            std::cerr << "Select book success.\n";
+            std::string msg = current_time() + " [SELECT]User " + account_manager.current_user() + " selected book " + ISBN + '.';
+            std::cerr << msg << '\n';
+            log_manager.add_log(msg);
+        }
+        else if (op == "modify") {
+            
+        }
     }
     return 0;
 }

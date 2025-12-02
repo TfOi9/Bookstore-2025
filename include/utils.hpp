@@ -37,4 +37,6 @@ std::string array_to_string(const std::array<char, StringSize>& arr) {
 
 std::string current_time();
 
+bool parse_argument(const std::string& arg, std::string& arg1, std::string& arg2);
+
 #endif
