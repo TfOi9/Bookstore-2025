@@ -30,3 +30,22 @@ bool parse_argument(const std::string& arg, std::string& arg1, std::string& arg2
     arg2 = arg.substr(pos + 2, len - pos - 3);
     return true;
 }
+
+bool parse_number_argument(const std::string& arg, std::string& arg1, std::string& arg2) {
+    if (arg[0] != '-') {
+        return false;
+    }
+    int len = arg.size(), pos = -1;
+    for (int i = 1; i < len; i++) {
+        if (arg[i] == '=') {
+            pos = i;
+            break;
+        }
+    }
+    if (pos >= len - 1) {
+        return false;
+    }
+    arg1 = arg.substr(1, pos - 1);
+    arg2 = arg.substr(pos + 1, len - pos - 1);
+    return true;
+}

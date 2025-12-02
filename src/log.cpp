@@ -58,7 +58,7 @@ void LogManager::add_log(const std::string& msg) {
 std::pair<double, double> LogManager::finance(int count) {
     double income = 0.00, expenditure = 0.00;
     int pos = 0;
-    if (count > 0) {
+    if (count >= 0) {
         pos = current_count_ - count;
     }
     for (int i = pos; i < current_count_; i++) {

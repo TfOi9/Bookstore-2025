@@ -3,6 +3,8 @@
 #include <string>
 #include <vector>
 #include <sstream>
+#include <set>
+#include <map>
 #include "../include/account.hpp"
 #include "../include/book.hpp"
 #include "../include/log.hpp"
@@ -30,9 +32,9 @@ int main() {
                 std::cout << "Invalid\n";
             }
             else {
-                std::cerr << "Exiting system.\n";
+                std::clog << "Exiting system.\n";
                 std::string msg = current_time() + " [EXIT]User " + account_manager.current_user() + "exited system.";
-                std::cerr << msg << '\n';
+                std::clog << msg << '\n';
                 log_manager.add_log(msg);
                 break;
             }
@@ -55,13 +57,13 @@ int main() {
             }
             bool login_success = account_manager.login(user_id, pwd);
             if (login_success) {
-                std::cerr << "Login success.\n";
+                std::clog << "Login success.\n";
                 std::string msg = current_time() + " [LOGIN]User " + user_id + " logged in.";
-                std::cerr << msg << '\n';
+                std::clog << msg << '\n';
                 log_manager.add_log(msg);
             }
             else {
-                std::cerr << "Login failed.\n";
+                std::clog << "Login failed.\n";
             }
         }
         else if (op == "logout") {
@@ -72,13 +74,13 @@ int main() {
             std::string user_id = account_manager.current_user();
             bool logout_success = account_manager.logout();
             if (logout_success) {
-                std::cerr << "Logout success.\n";
+                std::clog << "Logout success.\n";
                 std::string msg = current_time() + " [LOGOUT]User " + user_id + " logged out.";
-                std::cerr << msg << '\n';
+                std::clog << msg << '\n';
                 log_manager.add_log(msg);
             }
             else {
-                std::cerr << "Logout failed.\n";
+                std::clog << "Logout failed.\n";
             }
         }
         else if (op == "register") {
@@ -96,13 +98,13 @@ int main() {
             }
             bool register_success = account_manager.register_account(user_id, username, pwd, 1);
             if (register_success) {
-                std::cerr << "Register success.\n";
+                std::clog << "Register success.\n";
                 std::string msg = current_time() + " [REGISTER]User " + user_id + " registered.";
-                std::cerr << msg << '\n';
+                std::clog << msg << '\n';
                 log_manager.add_log(msg);
             }
             else {
-                std::cerr << "Register failed." << std::endl;
+                std::clog << "Register failed." << std::endl;
             }
         }
         else if (op == "passwd") {
@@ -118,13 +120,13 @@ int main() {
             }
             bool change_success = account_manager.change_password(user_id, new_pwd, pwd);
             if (change_success) {
-                std::cerr << "Change password success.\n";
+                std::clog << "Change password success.\n";
                 std::string msg = current_time() + " [PASSWORD]User " + user_id + " changed password.";
-                std::cerr << msg << '\n';
+                std::clog << msg << '\n';
                 log_manager.add_log(msg);
             }
             else {
-                std::cerr << "Change password failed." << std::endl;
+                std::clog << "Change password failed." << std::endl;
             }
         }
         else if (op == "useradd") {
@@ -149,13 +151,13 @@ int main() {
             }
             bool useradd_success = account_manager.add_account(user_id, username, pwd, previlege);
             if (useradd_success) {
-                std::cerr << "Add user success.\n";
+                std::clog << "Add user success.\n";
                 std::string msg = current_time() + " [USERADD]Added user " + user_id + '.';
-                std::cerr << msg << '\n';
+                std::clog << msg << '\n';
                 log_manager.add_log(msg);
             }
             else {
-                std::cerr << "Add user failed.\n";
+                std::clog << "Add user failed.\n";
             }
         }
         else if (op == "delete") {
@@ -166,16 +168,47 @@ int main() {
             std::string user_id = tokens[1];
             bool delete_success = account_manager.delete_account(user_id);
             if (delete_success) {
-                std::cerr << "Delete user success.\n";
+                std::clog << "Delete user success.\n";
                 std::string msg = current_time() + " [DELETE]Deleted user " + user_id + '.';
-                std::cerr << msg << '\n';
+                std::clog << msg << '\n';
                 log_manager.add_log(msg);
             }
             else {
-                std::cerr << "Delete user failed.\n";
+                std::clog << "Delete user failed.\n";
             }
         }
         else if (op == "show") {
+            if (tokens.size() > 1 && tokens[1] == "finance") {
+                if (account_manager.current_previlege() < 7) {
+                    std::cout << "Invalid\n";
+                    continue;
+                }
+                if (tokens.size() < 2 || tokens.size() > 3) {
+                    std::cout << "Invalid\n";
+                    continue;
+                }
+                if (tokens[1] != "finance") {
+                    std::cout << "Invalid\n";
+                    continue;
+                }
+                int count = -1;
+                if (tokens.size() == 3) {
+                    // std::cerr << tokens[2] << std::endl;
+                    std::string c = tokens[2];
+                    if (!Validator(c).max_len(10).number_only()) {
+                        std::cout << "Invalid\n";
+                        continue;
+                    }
+                    count = std::stoi(c);
+                }
+                if (count == 0) {
+                    std::cout << '\n';
+                    continue;
+                }
+                auto p = log_manager.finance(count);
+                std::cout << "+ " << p.first << " - " << p.second << '\n';
+                continue;
+            }
             if (account_manager.current_previlege() < 1) {
                 std::cout << "Invalid\n";
                 continue;
@@ -190,7 +223,7 @@ int main() {
                     std::cout << book.ISBN() << '\t' << book.book_name() << '\t' << book.author() << '\t' << book.keyword() << '\t' << book.price() << '\t' << book.quant() << '\n';
                 }
                 std::string msg = current_time() + " [FIND]User " + account_manager.current_user() + " found all books.";
-                std::cerr << msg << '\n';
+                std::clog << msg << '\n';
                 log_manager.add_log(msg);
                 continue;
             }
@@ -213,22 +246,22 @@ int main() {
             }
             std::vector<Book> vec;
             if (key == "ISBN") {
-                vec = book_manager.find_ISBN(key);
+                vec = book_manager.find_ISBN(val);
             }
             else if (key == "name") {
-                vec = book_manager.find_book_name(key);
+                vec = book_manager.find_book_name(val);
             }
             else if (key == "author") {
-                vec = book_manager.find_author(key);
+                vec = book_manager.find_author(val);
             }
             else if (key == "keyword") {
-                vec = book_manager.find_keyword(key);
+                vec = book_manager.find_keyword(val);
             }
             for (auto book : vec) {
                 std::cout << book.ISBN() << '\t' << book.book_name() << '\t' << book.author() << '\t' << book.keyword() << '\t' << book.price() << '\t' << book.quant() << '\n';
             }
             std::string msg = current_time() + " [FIND]User " + account_manager.current_user() + " found books by " + key + '.';
-            std::cerr << msg << '\n';
+            std::clog << msg << '\n';
             log_manager.add_log(msg);
         }
         else if (op == "buy") {
@@ -249,16 +282,16 @@ int main() {
             }
             int quant = std::stoi(q);
             double cost = 0.00;
-            bool buy_success = book_manager.buy(ISBN, buy_success, cost);
+            bool buy_success = book_manager.buy(ISBN, quant, cost);
             if (buy_success) {
-                std::cerr << "Buy book success, costing " << cost << ".\n";
+                std::clog << "Buy book success, costing " << cost << ".\n";
                 std::string msg = current_time() + " [BUY]User " + account_manager.current_user() + " bought " + q + " book(s). ISBN:" + ISBN;
-                std::cerr << msg << '\n';
+                std::clog << msg << '\n';
                 log_manager.add_log(msg);
                 log_manager.add_finance_log(cost);
             }
             else {
-                std::cerr << "Buy book failed.\n";
+                std::clog << "Buy book failed.\n";
             }
         }
         else if (op == "select") {
@@ -278,13 +311,161 @@ int main() {
             }
             book_manager.add(ISBN);
             account_manager.select_book(ISBN);
-            std::cerr << "Select book success.\n";
+            std::clog << "Select book success.\n";
             std::string msg = current_time() + " [SELECT]User " + account_manager.current_user() + " selected book " + ISBN + '.';
-            std::cerr << msg << '\n';
+            std::clog << msg << '\n';
             log_manager.add_log(msg);
         }
         else if (op == "modify") {
-            
+            if (account_manager.current_previlege() < 3) {
+                std::cout << "Invalid\n";
+                continue;
+            }
+            if (tokens.size() < 2) {
+                std::cout << "Invalid\n";
+                continue;
+            }
+            if (account_manager.selected_book() == "") {
+                std::cout << "Invalid\n";
+                continue;
+            }
+            std::map<std::string, std::string> mp;
+            bool parse_success = true;
+            for (int i = 1; i < tokens.size(); i++) {
+                std::string key;
+                std::string val;
+                bool valid = parse_argument(tokens[i], key, val);
+                if (!valid) {
+                    bool number_valid = parse_number_argument(tokens[i], key, val);
+                    if (number_valid == 0 || key != "price") {
+                        parse_success = false;
+                        break;
+                    }
+                }
+                if (mp.count(key)) {
+                    parse_success = false;
+                    break;
+                }
+                if (key == "ISBN") {
+                    if (!Validator(val).max_len(20).visible_only()) {
+                        parse_success = false;
+                        break;
+                    }
+                }
+                else if (key == "name" || key == "author" || key == "keyword") {
+                    if (!Validator(val).max_len(60).visible_only().no_commas()) {
+                        parse_success = false;
+                        break;
+                    }
+                    if (key == "keyword") {
+                        auto key_words = parse_keywords(string_to_array<60>(val));
+                        std::sort(key_words.begin(), key_words.end());
+                        if (std::unique(key_words.begin(), key_words.end()) != key_words.end()) {
+                            parse_success = false;
+                            break;
+                        }
+                    }
+                }
+                else if (key == "price") {
+                    if (!Validator(val).max_len(13).number_and_dot_only().only_one_dot()) {
+                        parse_success = false;
+                        break;
+                    }
+                }
+                else {
+                    parse_success = false;
+                    break;
+                }
+                mp[key] = val;
+            }
+            if (!parse_success) {
+                std::cout << "Invalid\n";
+                continue;
+            }
+            bool modify_success = true;
+            for (auto it = mp.begin(); it != mp.end(); it++) {
+                std::cerr << it->first << " " << it->second << std::endl;
+                std::cerr << modify_success << std::endl;
+                if (it->first == "ISBN") {
+                    modify_success &= book_manager.modify_ISBN(account_manager.selected_book(), it->second);
+                    if (modify_success) {
+                        account_manager.select_book(it->second);
+                    }
+                    else {
+                        break;
+                    }
+                }
+                else if (it->first == "name") {
+                    modify_success &= book_manager.modify_book_name(account_manager.selected_book(), it->second);
+                }
+                else if (it->first == "author") {
+                    modify_success &= book_manager.modify_author(account_manager.selected_book(), it->second);
+                }
+                else if (it->first == "keyword") {
+                    modify_success &= book_manager.modify_keyword(account_manager.selected_book(), it->second);
+                }
+                else if (it->first == "price") {
+                    modify_success &= book_manager.modify_price(account_manager.selected_book(), std::stod(it->second));
+                }
+                else {
+                    modify_success = false;
+                }
+            }
+            if (modify_success) {
+                std::clog << "Modify book success.\n";
+                std::string msg = current_time() + " [MODIFY]User " + account_manager.current_user() + " modified book " + account_manager.selected_book();
+                std::clog << msg << '\n';
+                log_manager.add_log(msg);
+                log_manager.add_employee_log(account_manager.current_user(), msg);
+            }
+            else {
+                std::clog << "Modify book failed.\n";
+            }
+        }
+        else if (op == "import") {
+            if (account_manager.current_previlege() < 3) {
+                std::cout << "Invalid\n";
+                continue;
+            }
+            if (tokens.size() != 3) {
+                std::cout << "Invalid\n";
+                continue;
+            }
+            if (account_manager.selected_book() == "") {
+                std::cout << "Invalid\n";
+                continue;
+            }
+            std::string q = tokens[1], tc = tokens[2];
+            bool quant_valid = Validator(q).max_len(10).number_only();
+            bool cost_valid = Validator(q).max_len(13).number_and_dot_only().only_one_dot();
+            if (quant_valid == 0 || cost_valid == 0) {
+                std::cout << "Invalid\n";
+                continue;
+            }
+            int quant = std::stoi(q);
+            double cost = std::stod(tc);
+            bool import_success = book_manager.import(account_manager.selected_book(), quant, cost);
+            if (import_success) {
+                std::clog << "Import book success.\n";
+                std::string msg = current_time() + " [IMPORT]User " + account_manager.current_user() + " imported book " + account_manager.selected_book() + ' ' + q + " copies, costing " + tc + '.';
+                std::clog << msg << '\n';
+                log_manager.add_log(msg);
+                log_manager.add_employee_log(account_manager.current_user(), msg);
+                log_manager.add_finance_log(-cost);
+            }
+            else {
+                std::clog << "Import book failed.\n";
+            }
+        }
+        else if (op == "report") {
+
+        }
+        else if (op == "log") {
+
+        }
+        else {
+            std::cout << "Invalid\n";
+            continue;
         }
     }
     return 0;

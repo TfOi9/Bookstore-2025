@@ -81,9 +81,7 @@ public:
 
     bool modify_price(const std::string& ISBN, double new_price);
     
-    bool import_by_quantity(const std::string& ISBN, int quant);
-
-    bool import_by_cost(const std::string& ISBN, double cost);
+    bool import(const std::string& ISBN, int quant, double cost);
 };
 
 #endif

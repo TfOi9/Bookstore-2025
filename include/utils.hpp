@@ -39,4 +39,6 @@ std::string current_time();
 
 bool parse_argument(const std::string& arg, std::string& arg1, std::string& arg2);
 
+bool parse_number_argument(const std::string& arg, std::string& arg1, std::string& arg2);
+
 #endif

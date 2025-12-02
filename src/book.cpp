@@ -120,7 +120,7 @@ std::vector<Book> BookManager::find_keyword(const std::string& keyword) {
 }
 
 std::vector<Book> BookManager::find_all() {
-    std::vector<Book> vec = keyword_file_.serialize();
+    std::vector<Book> vec = ISBN_file_.serialize();
     std::sort(vec.begin(), vec.end());
     return vec;
 }
@@ -216,7 +216,7 @@ bool BookManager::modify_price(const std::string& ISBN, double new_price) {
     return true;
 }
 
-bool BookManager::import_by_quantity(const std::string& ISBN, int quant) {
+bool BookManager::import(const std::string& ISBN, int quant, double cost) {
     if (quant <= 0) {
         return false;
     }
@@ -226,23 +226,10 @@ bool BookManager::import_by_quantity(const std::string& ISBN, int quant) {
         return false;
     }
     Book& book = books[0];
-    Book new_book = book;
-    new_book.quant_ += quant;
-    update_book(book, new_book);
-    return true;
-}
-
-bool BookManager::import_by_cost(const std::string& ISBN, double cost) {
-    if (cost <= 0) {
+    double expected_cost = book.price_ * quant;
+    if (std::abs(cost - expected_cost) > 1e-7) {
         return false;
     }
-    std::array<char, 20> arr = string_to_array<20>(ISBN);
-    std::vector<Book> books = ISBN_file_.find(arr);
-    if (books.empty()) {
-        return false;
-    }
-    Book& book = books[0];
-    int quant = cost / book.price_;
     Book new_book = book;
     new_book.quant_ += quant;
     update_book(book, new_book);
