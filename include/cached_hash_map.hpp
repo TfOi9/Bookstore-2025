@@ -39,17 +39,30 @@ private:
         Block() : size_(0), next_(0) {}
     };
 
+    struct CachedBlock {
+        Block block_;
+        int count_;
+        int pos_;
+        bool dirty_;
+        CachedBlock() : block_(), pos_(0), count_(0), dirty_(0) {}
+        CachedBlock(const Block& block, int pos) : block_(block), pos_(pos), count_(1), dirty_(0) {}
+    };
+
     int hash(const KeyType& key) {
         return hasher_(key) % HashSize;
     }
 
     HashMemoryRiver<Bucket, Block, 2, HashSize> file_;
 
-    std::unordered_map<int, Bucket> cache_;
+    std::unordered_map<int, Bucket> bucket_cache_;
+
+    std::unordered_map<int, CachedBlock> block_cache_;
 
     std::string file_name_;
 
     Hasher hasher_;
+
+    constexpr static int block_threshold_ = 524288;
 
     int new_block() {
         Block block;
@@ -58,24 +71,78 @@ private:
         return pos;
     }
 
+    void evict_block() {
+        if (block_cache_.empty()) {
+            return;
+        }
+        int min_count = 1e9;
+        typename std::unordered_map<int, CachedBlock>::iterator min_pos;
+        for (auto it = block_cache_.begin(); it != block_cache_.end(); it++) {
+            if (it->second.count_ < min_count) {
+                min_count = it->second.count_;
+                min_pos = it;
+            }
+        }
+        CachedBlock cached_block = min_pos->second;
+        if (cached_block.dirty_) {
+            file_.update_block(cached_block.block_, cached_block.pos_);
+        }
+        block_cache_.erase(min_pos);
+    }
+
     void read_bucket(Bucket& bucket, int pos) {
-        if (cache_.count(pos)) {
-            bucket = cache_[pos];
+        if (bucket_cache_.count(pos)) {
+            bucket = bucket_cache_[pos];
         }
         else {
             file_.read_bucket(bucket, pos);
-            cache_[pos] = bucket;
+            bucket_cache_[pos] = bucket;
         }
     }
 
     void update_bucket(Bucket& bucket, int pos) {
-        cache_[pos] = bucket;
+        bucket_cache_[pos] = bucket;
+    }
+
+    void read_block(Block& block, int pos) {
+        if (block_cache_.count(pos)) {
+            block = block_cache_[pos].block_;
+            block_cache_[pos].count_++;
+        }
+        else {
+            file_.read_block(block, pos);
+            if (sizeof(CachedBlock) * block_cache_.size() > block_threshold_) {
+                evict_block();
+            }
+            block_cache_.emplace(std::make_pair(pos, CachedBlock(block, pos)));
+        }
+    }
+
+    void update_block(Block& block, int pos) {
+        if (block_cache_.count(pos)) {
+            block_cache_[pos].block_ = block;
+            block_cache_[pos].count_++;
+            block_cache_[pos].dirty_ = 1;
+        }
+        else {
+            if (sizeof(CachedBlock) * block_cache_.size() > block_threshold_) {
+                evict_block();
+            }
+            block_cache_.emplace(std::make_pair(pos, CachedBlock(block, pos)));
+            block_cache_[pos].dirty_ = 1;
+        }
     }
 
     void flush_cache() {
-        for (auto it = cache_.begin(); it != cache_.end(); it++) {
+        for (auto it = bucket_cache_.begin(); it != bucket_cache_.end(); it++) {
             Bucket bucket = it->second;
             file_.update_bucket(bucket, it->first);
+        }
+        for (auto it = block_cache_.begin(); it != block_cache_.end(); it++) {
+            if (it->second.dirty_) {
+                Block block = it->second.block_;
+                file_.update_block(block, it->second.pos_);
+            }
         }
     }
 
@@ -104,7 +171,8 @@ public:
         Block block;
         int pos = bucket.head_;
         while (pos) {
-            file_.read_block(block, pos);
+            // file_.read_block(block, pos);
+            read_block(block, pos);
             for (int i = 0; i < block.size_; i++) {
                 if (block.data_[i].key_ == key && block.data_[i].val_ == val) {
                     // std::cerr << "duplicated" << std::endl;
@@ -125,17 +193,20 @@ public:
             bucket.tail_ = new_pos;
             // file_.update_bucket(bucket, hash_val);
             update_bucket(bucket, hash_val);
-            file_.update_block(new_block, new_pos);
+            // file_.update_block(new_block, new_pos);
+            update_block(new_block, new_pos);
         }
         else {
             Block tail_block;
-            file_.read_block(tail_block, bucket.tail_);
+            // file_.read_block(tail_block, bucket.tail_);
+            read_block(tail_block, bucket.tail_);
             if (tail_block.size_ < BlockCapacity) {
                 // tail has space, put data into tail block
                 tail_block.data_[tail_block.size_].key_ = key;
                 tail_block.data_[tail_block.size_].val_ = val;
                 tail_block.size_++;
-                file_.update_block(tail_block, bucket.tail_);
+                // file_.update_block(tail_block, bucket.tail_);
+                update_block(tail_block, bucket.tail_);
             }
             else {
                 // tail is full, create a new block
@@ -146,8 +217,10 @@ public:
                 new_block.data_[0].key_ = key;
                 new_block.data_[0].val_ = val;
                 tail_block.next_ = new_pos;
-                file_.update_block(tail_block, bucket.tail_);
-                file_.update_block(new_block, new_pos);
+                // file_.update_block(tail_block, bucket.tail_);
+                update_block(tail_block, bucket.tail_);
+                // file_.update_block(new_block, new_pos);
+                update_block(new_block, new_pos);
                 bucket.tail_ = new_pos;
                 // file_.update_bucket(bucket, hash_val);
                 update_bucket(bucket, hash_val);
@@ -165,7 +238,8 @@ public:
         Block block;
         int pos = bucket.head_, last = -1;
         while (pos) {
-            file_.read_block(block, pos);
+            // file_.read_block(block, pos);
+            read_block(block, pos);
             int found_pos = -1;
             for (int i = 0; i < block.size_; i++) {
                 if (block.data_[i].key_ == key && block.data_[i].val_ == val) {
@@ -191,9 +265,11 @@ public:
                     else {
                         // block in the middle
                         Block last_block;
-                        file_.read_block(last_block, last);
+                        // file_.read_block(last_block, last);
+                        read_block(last_block, last);
                         last_block.next_ = block.next_;
-                        file_.update_block(last_block, last);
+                        // file_.update_block(last_block, last);
+                        update_block(last_block, last);
                         if (block.next_ == 0) {
                             // last block
                             bucket.tail_ = last;
@@ -207,7 +283,8 @@ public:
                     block.data_[i] = block.data_[i + 1];
                 }
                 block.size_--;
-                file_.update_block(block, pos);
+                // file_.update_block(block, pos);
+                update_block(block, pos);
                 return;
             }
             last = pos;
@@ -226,7 +303,8 @@ public:
         Block block;
         int pos = bucket.head_, last = -1;
         while (pos) {
-            file_.read_block(block, pos);
+            // file_.read_block(block, pos);
+            read_block(block, pos);
             int found_pos = -1;
             for (int i = 0; i < block.size_; i++) {
                 if (block.data_[i].key_ == key) {
@@ -251,9 +329,11 @@ public:
                     else {
                         // block in the middle
                         Block last_block;
-                        file_.read_block(last_block, last);
+                        // file_.read_block(last_block, last);
+                        read_block(last_block, last);
                         last_block.next_ = block.next_;
-                        file_.update_block(last_block, last);
+                        // file_.update_block(last_block, last);
+                        update_block(last_block, last);
                         if (block.next_ == 0) {
                             // last block
                             bucket.tail_ = last;
@@ -267,7 +347,8 @@ public:
                     block.data_[i] = block.data_[i + 1];
                 }
                 block.size_--;
-                file_.update_block(block, pos);
+                // file_.update_block(block, pos);
+                update_block(block, pos);
                 return;
             }
             last = pos;
@@ -286,7 +367,8 @@ public:
         int pos = bucket.head_;
         int cnt = 0;
         while (pos) {
-            file_.read_block(block, pos);
+            // file_.read_block(block, pos);
+            read_block(block, pos);
             // std::cerr << "size " << block.size_ << std::endl;
             for (int i = 0; i < block.size_; i++) {
                 if (block.data_[i].key_ == key) {
@@ -310,7 +392,8 @@ public:
         int pos = bucket.head_;
         std::vector<ValueType> vec;
         while (pos) {
-            file_.read_block(block, pos);
+            // file_.read_block(block, pos);
+            read_block(block, pos);
             // std::cerr << "size " << block.size_ << std::endl;
             for (int i = 0; i < block.size_; i++) {
                 if (block.data_[i].key_ == key) {
@@ -333,7 +416,8 @@ public:
             Block block;
             int pos = bucket.head_;
             while (pos) {
-                file_.read_block(block, pos);
+                // file_.read_block(block, pos);
+                read_block(block, pos);
                 for (int j = 0; j < block.size_; j++) {
                     vec.push_back(block.data_[j].val_);
                 }
