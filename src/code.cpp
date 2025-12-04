@@ -7,7 +7,7 @@
 #include <map>
 #include <iomanip>
 #include "../include/account.hpp"
-#include "../include/book.hpp"
+#include "../include/cached_book.hpp"
 #include "../include/log.hpp"
 #include "../include/validator.hpp"
 #include "../include/utils.hpp"
@@ -256,16 +256,16 @@ int main() {
             }
             std::vector<Book> vec;
             if (key == "ISBN") {
-                vec = book_manager.find_ISBN(string_to_array<20>(val));
+                vec = book_manager.find_ISBN(val);
             }
             else if (key == "name") {
-                vec = book_manager.find_book_name(string_to_array<60>(val));
+                vec = book_manager.find_book_name(val);
             }
             else if (key == "author") {
-                vec = book_manager.find_author(string_to_array<60>(val));
+                vec = book_manager.find_author(val);
             }
             else if (key == "keyword") {
-                vec = book_manager.find_keyword(string_to_array<60>(val));
+                vec = book_manager.find_keyword(val);
             }
             if (vec.empty()) {
                 std::cout << '\n';
@@ -298,7 +298,7 @@ int main() {
             }
             int quant = std::stoi(q);
             double cost = 0.00;
-            bool buy_success = book_manager.buy(string_to_array<20>(ISBN), quant, cost);
+            bool buy_success = book_manager.buy(ISBN, quant, cost);
             if (buy_success) {
                 std::cout << std::fixed << std::setprecision(2) << cost << std::endl;
                 // std::clog << "Buy book success, costing " << cost << ".\n";
@@ -327,7 +327,7 @@ int main() {
                 std::cout << "Invalid\n";
                 continue;
             }
-            auto vec = book_manager.find_ISBN(string_to_array<20>(ISBN));
+            auto vec = book_manager.find_ISBN(ISBN);
             if (vec.empty()) {
                 Book new_book(ISBN);
                 new_book.id_ = book_manager.size();
@@ -415,24 +415,24 @@ int main() {
                 // std::cerr << it->first << " " << it->second << std::endl;
                 // std::cerr << modify_success << std::endl;
                 if (it->first == "ISBN") {
-                    if (book.ISBN() == it->second || book_manager.count_ISBN(string_to_array<20>(it->second))) {
+                    if (book.ISBN() == it->second || book_manager.count_ISBN(it->second)) {
                         modify_success = false;
                         break;
                     }
-                    book_manager.modify_ISBN(book.ISBN_, string_to_array<20>(it->second));
+                    book_manager.modify_ISBN(book.ISBN(), it->second);
                     book.ISBN_ = string_to_array<20>(it->second);
                 }
                 else if (it->first == "name") {
-                    book_manager.modify_book_name(book.ISBN_, string_to_array<60>(it->second));
+                    book_manager.modify_book_name(book.ISBN(), it->second);
                 }
                 else if (it->first == "author") {
-                    book_manager.modify_author(book.ISBN_, string_to_array<60>(it->second));
+                    book_manager.modify_author(book.ISBN(), it->second);
                 }
                 else if (it->first == "keyword") {
-                    book_manager.modify_keyword(book.ISBN_, string_to_array<60>(it->second));
+                    book_manager.modify_keyword(book.ISBN(), it->second);
                 }
                 else if (it->first == "price") {
-                    book_manager.modify_price(book.ISBN_, std::stod(it->second));
+                    book_manager.modify_price(book.ISBN(), std::stod(it->second));
                 }
                 else {
                     modify_success = false;
@@ -473,7 +473,7 @@ int main() {
             int quant = std::stoi(q);
             double cost = std::stod(tc);
             Book book = book_manager.find(account_manager.selected_book());
-            bool import_success = book_manager.import(book.ISBN_, quant);
+            bool import_success = book_manager.import(book.ISBN(), quant);
             if (import_success) {
                 // std::clog << "Import book success.\n";
                 std::string msg = current_time() + " [IMPORT]User " + account_manager.current_user() + " imported book " + book.ISBN() + ' ' + q + " copies, costing " + tc + '.';

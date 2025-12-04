@@ -6,6 +6,7 @@
 #include <chrono>
 #include <ctime>
 #include <sstream>
+#include <algorithm>
 
 template<int StringSize>
 std::array<char, StringSize> string_to_array(const std::string& str) {
@@ -40,5 +41,11 @@ std::string current_time();
 bool parse_argument(const std::string& arg, std::string& arg1, std::string& arg2);
 
 bool parse_number_argument(const std::string& arg, std::string& arg1, std::string& arg2);
+
+template <typename T>
+void vector_remove(std::vector<T>& vec, T val) {
+    auto it = std::remove(vec.begin(), vec.end(), val);
+    vec.erase(it, vec.end());
+}
 
 #endif
