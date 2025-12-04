@@ -6,6 +6,7 @@
 #include <chrono>
 #include <ctime>
 #include <sstream>
+#include <vector>
 #include <algorithm>
 
 template<int StringSize>
