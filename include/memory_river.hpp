@@ -50,7 +50,7 @@ public:
         else {
             size_ = 0;
         }
-        std::cerr << file_name << " " << size_ << std::endl;
+        // std::cerr << file_name << " " << size_ << std::endl;
         return f;
     }
 

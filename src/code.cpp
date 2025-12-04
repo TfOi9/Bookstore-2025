@@ -5,6 +5,7 @@
 #include <sstream>
 #include <set>
 #include <map>
+#include <iomanip>
 #include "../include/account.hpp"
 #include "../include/book.hpp"
 #include "../include/log.hpp"
@@ -63,6 +64,7 @@ int main() {
                 log_manager.add_log(msg);
             }
             else {
+                std::cout << "Invalid\n";
                 std::clog << "Login failed.\n";
             }
         }
@@ -80,6 +82,7 @@ int main() {
                 log_manager.add_log(msg);
             }
             else {
+                std::cout << "Invalid\n";
                 std::clog << "Logout failed.\n";
             }
         }
@@ -104,6 +107,7 @@ int main() {
                 log_manager.add_log(msg);
             }
             else {
+                std::cout << "Invalid\n";
                 std::clog << "Register failed." << std::endl;
             }
         }
@@ -126,6 +130,7 @@ int main() {
                 log_manager.add_log(msg);
             }
             else {
+                std::cout << "Invalid\n";
                 std::clog << "Change password failed." << std::endl;
             }
         }
@@ -157,6 +162,7 @@ int main() {
                 log_manager.add_log(msg);
             }
             else {
+                std::cout << "Invalid\n";
                 std::clog << "Add user failed.\n";
             }
         }
@@ -174,6 +180,7 @@ int main() {
                 log_manager.add_log(msg);
             }
             else {
+                std::cout << "Invalid\n";
                 std::clog << "Delete user failed.\n";
             }
         }
@@ -206,7 +213,7 @@ int main() {
                     continue;
                 }
                 auto p = log_manager.finance(count);
-                std::cout << "+ " << p.first << " - " << p.second << '\n';
+                std::cout << "+ " << std::fixed << std::setprecision(2) << p.first << " - " << std::fixed << std::setprecision(2) << p.second << '\n';
                 continue;
             }
             if (account_manager.current_previlege() < 1) {
@@ -220,7 +227,7 @@ int main() {
             if (tokens.size() == 1) {
                 auto vec = book_manager.find_all();
                 for (auto book : vec) {
-                    std::cout << book.ISBN() << '\t' << book.book_name() << '\t' << book.author() << '\t' << book.keyword() << '\t' << book.price() << '\t' << book.quant() << '\n';
+                    std::cout << book.ISBN() << '\t' << book.book_name() << '\t' << book.author() << '\t' << book.keyword() << '\t' << std::fixed << std::setprecision(2) << book.price() << '\t' << book.quant() << '\n';
                 }
                 std::string msg = current_time() + " [FIND]User " + account_manager.current_user() + " found all books.";
                 std::clog << msg << '\n';
@@ -230,8 +237,11 @@ int main() {
             std::string key, val;
             bool valid = parse_argument(tokens[1], key, val);
             if (!valid) {
-                std::cout << "Invalid\n";
-                continue;
+                bool number_valid = parse_number_argument(tokens[1], key, val);
+                if (number_valid == 0 || key != "ISBN") {
+                    std::cout << "Invalid\n";
+                    continue;
+                }
             }
             if (key != "ISBN" && key != "name" && key != "author" && key != "keyword") {
                 std::cout << "Invalid\n";
@@ -257,8 +267,11 @@ int main() {
             else if (key == "keyword") {
                 vec = book_manager.find_keyword(val);
             }
-            for (auto book : vec) {
-                std::cout << book.ISBN() << '\t' << book.book_name() << '\t' << book.author() << '\t' << book.keyword() << '\t' << book.price() << '\t' << book.quant() << '\n';
+            if (vec.empty()) {
+                std::cout << '\n';
+            }
+            else for (auto book : vec) {
+                std::cout << book.ISBN() << '\t' << book.book_name() << '\t' << book.author() << '\t' << book.keyword() << '\t' << std::fixed << std::setprecision(2) << book.price() << '\t' << book.quant() << '\n';
             }
             std::string msg = current_time() + " [FIND]User " + account_manager.current_user() + " found books by " + key + '.';
             std::clog << msg << '\n';
@@ -284,6 +297,7 @@ int main() {
             double cost = 0.00;
             bool buy_success = book_manager.buy(ISBN, quant, cost);
             if (buy_success) {
+                std::cout << std::fixed << std::setprecision(2) << cost << std::endl;
                 std::clog << "Buy book success, costing " << cost << ".\n";
                 std::string msg = current_time() + " [BUY]User " + account_manager.current_user() + " bought " + q + " book(s). ISBN:" + ISBN;
                 std::clog << msg << '\n';
@@ -291,6 +305,7 @@ int main() {
                 log_manager.add_finance_log(cost);
             }
             else {
+                std::cout << "Invalid\n";
                 std::clog << "Buy book failed.\n";
             }
         }
@@ -337,7 +352,7 @@ int main() {
                 bool valid = parse_argument(tokens[i], key, val);
                 if (!valid) {
                     bool number_valid = parse_number_argument(tokens[i], key, val);
-                    if (number_valid == 0 || key != "price") {
+                    if (number_valid == 0 || key != "price" && key != "ISBN") {
                         parse_success = false;
                         break;
                     }
@@ -419,6 +434,7 @@ int main() {
                 log_manager.add_employee_log(account_manager.current_user(), msg);
             }
             else {
+                std::cout << "Invalid\n";
                 std::clog << "Modify book failed.\n";
             }
         }
@@ -454,6 +470,7 @@ int main() {
                 log_manager.add_finance_log(-cost);
             }
             else {
+                std::cout << "Invalid\n";
                 std::clog << "Import book failed.\n";
             }
         }

@@ -34,6 +34,9 @@ bool Account::operator==(const Account& oth) const {
 AccountManager::AccountManager(const std::string& file_name, const std::string& root_password)
     : account_file_(file_name), account_count_(1) {
     if (account_file_.count(string_to_array<30>("root"))) {
+        // std::cerr << "found user root" << std::endl;
+        login_stack_.push_back(Account());
+        book_stack_.push_back(std::array<char, 20>());
         return;
     }
     Account root("root", 7, "root", root_password);
@@ -47,6 +50,7 @@ bool AccountManager::login(const std::string& user_id, const std::string& passwo
     if (accounts.empty()) {
         return false;
     }
+    // std::cerr << accounts.size() << std::endl;
     Account& account = accounts[0];
     if (account.verify_password(password) || account.previlege_ < login_stack_.back().previlege()) {
         login_stack_.push_back(account);

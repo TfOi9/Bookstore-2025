@@ -1,4 +1,5 @@
 #include "../include/book.hpp"
+#include "utils.hpp"
 
 std::vector<std::array<char, 60>> parse_keywords(const std::array<char, 60>& keyword) {
     std::vector<std::array<char, 60>> vec;
@@ -69,19 +70,20 @@ std::ostream& operator<<(std::ostream& os, const Book& book) {
 }
 
 void BookManager::update_book(const Book& book, const Book& new_book) {
-    ISBN_file_.insert(new_book.ISBN_, new_book);
-    book_name_file_.insert(new_book.book_name_, new_book);
-    author_file_.insert(new_book.author_, new_book);
-    auto vec = parse_keywords(new_book.keyword_);
-    for (auto kw : vec) {
-        keyword_file_.insert(kw, new_book);
-    }
     ISBN_file_.erase(book.ISBN_, book);
     book_name_file_.erase(book.book_name_, book);
     author_file_.erase(book.author_, book);
-    vec = parse_keywords(book.keyword_);
+    auto vec = parse_keywords(book.keyword_);
     for (auto kw : vec) {
         keyword_file_.erase(kw, book);
+    }
+    ISBN_file_.insert(new_book.ISBN_, new_book);
+    book_name_file_.insert(new_book.book_name_, new_book);
+    author_file_.insert(new_book.author_, new_book);
+    vec = parse_keywords(new_book.keyword_);
+    for (auto kw : vec) {
+        std::cerr << array_to_string<60>(kw) << std::endl;
+        keyword_file_.insert(kw, new_book);
     }
 }
 
@@ -152,6 +154,9 @@ bool BookManager::modify_ISBN(const std::string& ISBN, const std::string& new_IS
     if (ISBN == new_ISBN) {
         return false;
     }
+    if (ISBN_file_.count(string_to_array<20>(new_ISBN))) {
+        return false;
+    }
     std::vector<Book> books = ISBN_file_.find(string_to_array<20>(ISBN));
     if (books.empty()) {
         return false;
@@ -217,7 +222,7 @@ bool BookManager::modify_price(const std::string& ISBN, double new_price) {
 }
 
 bool BookManager::import(const std::string& ISBN, int quant, double cost) {
-    if (quant <= 0) {
+    if (quant <= 0 || cost <= 0.00) {
         return false;
     }
     std::array<char, 20> arr = string_to_array<20>(ISBN);
@@ -226,10 +231,6 @@ bool BookManager::import(const std::string& ISBN, int quant, double cost) {
         return false;
     }
     Book& book = books[0];
-    double expected_cost = book.price_ * quant;
-    if (std::abs(cost - expected_cost) > 1e-7) {
-        return false;
-    }
     Book new_book = book;
     new_book.quant_ += quant;
     update_book(book, new_book);
