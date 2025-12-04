@@ -82,7 +82,7 @@ void BookManager::update_book(const Book& book, const Book& new_book) {
     author_file_.insert(new_book.author_, new_book);
     vec = parse_keywords(new_book.keyword_);
     for (auto kw : vec) {
-        std::cerr << array_to_string<60>(kw) << std::endl;
+        // std::cerr << array_to_string<60>(kw) << std::endl;
         keyword_file_.insert(kw, new_book);
     }
 }
