@@ -23,13 +23,14 @@ std::vector<std::array<char, 60>> parse_keywords(const std::array<char, 60>& key
     return vec;
 }
 
-Book::Book(const std::string& ISBN, const std::string& book_name, const std::string& author, const std::string keyword, double price, int quant) {
+Book::Book(const std::string& ISBN, const std::string& book_name, const std::string& author, const std::string keyword, double price, int quant, int id) {
     ISBN_ = string_to_array<20>(ISBN);
     book_name_ = string_to_array<60>(book_name);
     author_ = string_to_array<60>(author);
     keyword_ = string_to_array<60>(keyword);
     price_ = price;
     quant_ = quant;
+    id_ = id;
 }
 
 std::string Book::ISBN() const {
@@ -48,34 +49,6 @@ std::string Book::keyword() const {
     return array_to_string<60>(keyword_);
 }
 
-double Book::price() const {
-    return price_;
-}
-
-int Book::quant() const {
-    return quant_;
-}
-
-void Book::set_ISBN(const std::string& new_ISBN) {
-    ISBN_ = string_to_array<20>(new_ISBN);
-}
-
-void Book::set_book_name(const std::string& new_book_name) {
-    book_name_ = string_to_array<60>(new_book_name);
-}
-
-void Book::set_author(const std::string& new_author) {
-    author_ = string_to_array<60>(new_author);
-}
-
-void Book::set_keyword(const std::string& new_keyword) {
-    keyword_ = string_to_array<60>(new_keyword);
-}
-
-void Book::set_price(double new_price) {
-    price_ = new_price;
-}
-
 bool Book::operator<(const Book& oth) const {
     return ISBN_ < oth.ISBN_;
 }
@@ -85,214 +58,160 @@ bool Book::operator==(const Book& oth) const {
 }
 
 std::ostream& operator<<(std::ostream& os, const Book& book) {
-    os << book.ISBN() << '\t' << book.book_name() << '\t' << book.author() << '\t' << book.keyword() << '\t' << book.price() << '\t' << book.quant();
+    os << book.ISBN() << '\t' << book.book_name() << '\t' << book.author() << '\t' << book.keyword() << '\t' << book.price_ << '\t' << book.quant_;
     return os;
 }
 
-void BookManager::update_book(const Book& book, const Book& new_book) {
-    ISBN_file_.erase(book.ISBN_, book);
-    book_name_file_.erase(book.book_name_, book);
-    author_file_.erase(book.author_, book);
+BookManager::BookManager() : ISBN_file_("ISBN.dat"), book_name_file_("book_name.dat"), author_file_("author.dat"), keyword_file_("keyword.dat"), book_file_("book.dat") {
+    book_file_.initialise();
+}
+
+int BookManager::size() const {
+    return book_file_.size();
+}
+
+Book BookManager::find(int id) {
+    Book book;
+    book_file_.read(book, id);
+    return book;
+}
+
+std::vector<Book> BookManager::find_ISBN(const std::array<char, 20>& ISBN) {
+    auto vec = ISBN_file_.find(ISBN);
+    std::vector<Book> ret;
+    for (int id : vec) {
+        Book book;
+        book_file_.read(book, id);
+        ret.push_back(book);
+    }
+    return ret;
+}
+
+std::vector<Book> BookManager::find_book_name(const std::array<char, 60>& book_name) {
+    auto vec = book_name_file_.find(book_name);
+    std::vector<Book> ret;
+    for (int id : vec) {
+        Book book;
+        book_file_.read(book, id);
+        ret.push_back(book);
+    }
+    return ret;
+}
+
+std::vector<Book> BookManager::serialize() {
+    std::vector<Book> ret;
+    for (int i = 0; i < book_file_.size(); i++) {
+        Book book;
+        book_file_.read(book, i);
+        ret.push_back(book);
+    }
+    return ret;
+}
+
+std::vector<Book> BookManager::find_author(const std::array<char, 60>& author) {
+    auto vec = author_file_.find(author);
+    std::vector<Book> ret;
+    for (int id : vec) {
+        Book book;
+        book_file_.read(book, id);
+        ret.push_back(book);
+    }
+    return ret;
+}
+
+void BookManager::add(Book& book) {
+    book_file_.write(book);
+    ISBN_file_.insert(book.ISBN_, book.id_);
+    book_name_file_.insert(book.book_name_, book.id_);
+    author_file_.insert(book.author_, book.id_);
     auto vec = parse_keywords(book.keyword_);
     for (auto kw : vec) {
-        keyword_file_.erase(kw, book);
-    }
-    ISBN_file_.insert(new_book.ISBN_, new_book);
-    book_name_file_.insert(new_book.book_name_, new_book);
-    author_file_.insert(new_book.author_, new_book);
-    vec = parse_keywords(new_book.keyword_);
-    for (auto kw : vec) {
-        // std::cerr << array_to_string<60>(kw) << std::endl;
-        keyword_file_.insert(kw, new_book);
+        keyword_file_.insert(kw, book.id_);
     }
 }
 
-BookManager::BookManager() : ISBN_file_("ISBN.dat"), book_name_file_("book.dat"), author_file_("author.dat"), keyword_file_("keyword.dat") {}
-
-bool BookManager::add(const std::string& ISBN) {
-    if (ISBN_file_.count(string_to_array<20>(ISBN))) {
-        return false;
+void BookManager::modify_ISBN(const std::array<char, 20>& ISBN, const std::array<char, 20>& new_ISBN) {
+    auto vec = ISBN_file_.find(ISBN);
+    if (vec.empty()) {
+        return;
     }
-    ISBN_file_.insert(string_to_array<20>(ISBN), Book(ISBN));
-    return true;
+    int id = vec[0];
+    Book book;
+    book_file_.read(book, id);
+    ISBN_file_.erase(ISBN, id);
+    book.ISBN_ = new_ISBN;
+    book_file_.update(book, id);
+    ISBN_file_.insert(new_ISBN, id);
 }
 
-int BookManager::count(const std::string& ISBN) {
-    return ISBN_file_.count(string_to_array<20>(ISBN));
+void BookManager::modify_book_name(const std::array<char, 20>& ISBN, const std::array<char, 60>& new_book_name) {
+    auto vec = ISBN_file_.find(ISBN);
+    if (vec.empty()) {
+        return;
+    }
+    int id = vec[0];
+    Book book;
+    book_file_.read(book, id);
+    book_name_file_.erase(book.book_name_, id);
+    book.book_name_ = new_book_name;
+    book_file_.update(book, id);
+    book_name_file_.insert(new_book_name, id);
 }
 
-Book BookManager::find(const std::string& ISBN) {
-    std::vector<Book> vec = ISBN_file_.find(string_to_array<20>(ISBN));
-    if (!vec.empty()) {
-        return vec[0];
+void BookManager::modify_author(const std::array<char, 20>& ISBN, const std::array<char, 60>& new_author) {
+    auto vec = ISBN_file_.find(ISBN);
+    if (vec.empty()) {
+        return;
     }
-    else {
-        return Book();
+    int id = vec[0];
+    Book book;
+    book_file_.read(book, id);
+    author_file_.erase(book.author_, id);
+    book.author_ = new_author;
+    book_file_.update(book, id);
+    author_file_.insert(new_author, id);
+}
+
+void BookManager::modify_keyword(const std::array<char, 20>& ISBN, const std::array<char, 60>& new_keyword) {
+    auto vec = ISBN_file_.find(ISBN);
+    if (vec.empty()) {
+        return;
+    }
+    int id = vec[0];
+    Book book;
+    book_file_.read(book, id);
+    auto kws = parse_keywords(book.keyword_);
+    for (auto kw : kws) {
+        keyword_file_.erase(kw, id);
+    }
+    book.keyword_ = new_keyword;
+    book_file_.update(book, id);
+    kws = parse_keywords(new_keyword);
+    for (auto kw : kws) {
+        keyword_file_.insert(kw, id);
     }
 }
 
-std::vector<Book> BookManager::find_ISBN(const std::string& ISBN) {
-    std::vector<Book> vec = ISBN_file_.find(string_to_array<20>(ISBN));
-    std::sort(vec.begin(), vec.end());
-    return vec;
+void BookManager::modify_price(const std::array<char, 20>& ISBN, double new_price) {
+    auto vec = ISBN_file_.find(ISBN);
+    if (vec.empty()) {
+        return;
+    }
+    int id = vec[0];
+    Book book;
+    book_file_.read(book, id);
+    book.price_ = new_price;
+    book_file_.update(book, id);
 }
 
-std::vector<Book> BookManager::find_book_name(const std::string& book_name) {
-    std::vector<Book> vec = book_name_file_.find(string_to_array<60>(book_name));
-    std::sort(vec.begin(), vec.end());
-    return vec;
-}
-
-std::vector<Book> BookManager::find_author(const std::string& author) {
-    std::vector<Book> vec = author_file_.find(string_to_array<60>(author));
-    std::sort(vec.begin(), vec.end());
-    return vec;
-}
-
-std::vector<Book> BookManager::find_keyword(const std::string& keyword) {
-    std::vector<Book> vec = keyword_file_.find(string_to_array<60>(keyword));
-    std::sort(vec.begin(), vec.end());
-    return vec;
-}
-
-std::vector<Book> BookManager::find_all() {
-    std::vector<Book> vec = ISBN_file_.serialize();
-    std::sort(vec.begin(), vec.end());
-    return vec;
-}
-
-bool BookManager::buy(const std::string& ISBN, int quant, double& cost) {
-    if (quant <= 0) {
-        return false;
+void BookManager::import(const std::array<char, 20>& ISBN, int d_quant) {
+    auto vec = ISBN_file_.find(ISBN);
+    if (vec.empty()) {
+        return;
     }
-    std::array<char, 20> arr = string_to_array<20>(ISBN);
-    std::vector<Book> books = ISBN_file_.find(arr);
-    if (books.empty()) {
-        // std::cerr << "not found" << std::endl;
-        return false;
-    }
-    // std::cerr << "sized " << books.size() << std::endl;
-    Book& book = books[0];
-    // std::cerr << book.quant_ << std::endl;
-    if (book.quant_ < quant) {
-        return false;
-    }
-    cost = book.price_ * quant;
-    Book new_book = book;
-    new_book.quant_ -= quant;
-    update_book(book, new_book);
-    return true;
-}
-
-bool BookManager::modify_ISBN(const std::string& ISBN, const std::string& new_ISBN) {
-    if (ISBN == new_ISBN) {
-        return false;
-    }
-    if (ISBN_file_.count(string_to_array<20>(new_ISBN))) {
-        return false;
-    }
-    std::vector<Book> books = ISBN_file_.find(string_to_array<20>(ISBN));
-    if (books.empty()) {
-        return false;
-    }
-    Book& book = books[0];
-    Book new_book = book;
-    new_book.ISBN_ = string_to_array<20>(new_ISBN);
-    update_book(book, new_book);
-    return true;
-}
-
-bool BookManager::modify_book_name(const std::string& ISBN, const std::string& new_book_name) {
-    std::vector<Book> books = ISBN_file_.find(string_to_array<20>(ISBN));
-    if (books.empty()) {
-        return false;
-    }
-    Book& book = books[0];
-    Book new_book = book;
-    new_book.book_name_ = string_to_array<60>(new_book_name);
-    update_book(book, new_book);
-    return true;
-}
-
-bool BookManager::modify_author(const std::string& ISBN, const std::string& new_author) {
-    std::vector<Book> books = ISBN_file_.find(string_to_array<20>(ISBN));
-    if (books.empty()) {
-        return false;
-    }
-    Book& book = books[0];
-    Book new_book = book;
-    new_book.author_ = string_to_array<60>(new_author);
-    update_book(book, new_book);
-    return true;
-}
-
-bool BookManager::modify_keyword(const std::string& ISBN, const std::string& new_keyword) {
-    std::vector<Book> books = ISBN_file_.find(string_to_array<20>(ISBN));
-    if (books.empty()) {
-        return false;
-    }
-    auto key_words = parse_keywords(string_to_array<60>(new_keyword));
-    std::sort(key_words.begin(), key_words.end());
-    if (std::unique(key_words.begin(), key_words.end()) != key_words.end()) {
-        return false;
-    }
-    Book& book = books[0];
-    Book new_book = book;
-    new_book.keyword_ = string_to_array<60>(new_keyword);
-    update_book(book, new_book);
-    return true;
-}
-
-bool BookManager::modify_price(const std::string& ISBN, double new_price) {
-    std::vector<Book> books = ISBN_file_.find(string_to_array<20>(ISBN));
-    if (books.empty()) {
-        return false;
-    }
-    Book& book = books[0];
-    Book new_book = book;
-    new_book.price_ = new_price;
-    update_book(book, new_book);
-    return true;
-}
-
-bool BookManager::modify(const std::string& ISBN, const std::string& new_ISBN, const std::string& new_name, const std::string& new_author, const std::string& new_keyword, double new_price) {
-    std::vector<Book> books = ISBN_file_.find(string_to_array<20>(ISBN));
-    if (books.empty()) {
-        return false;
-    }
-    Book& book = books[0];
-    Book new_book = book;
-    new_book.ISBN_ = string_to_array<20>(new_ISBN);
-    new_book.book_name_ = string_to_array<60>(new_name);
-    new_book.author_ = string_to_array<60>(new_author);
-    new_book.keyword_ = string_to_array<60>(new_keyword);
-    new_book.price_ = new_price;
-    update_book(book, new_book);
-    return true;
-}
-
-bool BookManager::modify(const std::string& ISBN, const Book& new_book) {
-    std::vector<Book> books = ISBN_file_.find(string_to_array<20>(ISBN));
-    if (books.empty()) {
-        return false;
-    }
-    Book& book = books[0];
-    update_book(book, new_book);
-    return true;
-}
-
-bool BookManager::import(const std::string& ISBN, int quant, double cost) {
-    if (quant <= 0 || cost <= 0.00) {
-        return false;
-    }
-    std::array<char, 20> arr = string_to_array<20>(ISBN);
-    std::vector<Book> books = ISBN_file_.find(arr);
-    if (books.empty()) {
-        return false;
-    }
-    Book& book = books[0];
-    Book new_book = book;
-    new_book.quant_ += quant;
-    update_book(book, new_book);
-    return true;
+    int id = vec[0];
+    Book book;
+    book_file_.read(book, id);
+    book.quant_ += d_quant;
+    book_file_.update(book, id);
 }
