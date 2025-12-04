@@ -270,8 +270,11 @@ int main() {
             if (vec.empty()) {
                 std::cout << '\n';
             }
-            else for (auto book : vec) {
-                std::cout << book.ISBN() << '\t' << book.book_name() << '\t' << book.author() << '\t' << book.keyword() << '\t' << std::fixed << std::setprecision(2) << book.price_ << '\t' << book.quant_ << '\n';
+            else {
+                std::sort(vec.begin(), vec.end());
+                for (auto book : vec) {
+                    std::cout << book.ISBN() << '\t' << book.book_name() << '\t' << book.author() << '\t' << book.keyword() << '\t' << std::fixed << std::setprecision(2) << book.price_ << '\t' << book.quant_ << '\n';
+                }
             }
             std::string msg = current_time() + " [FIND]User " + account_manager.current_user() + " found books by " + key + '.';
             // std::clog << msg << '\n';
