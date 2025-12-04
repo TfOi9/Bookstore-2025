@@ -36,6 +36,16 @@ public:
 
     int quant() const;
 
+    void set_ISBN(const std::string& new_ISBN);
+
+    void set_book_name(const std::string& new_book_name);
+
+    void set_author(const std::string& new_author);
+
+    void set_keyword(const std::string& new_keyword);
+
+    void set_price(double new_price);
+
     bool operator<(const Book& oth) const;
 
     bool operator==(const Book& oth) const;
@@ -59,6 +69,10 @@ public:
 
     bool add(const std::string& ISBN);
 
+    int count(const std::string& ISBN);
+
+    Book find(const std::string& ISBN);
+
     std::vector<Book> find_ISBN(const std::string& ISBN);
 
     std::vector<Book> find_book_name(const std::string& book_name);
@@ -80,7 +94,11 @@ public:
     bool modify_keyword(const std::string& ISBN, const std::string& new_keyword);
 
     bool modify_price(const std::string& ISBN, double new_price);
+
+    bool modify(const std::string& ISBN, const std::string& new_ISBN, const std::string& new_name, const std::string& new_author, const std::string& new_keyword, double new_price);
     
+    bool modify(const std::string& ISBN, const Book& new_book);
+
     bool import(const std::string& ISBN, int quant, double cost);
 };
 

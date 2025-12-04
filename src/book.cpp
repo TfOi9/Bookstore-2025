@@ -56,6 +56,26 @@ int Book::quant() const {
     return quant_;
 }
 
+void Book::set_ISBN(const std::string& new_ISBN) {
+    ISBN_ = string_to_array<20>(new_ISBN);
+}
+
+void Book::set_book_name(const std::string& new_book_name) {
+    book_name_ = string_to_array<60>(new_book_name);
+}
+
+void Book::set_author(const std::string& new_author) {
+    author_ = string_to_array<60>(new_author);
+}
+
+void Book::set_keyword(const std::string& new_keyword) {
+    keyword_ = string_to_array<60>(new_keyword);
+}
+
+void Book::set_price(double new_price) {
+    price_ = new_price;
+}
+
 bool Book::operator<(const Book& oth) const {
     return ISBN_ < oth.ISBN_;
 }
@@ -95,6 +115,20 @@ bool BookManager::add(const std::string& ISBN) {
     }
     ISBN_file_.insert(string_to_array<20>(ISBN), Book(ISBN));
     return true;
+}
+
+int BookManager::count(const std::string& ISBN) {
+    return ISBN_file_.count(string_to_array<20>(ISBN));
+}
+
+Book BookManager::find(const std::string& ISBN) {
+    std::vector<Book> vec = ISBN_file_.find(string_to_array<20>(ISBN));
+    if (!vec.empty()) {
+        return vec[0];
+    }
+    else {
+        return Book();
+    }
 }
 
 std::vector<Book> BookManager::find_ISBN(const std::string& ISBN) {
@@ -217,6 +251,32 @@ bool BookManager::modify_price(const std::string& ISBN, double new_price) {
     Book& book = books[0];
     Book new_book = book;
     new_book.price_ = new_price;
+    update_book(book, new_book);
+    return true;
+}
+
+bool BookManager::modify(const std::string& ISBN, const std::string& new_ISBN, const std::string& new_name, const std::string& new_author, const std::string& new_keyword, double new_price) {
+    std::vector<Book> books = ISBN_file_.find(string_to_array<20>(ISBN));
+    if (books.empty()) {
+        return false;
+    }
+    Book& book = books[0];
+    Book new_book = book;
+    new_book.ISBN_ = string_to_array<20>(new_ISBN);
+    new_book.book_name_ = string_to_array<60>(new_name);
+    new_book.author_ = string_to_array<60>(new_author);
+    new_book.keyword_ = string_to_array<60>(new_keyword);
+    new_book.price_ = new_price;
+    update_book(book, new_book);
+    return true;
+}
+
+bool BookManager::modify(const std::string& ISBN, const Book& new_book) {
+    std::vector<Book> books = ISBN_file_.find(string_to_array<20>(ISBN));
+    if (books.empty()) {
+        return false;
+    }
+    Book& book = books[0];
     update_book(book, new_book);
     return true;
 }

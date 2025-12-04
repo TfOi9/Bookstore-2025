@@ -398,35 +398,65 @@ int main() {
                 continue;
             }
             bool modify_success = true;
+            // for (auto it = mp.begin(); it != mp.end(); it++) {
+            //     // std::cerr << it->first << " " << it->second << std::endl;
+            //     // std::cerr << modify_success << std::endl;
+            //     if (it->first == "ISBN") {
+            //         modify_success &= book_manager.modify_ISBN(account_manager.selected_book(), it->second);
+            //         if (modify_success) {
+            //             account_manager.select_book(it->second);
+            //         }
+            //         else {
+            //             break;
+            //         }
+            //     }
+            //     else if (it->first == "name") {
+            //         modify_success &= book_manager.modify_book_name(account_manager.selected_book(), it->second);
+            //     }
+            //     else if (it->first == "author") {
+            //         modify_success &= book_manager.modify_author(account_manager.selected_book(), it->second);
+            //     }
+            //     else if (it->first == "keyword") {
+            //         modify_success &= book_manager.modify_keyword(account_manager.selected_book(), it->second);
+            //     }
+            //     else if (it->first == "price") {
+            //         modify_success &= book_manager.modify_price(account_manager.selected_book(), std::stod(it->second));
+            //     }
+            //     else {
+            //         modify_success = false;
+            //     }
+            // }
+            Book new_book = book_manager.find(account_manager.selected_book());
             for (auto it = mp.begin(); it != mp.end(); it++) {
-                // std::cerr << it->first << " " << it->second << std::endl;
-                // std::cerr << modify_success << std::endl;
                 if (it->first == "ISBN") {
-                    modify_success &= book_manager.modify_ISBN(account_manager.selected_book(), it->second);
-                    if (modify_success) {
-                        account_manager.select_book(it->second);
-                    }
-                    else {
+                    if (it->second == account_manager.selected_book() || book_manager.count(it->second)) {
+                        modify_success = false;
                         break;
                     }
+                    new_book.set_ISBN(it->second);
                 }
                 else if (it->first == "name") {
-                    modify_success &= book_manager.modify_book_name(account_manager.selected_book(), it->second);
+                    new_book.set_book_name(it->second);
                 }
                 else if (it->first == "author") {
-                    modify_success &= book_manager.modify_author(account_manager.selected_book(), it->second);
+                    new_book.set_author(it->second);
                 }
                 else if (it->first == "keyword") {
-                    modify_success &= book_manager.modify_keyword(account_manager.selected_book(), it->second);
+                    new_book.set_keyword(it->second);
                 }
                 else if (it->first == "price") {
-                    modify_success &= book_manager.modify_price(account_manager.selected_book(), std::stod(it->second));
+                    new_book.set_price(std::stod(it->second));
                 }
                 else {
                     modify_success = false;
                 }
             }
+            // std::cerr << new_book << std::endl;
             if (modify_success) {
+                modify_success &= book_manager.modify(account_manager.selected_book(), new_book);
+            }
+            if (modify_success) {
+                account_manager.select_book(new_book.ISBN());
                 // std::clog << "Modify book success.\n";
                 std::string msg = current_time() + " [MODIFY]User " + account_manager.current_user() + " modified book " + account_manager.selected_book();
                 // std::clog << msg << '\n';
