@@ -98,16 +98,6 @@ std::vector<Book> BookManager::find_book_name(const std::array<char, 60>& book_n
     return ret;
 }
 
-std::vector<Book> BookManager::serialize() {
-    std::vector<Book> ret;
-    for (int i = 0; i < book_file_.size(); i++) {
-        Book book;
-        book_file_.read(book, i);
-        ret.push_back(book);
-    }
-    return ret;
-}
-
 std::vector<Book> BookManager::find_author(const std::array<char, 60>& author) {
     auto vec = author_file_.find(author);
     std::vector<Book> ret;
@@ -116,6 +106,28 @@ std::vector<Book> BookManager::find_author(const std::array<char, 60>& author) {
         book_file_.read(book, id);
         ret.push_back(book);
     }
+    return ret;
+}
+
+std::vector<Book> BookManager::find_keyword(const std::array<char, 60>& keyword) {
+    auto vec = keyword_file_.find(keyword);
+    std::vector<Book> ret;
+    for (int id : vec) {
+        Book book;
+        book_file_.read(book, id);
+        ret.push_back(book);
+    }
+    return ret;
+}
+
+std::vector<Book> BookManager::serialize() {
+    std::vector<Book> ret;
+    for (int i = 0; i < book_file_.size(); i++) {
+        Book book;
+        book_file_.read(book, i);
+        ret.push_back(book);
+    }
+    std::sort(ret.begin(), ret.end());
     return ret;
 }
 
@@ -204,14 +216,39 @@ void BookManager::modify_price(const std::array<char, 20>& ISBN, double new_pric
     book_file_.update(book, id);
 }
 
-void BookManager::import(const std::array<char, 20>& ISBN, int d_quant) {
+bool BookManager::import(const std::array<char, 20>& ISBN, int d_quant) {
     auto vec = ISBN_file_.find(ISBN);
     if (vec.empty()) {
-        return;
+        return false;
     }
     int id = vec[0];
     Book book;
     book_file_.read(book, id);
     book.quant_ += d_quant;
     book_file_.update(book, id);
+    return true;
+}
+
+bool BookManager::buy(const std::array<char, 20>& ISBN, int quant, double& cost) {
+    if (quant <= 0) {
+        return false;
+    }
+    auto vec = ISBN_file_.find(ISBN);
+    if (vec.empty()) {
+        return false;
+    }
+    int id = vec[0];
+    Book book;
+    book_file_.read(book, id);
+    if (book.quant_ < quant) {
+        return false;
+    }
+    book.quant_ -= quant;
+    cost = book.price_ * quant;
+    book_file_.update(book, id);
+    return true;
+}
+
+int BookManager::count_ISBN(const std::array<char, 20>& ISBN) {
+    return ISBN_file_.count(ISBN);
 }

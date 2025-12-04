@@ -225,9 +225,9 @@ int main() {
                 continue;
             }
             if (tokens.size() == 1) {
-                auto vec = book_manager.find_all();
+                auto vec = book_manager.serialize();
                 for (auto book : vec) {
-                    std::cout << book.ISBN() << '\t' << book.book_name() << '\t' << book.author() << '\t' << book.keyword() << '\t' << std::fixed << std::setprecision(2) << book.price() << '\t' << book.quant() << '\n';
+                    std::cout << book.ISBN() << '\t' << book.book_name() << '\t' << book.author() << '\t' << book.keyword() << '\t' << std::fixed << std::setprecision(2) << book.price_ << '\t' << book.quant_ << '\n';
                 }
                 std::string msg = current_time() + " [FIND]User " + account_manager.current_user() + " found all books.";
                 // std::clog << msg << '\n';
@@ -256,22 +256,22 @@ int main() {
             }
             std::vector<Book> vec;
             if (key == "ISBN") {
-                vec = book_manager.find_ISBN(val);
+                vec = book_manager.find_ISBN(string_to_array<20>(val));
             }
             else if (key == "name") {
-                vec = book_manager.find_book_name(val);
+                vec = book_manager.find_book_name(string_to_array<60>(val));
             }
             else if (key == "author") {
-                vec = book_manager.find_author(val);
+                vec = book_manager.find_author(string_to_array<60>(val));
             }
             else if (key == "keyword") {
-                vec = book_manager.find_keyword(val);
+                vec = book_manager.find_keyword(string_to_array<60>(val));
             }
             if (vec.empty()) {
                 std::cout << '\n';
             }
             else for (auto book : vec) {
-                std::cout << book.ISBN() << '\t' << book.book_name() << '\t' << book.author() << '\t' << book.keyword() << '\t' << std::fixed << std::setprecision(2) << book.price() << '\t' << book.quant() << '\n';
+                std::cout << book.ISBN() << '\t' << book.book_name() << '\t' << book.author() << '\t' << book.keyword() << '\t' << std::fixed << std::setprecision(2) << book.price_ << '\t' << book.quant_ << '\n';
             }
             std::string msg = current_time() + " [FIND]User " + account_manager.current_user() + " found books by " + key + '.';
             // std::clog << msg << '\n';
@@ -295,7 +295,7 @@ int main() {
             }
             int quant = std::stoi(q);
             double cost = 0.00;
-            bool buy_success = book_manager.buy(ISBN, quant, cost);
+            bool buy_success = book_manager.buy(string_to_array<20>(ISBN), quant, cost);
             if (buy_success) {
                 std::cout << std::fixed << std::setprecision(2) << cost << std::endl;
                 // std::clog << "Buy book success, costing " << cost << ".\n";
@@ -324,8 +324,17 @@ int main() {
                 std::cout << "Invalid\n";
                 continue;
             }
-            book_manager.add(ISBN);
-            account_manager.select_book(ISBN);
+            auto vec = book_manager.find_ISBN(string_to_array<20>(ISBN));
+            if (vec.empty()) {
+                Book new_book(ISBN);
+                new_book.id_ = book_manager.size();
+                // std::cerr << "new id is " << new_book.id_ << std::endl;
+                book_manager.add(new_book);
+                account_manager.select_book(new_book.id_);
+            }
+            else {
+                account_manager.select_book(vec[0].id_);
+            }
             // std::clog << "Select book success.\n";
             std::string msg = current_time() + " [SELECT]User " + account_manager.current_user() + " selected book " + ISBN + '.';
             // std::clog << msg << '\n';
@@ -340,7 +349,7 @@ int main() {
                 std::cout << "Invalid\n";
                 continue;
             }
-            if (account_manager.selected_book() == "") {
+            if (account_manager.selected_book() == -1) {
                 std::cout << "Invalid\n";
                 continue;
             }
@@ -398,67 +407,37 @@ int main() {
                 continue;
             }
             bool modify_success = true;
-            // for (auto it = mp.begin(); it != mp.end(); it++) {
-            //     // std::cerr << it->first << " " << it->second << std::endl;
-            //     // std::cerr << modify_success << std::endl;
-            //     if (it->first == "ISBN") {
-            //         modify_success &= book_manager.modify_ISBN(account_manager.selected_book(), it->second);
-            //         if (modify_success) {
-            //             account_manager.select_book(it->second);
-            //         }
-            //         else {
-            //             break;
-            //         }
-            //     }
-            //     else if (it->first == "name") {
-            //         modify_success &= book_manager.modify_book_name(account_manager.selected_book(), it->second);
-            //     }
-            //     else if (it->first == "author") {
-            //         modify_success &= book_manager.modify_author(account_manager.selected_book(), it->second);
-            //     }
-            //     else if (it->first == "keyword") {
-            //         modify_success &= book_manager.modify_keyword(account_manager.selected_book(), it->second);
-            //     }
-            //     else if (it->first == "price") {
-            //         modify_success &= book_manager.modify_price(account_manager.selected_book(), std::stod(it->second));
-            //     }
-            //     else {
-            //         modify_success = false;
-            //     }
-            // }
-            Book new_book = book_manager.find(account_manager.selected_book());
+            Book book = book_manager.find(account_manager.selected_book());
             for (auto it = mp.begin(); it != mp.end(); it++) {
+                // std::cerr << it->first << " " << it->second << std::endl;
+                // std::cerr << modify_success << std::endl;
                 if (it->first == "ISBN") {
-                    if (it->second == account_manager.selected_book() || book_manager.count(it->second)) {
+                    if (book.ISBN() == it->second || book_manager.count_ISBN(string_to_array<20>(it->second))) {
                         modify_success = false;
                         break;
                     }
-                    new_book.set_ISBN(it->second);
+                    book_manager.modify_ISBN(book.ISBN_, string_to_array<20>(it->second));
+                    book.ISBN_ = string_to_array<20>(it->second);
                 }
                 else if (it->first == "name") {
-                    new_book.set_book_name(it->second);
+                    book_manager.modify_book_name(book.ISBN_, string_to_array<60>(it->second));
                 }
                 else if (it->first == "author") {
-                    new_book.set_author(it->second);
+                    book_manager.modify_author(book.ISBN_, string_to_array<60>(it->second));
                 }
                 else if (it->first == "keyword") {
-                    new_book.set_keyword(it->second);
+                    book_manager.modify_keyword(book.ISBN_, string_to_array<60>(it->second));
                 }
                 else if (it->first == "price") {
-                    new_book.set_price(std::stod(it->second));
+                    book_manager.modify_price(book.ISBN_, std::stod(it->second));
                 }
                 else {
                     modify_success = false;
                 }
             }
-            // std::cerr << new_book << std::endl;
             if (modify_success) {
-                modify_success &= book_manager.modify(account_manager.selected_book(), new_book);
-            }
-            if (modify_success) {
-                account_manager.select_book(new_book.ISBN());
                 // std::clog << "Modify book success.\n";
-                std::string msg = current_time() + " [MODIFY]User " + account_manager.current_user() + " modified book " + account_manager.selected_book();
+                std::string msg = current_time() + " [MODIFY]User " + account_manager.current_user() + " modified book " + book.ISBN();
                 // std::clog << msg << '\n';
                 log_manager.add_log(msg);
                 log_manager.add_employee_log(account_manager.current_user(), msg);
@@ -477,7 +456,7 @@ int main() {
                 std::cout << "Invalid\n";
                 continue;
             }
-            if (account_manager.selected_book() == "") {
+            if (account_manager.selected_book() == -1) {
                 std::cout << "Invalid\n";
                 continue;
             }
@@ -490,10 +469,11 @@ int main() {
             }
             int quant = std::stoi(q);
             double cost = std::stod(tc);
-            bool import_success = book_manager.import(account_manager.selected_book(), quant, cost);
+            Book book = book_manager.find(account_manager.selected_book());
+            bool import_success = book_manager.import(book.ISBN_, quant);
             if (import_success) {
                 // std::clog << "Import book success.\n";
-                std::string msg = current_time() + " [IMPORT]User " + account_manager.current_user() + " imported book " + account_manager.selected_book() + ' ' + q + " copies, costing " + tc + '.';
+                std::string msg = current_time() + " [IMPORT]User " + account_manager.current_user() + " imported book " + book.ISBN() + ' ' + q + " copies, costing " + tc + '.';
                 // std::clog << msg << '\n';
                 log_manager.add_log(msg);
                 log_manager.add_employee_log(account_manager.current_user(), msg);

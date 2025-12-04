@@ -60,6 +60,8 @@ public:
 
     std::vector<Book> find_author(const std::array<char, 60>& author);
 
+    std::vector<Book> find_keyword(const std::array<char, 60>& keyword);
+
     std::vector<Book> serialize();
 
     void add(Book& book);
@@ -74,7 +76,12 @@ public:
 
     void modify_price(const std::array<char, 20>& ISBN, double new_price);
 
-    void import(const std::array<char, 20>& ISBN, int d_quant);
+    bool import(const std::array<char, 20>& ISBN, int d_quant);
+
+    bool buy(const std::array<char, 20>& ISBN, int quant, double& cost);
+
+    int count_ISBN(const std::array<char, 20>& ISBN);
+
 };
 
 #endif
