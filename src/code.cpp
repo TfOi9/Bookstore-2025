@@ -251,13 +251,13 @@ int main() {
             }
             bool key_valid;
             if (key == "ISBN") {
-                key_valid = Validator(val).max_len(20).normal_char_only();
+                key_valid = Validator(val).max_len(20).visible_only();
             }
             else if (key == "keyword") {
-                key_valid = Validator(val).max_len(60).normal_char_only().no_commas().no_pipes();
+                key_valid = Validator(val).max_len(60).visible_only().no_commas().no_pipes();
             }
             else {
-                key_valid = Validator(val).max_len(60).normal_char_only().no_commas();
+                key_valid = Validator(val).max_len(60).visible_only().no_commas();
             }
             if (!key_valid) {
                 std::cout << "Invalid\n";
