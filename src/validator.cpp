@@ -104,6 +104,19 @@ Validator& Validator::only_one_dot() {
     return *this;
 }
 
+Validator& Validator::no_pipes() {
+    if (!valid_) {
+        return *this;
+    }
+    for (int i = 0; i < str_.size(); i++) {
+        if (str_[i] == '|') {
+            valid_ = 0;
+            break;
+        }
+    }
+    return *this;
+}
+
 Validator::operator bool() const {
     return valid_;
 }

@@ -29,6 +29,8 @@ public:
 
     Validator& only_one_dot();
 
+    Validator& no_pipes();
+
     operator bool() const;
 };
 
