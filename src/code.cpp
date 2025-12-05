@@ -20,6 +20,9 @@ int main() {
         std::string s, t;
         std::vector<std::string> tokens;
         getline(std::cin, s);
+        // if (!getline(std::cin, s)) {
+        //     break;
+        // }
         std::stringstream ss(s);
         while (ss >> t) {
             tokens.push_back(t);

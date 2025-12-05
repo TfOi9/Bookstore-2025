@@ -8,3 +8,4 @@ temp/*
 *.err
 *.exe
 *.dat
+.cache
