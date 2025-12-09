@@ -214,6 +214,10 @@ int main() {
                     std::cout << '\n';
                     continue;
                 }
+                if (log_manager.finance_size() < count) {
+                    std::cout << "Invalid\n";
+                    continue;
+                }
                 auto p = log_manager.finance(count);
                 std::cout << "+ " << std::fixed << std::setprecision(2) << p.first << " - " << std::fixed << std::setprecision(2) << p.second << '\n';
                 continue;

@@ -72,6 +72,8 @@ public:
 
     std::pair<double, double> finance(int count = -1);
 
+    int finance_size();
+
     void report_finance();
 
     void report_employee(const std::string& user_id);

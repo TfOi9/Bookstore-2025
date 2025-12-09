@@ -73,3 +73,7 @@ std::pair<double, double> LogManager::finance(int count) {
     }
     return std::make_pair(income, expenditure);
 }
+
+int LogManager::finance_size() {
+    return log_file_.size();
+}
