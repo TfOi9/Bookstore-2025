@@ -75,5 +75,5 @@ std::pair<double, double> LogManager::finance(int count) {
 }
 
 int LogManager::finance_size() {
-    return log_file_.size();
+    return finance_file_.size();
 }
