@@ -79,6 +79,8 @@ public:
 
     // returns the selected book's id.
     int selected_book() const;
+
+    void debug();
 };
 
 #endif

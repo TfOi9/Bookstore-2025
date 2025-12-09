@@ -94,6 +94,9 @@ bool AccountManager::change_password(const std::string& user_id, const std::stri
     }
     Account& account = accounts[0];
     if (account.verify_password(old_password) || login_stack_.back().previlege() == 7) {
+        if (new_password == old_password) {
+            return true;
+        }
         Account new_account = account;
         new_account.password_ = string_to_array<30>(new_password);
         account_file_.insert(arr, new_account);
@@ -165,4 +168,12 @@ int AccountManager::selected_book() const {
         return -1;
     }
     return book_stack_.back();
+}
+
+void AccountManager::debug() {
+    std::cout << "ACCOUNT*STACK*";
+    for (auto acc : login_stack_) {
+        std::cout << acc.user_id() << " ";
+    }
+    std::cout << std::endl;
 }
