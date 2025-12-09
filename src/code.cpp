@@ -290,7 +290,7 @@ int main() {
             log_manager.add_log(msg);
         }
         else if (op == "buy") {
-            if (account_manager.current_previlege() < 1) {
+            if (account_manager.current_previlege() < 0) {
                 std::cout << "Invalid\n";
                 continue;
             }
