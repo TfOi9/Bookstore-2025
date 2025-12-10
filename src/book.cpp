@@ -4,8 +4,8 @@
 std::vector<std::array<char, 60>> parse_keywords(const std::array<char, 60>& keyword) {
     std::vector<std::array<char, 60>> vec;
     int pos = 0;
-    for (int i = 0; i < 60; i++) {
-        if (keyword[i] == '|' || i == 59 || keyword[i] == 0) {
+    for (int i = 0; i <= 60; i++) {
+        if (i == 60 || keyword[i] == '|' || keyword[i] == 0) {
             if (i == pos) {
                 return std::vector<std::array<char, 60>>();
             }
@@ -18,7 +18,7 @@ std::vector<std::array<char, 60>> parse_keywords(const std::array<char, 60>& key
             }
             vec.push_back(arr);
             pos = i + 1;
-            if (keyword[i] == 0) {
+            if (i == 60 || keyword[i] == 0) {
                 break;
             }
         }
