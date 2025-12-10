@@ -6,8 +6,15 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
 
-include_directories(include)
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
+
+include_directories(include frontend/include)
 
 add_executable(code src/account.cpp src/book.cpp src/log.cpp src/utils.cpp src/validator.cpp src/code.cpp)
 
 add_executable(cleanup src/cleanup.cpp)
+
+add_executable(gui frontend/src/main.cpp)
+
+target_link_libraries(gui PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
