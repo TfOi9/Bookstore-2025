@@ -21,7 +21,7 @@ public:
 
     Validator& normal_char_only();
 
-    Validator& no_commas();
+    Validator& no_quotes();
 
     Validator& number_only();
 

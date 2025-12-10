@@ -46,7 +46,7 @@ Validator& Validator::normal_char_only() {
     return *this;
 }
 
-Validator& Validator::no_commas() {
+Validator& Validator::no_quotes() {
     if (!valid_) {
         return *this;
     }
