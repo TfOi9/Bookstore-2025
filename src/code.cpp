@@ -399,6 +399,10 @@ int main() {
                     }
                     if (key == "keyword") {
                         auto key_words = parse_keywords(string_to_array<60>(val));
+                        if (key_words.empty()) {
+                            parse_success = false;
+                            break;
+                        }
                         std::sort(key_words.begin(), key_words.end());
                         if (std::unique(key_words.begin(), key_words.end()) != key_words.end()) {
                             parse_success = false;
