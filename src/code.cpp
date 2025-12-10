@@ -375,7 +375,7 @@ int main() {
                 std::string key;
                 std::string val;
                 bool valid = parse_argument(tokens[i], key, val);
-                if (!valid) {
+                if (!valid || key == "ISBN" || key == "price") {
                     bool number_valid = parse_number_argument(tokens[i], key, val);
                     if (number_valid == 0 || key != "price" && key != "ISBN") {
                         parse_success = false;
@@ -489,6 +489,10 @@ int main() {
             }
             int quant = std::stoi(q);
             double cost = std::stod(tc);
+            if (quant <= 0 || cost <= 0.00) {
+                std::cout << "Invalid\n";
+                continue;
+            }
             Book book = book_manager.find(account_manager.selected_book());
             bool import_success = book_manager.import(book.ISBN_, quant);
             if (import_success) {

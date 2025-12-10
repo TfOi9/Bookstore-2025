@@ -2,7 +2,7 @@
 .clangd
 build/*
 temp/*
-tools/*
+test/*
 *.in
 *.out
 *.ans
