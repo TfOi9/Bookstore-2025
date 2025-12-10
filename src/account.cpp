@@ -52,7 +52,7 @@ bool AccountManager::login(const std::string& user_id, const std::string& passwo
     }
     // std::cerr << accounts.size() << std::endl;
     Account& account = accounts[0];
-    if (account.verify_password(password) || account.previlege_ < login_stack_.back().previlege()) {
+    if (account.verify_password(password) || account.previlege_ < login_stack_.back().previlege() && password == "") {
         login_stack_.push_back(account);
         book_stack_.push_back(-1);
         return true;
@@ -93,7 +93,7 @@ bool AccountManager::change_password(const std::string& user_id, const std::stri
         return false;
     }
     Account& account = accounts[0];
-    if (account.verify_password(old_password) || login_stack_.back().previlege() == 7) {
+    if (account.verify_password(old_password) || login_stack_.back().previlege() == 7 && old_password == "") {
         if (new_password == old_password) {
             return true;
         }
