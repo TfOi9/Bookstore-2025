@@ -478,7 +478,7 @@ int main() {
             }
             std::string q = tokens[1], tc = tokens[2];
             bool quant_valid = Validator(q).max_len(10).number_only();
-            bool cost_valid = Validator(q).max_len(13).number_and_dot_only().only_one_dot();
+            bool cost_valid = Validator(tc).max_len(13).number_and_dot_only().only_one_dot();
             if (quant_valid == 0 || cost_valid == 0) {
                 std::cout << "Invalid\n";
                 continue;
