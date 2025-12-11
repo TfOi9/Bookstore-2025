@@ -81,5 +81,11 @@ double stod_safe(const std::string &str) {
     if (str.size() > 13 || str[0] == '.' || (str.size() > 1 && str[0] == '0' && str[1] != '.') || (str.size() > 0 && str.back() == '.')) {
         throw std::invalid_argument("Invalid double string");
     }
+    int dot_pos = str.find('.');
+    if (dot_pos != std::string::npos) {
+        if (str.size() - dot_pos - 1 > 2) {
+            throw std::invalid_argument("Invalid double string");
+        }
+    }
     return std::stod(str);
 }
