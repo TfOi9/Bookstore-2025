@@ -6,6 +6,8 @@
 #include "login_dialog.hpp"
 #include "register_dialog.hpp"
 #include "profile_dialog.hpp"
+#include <QStatusBar>
+#include <functional>
 
 class TopBar : public QWidget {
 public:
@@ -26,12 +28,21 @@ private:
         
         registerButton = new QPushButton("注册", this);
 
+        accountButton = new QPushButton("账户管理", this);
+
+        bookButton = new QPushButton("图书管理", this);
+
+        logButton = new QPushButton("日志管理", this);
+
         userButton = new QPushButton(this);
         userButton->setObjectName("userButton");
         userButton->setFlat(true);
         userButton->setCursor(Qt::PointingHandCursor);
 
         layout->addWidget(titleLabel, 0, Qt::AlignLeft);
+        layout->addWidget(accountButton);
+        layout->addWidget(bookButton);
+        layout->addWidget(logButton);
         layout->addStretch(1);
         layout->addWidget(loginButton);
         layout->addWidget(registerButton);
@@ -144,18 +155,57 @@ private:
             userButton->show();
             loginButton->hide();
             registerButton->hide();
-        } else {
+        }
+        else {
             userButton->hide();
             loginButton->show();
             registerButton->show();
         }
+        int pri = account_manager->current_privilege();
+        if (pri >= 3) {
+            accountButton->show();
+            bookButton->setText("书籍管理");
+            bookButton->show();
+            logButton->show();
+        }
+        else if (pri == 1) {
+            accountButton->hide();
+            bookButton->setText("书籍浏览");
+            bookButton->show();
+            logButton->hide();
+        }
+        else {
+            accountButton->hide();
+            bookButton->hide();
+            logButton->hide();
+        }
+        
+        QString status;
+        if (cur.empty()) {
+            status = QStringLiteral("游客模式");
+        } else {
+            if (pri == 7) status = QStringLiteral("店长模式");
+            else if (pri == 3) status = QStringLiteral("管理员模式");
+            else if (pri == 1) status = QStringLiteral("顾客模式");
+            else status = QStringLiteral("游客模式");
+        }
+        if (authCallback) authCallback(status);
+    }
+
+public:
+    void setAuthChangedCallback(std::function<void(const QString &)> cb) {
+        authCallback = std::move(cb);
     }
 
 private:
     QLabel *titleLabel;
     QPushButton *loginButton;
     QPushButton *registerButton;
+    QPushButton *accountButton;
+    QPushButton *bookButton;
+    QPushButton *logButton;
     QPushButton *userButton;
+    std::function<void(const QString &)> authCallback;
 };
 
 class MainWindow : public QMainWindow {
@@ -166,8 +216,10 @@ public:
         mainLayout->setContentsMargins(0, 0, 0, 0);
         mainLayout->setSpacing(0);
 
-        topBar = new TopBar();
+        topBar = new TopBar(this);
         mainLayout->addWidget(topBar);
+
+        topBar->setAuthChangedCallback([this](const QString &s){ setStatusMessage(s); });
 
         QTextEdit *contentArea = new QTextEdit();
         contentArea->setPlaceholderText("这里是内容区域...");
@@ -175,8 +227,14 @@ public:
         mainLayout->addWidget(contentArea, 1);
 
         setCentralWidget(centralWidget);
+        
+        statusBar()->showMessage(QStringLiteral("游客模式"));
         resize(800, 600);
         setWindowTitle("BookStore");
+    }
+
+    void setStatusMessage(const QString &msg, int timeout = 0) {
+        statusBar()->showMessage(msg, timeout);
     }
 
 private:

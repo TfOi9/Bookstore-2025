@@ -3,6 +3,7 @@
 build/*
 temp/*
 test/*
+tools/*
 *.in
 *.out
 *.ans

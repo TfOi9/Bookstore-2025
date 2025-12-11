@@ -22,7 +22,7 @@ public:
             
             qDebug() << "修改密码";
 
-            if (!Validator(newPassword.toStdString()).min_len(6).max_len(30).normal_char_only()) {
+            if (!Validator(newPassword.toStdString()).min_len(4).max_len(30).normal_char_only()) {
                 qDebug() << "错误: 新密码格式不正确!";
                 errorLabel->setText("错误: 新密码格式不正确!");
                 errorLabel->show();

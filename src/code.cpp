@@ -142,21 +142,21 @@ int main() {
                 continue;
             }
             std::string user_id = tokens[1], pwd = tokens[2], username = tokens[4];
-            int previlege;
+            int privilege;
             bool user_id_valid = Validator(user_id).max_len(30).normal_char_only();
             bool pwd_valid = Validator(pwd).max_len(30).normal_char_only();
             bool username_valid = Validator(username).max_len(30).visible_only();
-            bool previlege_valid = Validator(tokens[3]).max_len(1).min_len(1).number_only();
-            if (user_id_valid == 0 || pwd_valid == 0 || username_valid == 0 || previlege_valid == 0) {
+            bool privilege_valid = Validator(tokens[3]).max_len(1).min_len(1).number_only();
+            if (user_id_valid == 0 || pwd_valid == 0 || username_valid == 0 || privilege_valid == 0) {
                 std::cout << "Invalid\n";
                 continue;
             }
-            previlege = tokens[3][0] - '0';
-            if (previlege != 1 && previlege != 3) {
+            privilege = tokens[3][0] - '0';
+            if (privilege != 1 && privilege != 3) {
                 std::cout << "Invalid\n";
                 continue;
             }
-            bool useradd_success = account_manager.add_account(user_id, username, pwd, previlege);
+            bool useradd_success = account_manager.add_account(user_id, username, pwd, privilege);
             if (useradd_success) {
                 // std::clog << "Add user success.\n";
                 std::string msg = current_time() + " [USERADD]Added user " + user_id + '.';
@@ -188,7 +188,7 @@ int main() {
         }
         else if (op == "show") {
             if (tokens.size() > 1 && tokens[1] == "finance") {
-                if (account_manager.current_previlege() < 7) {
+                if (account_manager.current_privilege() < 7) {
                     std::cout << "Invalid\n";
                     continue;
                 }
@@ -222,7 +222,7 @@ int main() {
                 std::cout << "+ " << std::fixed << std::setprecision(2) << p.first << " - " << std::fixed << std::setprecision(2) << p.second << '\n';
                 continue;
             }
-            if (account_manager.current_previlege() < 1) {
+            if (account_manager.current_privilege() < 1) {
                 std::cout << "Invalid\n";
                 continue;
             }
@@ -294,7 +294,7 @@ int main() {
             log_manager.add_log(msg);
         }
         else if (op == "buy") {
-            if (account_manager.current_previlege() < 1) {
+            if (account_manager.current_privilege() < 1) {
                 std::cout << "Invalid\n";
                 continue;
             }
@@ -326,7 +326,7 @@ int main() {
             }
         }
         else if (op == "select") {
-            if (account_manager.current_previlege() < 3) {
+            if (account_manager.current_privilege() < 3) {
                 std::cout << "Invalid\n";
                 continue;
             }
@@ -357,7 +357,7 @@ int main() {
             log_manager.add_log(msg);
         }
         else if (op == "modify") {
-            if (account_manager.current_previlege() < 3) {
+            if (account_manager.current_privilege() < 3) {
                 std::cout << "Invalid\n";
                 continue;
             }
@@ -468,7 +468,7 @@ int main() {
             }
         }
         else if (op == "import") {
-            if (account_manager.current_previlege() < 3) {
+            if (account_manager.current_privilege() < 3) {
                 std::cout << "Invalid\n";
                 continue;
             }

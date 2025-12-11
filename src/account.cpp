@@ -1,10 +1,10 @@
 #include "../include/account.hpp"
 
-Account::Account(const std::string& user_id, int previlege, const std::string& username, const std::string& password) {
+Account::Account(const std::string& user_id, int privilege, const std::string& username, const std::string& password) {
     user_id_ = string_to_array<30>(user_id);
     username_ = string_to_array<30>(username);
     password_ = string_to_array<30>(password);
-    previlege_ = previlege;
+    privilege_ = privilege;
 }
 
 bool Account::verify_password(const std::string& password) const {
@@ -23,12 +23,12 @@ std::string Account::user_id() const {
     return array_to_string<30>(user_id_);
 }
 
-int Account::previlege() const {
-    return previlege_;
+int Account::privilege() const {
+    return privilege_;
 }
 
 bool Account::operator==(const Account& oth) const {
-    return (user_id_ == oth.user_id_ && username_ == oth.username_ && password_ == oth.password_ && previlege_ == oth.previlege_);
+    return (user_id_ == oth.user_id_ && username_ == oth.username_ && password_ == oth.password_ && privilege_ == oth.privilege_);
 }
 
 AccountManager::AccountManager(const std::string& file_name, const std::string& root_password)
@@ -52,7 +52,7 @@ bool AccountManager::login(const std::string& user_id, const std::string& passwo
     }
     // std::cerr << accounts.size() << std::endl;
     Account& account = accounts[0];
-    if (account.verify_password(password) || account.previlege_ < login_stack_.back().previlege() && password == "") {
+    if (account.verify_password(password) || account.privilege_ < login_stack_.back().privilege() && password == "") {
         login_stack_.push_back(account);
         book_stack_.push_back(-1);
         return true;
@@ -61,7 +61,7 @@ bool AccountManager::login(const std::string& user_id, const std::string& passwo
 }
 
 bool AccountManager::logout() {
-    if (login_stack_.back().previlege_ < 1) {
+    if (login_stack_.back().privilege_ < 1) {
         return false;
     }
     if (login_stack_.empty()) {
@@ -72,10 +72,10 @@ bool AccountManager::logout() {
     return true;
 }
 
-bool AccountManager::register_account(const std::string& user_id, const std::string& username, const std::string& password, int previlege) {
+bool AccountManager::register_account(const std::string& user_id, const std::string& username, const std::string& password, int privilege) {
     std::array<char, 30> arr = string_to_array<30>(user_id);
     if (account_file_.find(arr).empty()) {
-        Account new_account(user_id, previlege, username, password);
+        Account new_account(user_id, privilege, username, password);
         account_file_.insert(arr, new_account);
         account_count_++;
         return true;
@@ -84,7 +84,7 @@ bool AccountManager::register_account(const std::string& user_id, const std::str
 }
 
 bool AccountManager::change_password(const std::string& user_id, const std::string& new_password, const std::string& old_password) {
-    if (login_stack_.back().previlege_ < 1) {
+    if (login_stack_.back().privilege_ < 1) {
         return false;
     }
     std::array<char, 30> arr = string_to_array<30>(user_id);
@@ -93,7 +93,7 @@ bool AccountManager::change_password(const std::string& user_id, const std::stri
         return false;
     }
     Account& account = accounts[0];
-    if (account.verify_password(old_password) || login_stack_.back().previlege() == 7 && old_password == "") {
+    if (account.verify_password(old_password) || login_stack_.back().privilege() == 7 && old_password == "") {
         if (new_password == old_password) {
             return true;
         }
@@ -106,25 +106,25 @@ bool AccountManager::change_password(const std::string& user_id, const std::stri
     return false;
 }
 
-bool AccountManager::add_account(const std::string& user_id, const std::string& username, const std::string& password, int previlege) {
-    if (login_stack_.back().previlege_ < 3) {
+bool AccountManager::add_account(const std::string& user_id, const std::string& username, const std::string& password, int privilege) {
+    if (login_stack_.back().privilege_ < 3) {
         return false;
     }
     std::array<char, 30> arr = string_to_array<30>(user_id);
-    if (login_stack_.back().previlege_ <= previlege) {
+    if (login_stack_.back().privilege_ <= privilege) {
         return false;
     }
     if (account_file_.count(arr)) {
         return false;
     }
-    Account account(user_id, previlege, username, password);
+    Account account(user_id, privilege, username, password);
     account_file_.insert(arr, account);
     account_count_++;
     return true;
 }
 
 bool AccountManager::delete_account(const std::string& user_id) {
-    if (login_stack_.back().previlege_ < 7) {
+    if (login_stack_.back().privilege_ < 7) {
         return false;
     }
     std::array<char, 30> arr = string_to_array<30>(user_id);
@@ -142,7 +142,7 @@ bool AccountManager::delete_account(const std::string& user_id) {
 }
 
 bool AccountManager::select_book(int id) {
-    if (login_stack_.back().previlege_ < 3) {
+    if (login_stack_.back().privilege_ < 3) {
         return false;
     }
     book_stack_.back() = id;
@@ -163,11 +163,11 @@ std::string AccountManager::current_username() const {
     return login_stack_.back().username();
 }
 
-int AccountManager::current_previlege() const {
+int AccountManager::current_privilege() const {
     if (login_stack_.empty()) {
         return 0;
     }
-    return login_stack_.back().previlege();
+    return login_stack_.back().privilege();
 }
 
 int AccountManager::selected_book() const {
