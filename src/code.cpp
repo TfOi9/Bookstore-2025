@@ -211,7 +211,8 @@ int main() {
                     count = std::stoi(c);
                 }
                 if (count == 0) {
-                    std::cout << '\n';
+                    // TODO: check if this is correct
+                    std::cout << "Invalid\n";
                     continue;
                 }
                 if (log_manager.finance_size() < count) {
