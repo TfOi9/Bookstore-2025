@@ -78,7 +78,7 @@ int stoi_safe(const std::string &str) {
 }
 
 double stod_safe(const std::string &str) {
-    if (str.size() > 13 || str[0] == '.' || (str.size() > 1 && str[0] == '0' && str[1] != '.')) {
+    if (str.size() > 13 || str[0] == '.' || (str.size() > 1 && str[0] == '0' && str[1] != '.') || (str.size() > 0 && str.back() == '.')) {
         throw std::invalid_argument("Invalid double string");
     }
     return std::stod(str);
