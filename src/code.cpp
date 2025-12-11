@@ -213,7 +213,7 @@ int main() {
                         continue;
                     }
                     try {
-                        count = std::stoi(c);
+                        count = stoi_safe(c);
                     }
                     catch (...) {
                         std::cout << "Invalid\n";
@@ -321,7 +321,7 @@ int main() {
             }
             int quant = 0;
             try {
-                quant = std::stoi(q);
+                quant = stoi_safe(q);
             }
             catch (...) {
                 std::cout << "Invalid\n";
@@ -468,7 +468,7 @@ int main() {
                 else if (it->first == "price") {
                     double new_price = 0.00;
                     try {
-                        new_price = std::stod(it->second);
+                        new_price = stod_safe(it->second);
                     }
                     catch (...) {
                         modify_success = false;
@@ -515,7 +515,7 @@ int main() {
             }
             int quant = 0;
             try {
-                quant = std::stoi(q);
+                quant = stoi_safe(q);
             }
             catch (...) {
                 std::cout << "Invalid\n";
@@ -523,7 +523,7 @@ int main() {
             }
             double cost = 0.00;
             try {
-                cost = std::stod(tc);
+                cost = stod_safe(tc);
             }
             catch (...) {
                 std::cout << "Invalid\n";

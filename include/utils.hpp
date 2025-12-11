@@ -51,4 +51,8 @@ void vector_remove(std::vector<T>& vec, T val) {
 
 std::vector<std::string> tokenize(const std::string& str);
 
+int stoi_safe(const std::string& str);
+
+double stod_safe(const std::string& str);
+
 #endif
