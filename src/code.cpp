@@ -152,7 +152,7 @@ int main() {
                 continue;
             }
             previlege = tokens[3][0] - '0';
-            if (previlege != 0 && previlege != 1 && previlege != 3 && previlege != 7) {
+            if (previlege != 1 && previlege != 3) {
                 std::cout << "Invalid\n";
                 continue;
             }
