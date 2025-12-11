@@ -74,6 +74,9 @@ public:
     // returns the current user's id.
     std::string current_user() const;
 
+    // returns the current user's name.
+    std::string current_username() const;
+
     // returns the current user's previlege.
     int current_previlege() const;
 

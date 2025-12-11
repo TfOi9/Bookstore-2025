@@ -2,8 +2,10 @@
 #define MAIN_WINDOW_HPP
 
 #include "qt_common.hpp"
+#include "globals.hpp"
 #include "login_dialog.hpp"
 #include "register_dialog.hpp"
+#include "profile_dialog.hpp"
 
 class TopBar : public QWidget {
 public:
@@ -56,8 +58,10 @@ private:
         QAction *logoutAction = userMenu->addAction("注销");
 
         connect(profileAction, &QAction::triggered, [=]() {
-            QString info = QString::fromStdString(account_manager->current_user());
-            QMessageBox::information(this, "个人信息", info.isEmpty() ? "未登录" : info);
+            qDebug() << "个人信息按钮被点击";
+            ProfileDialog dialog(this);
+            dialog.exec();
+            refreshAuthUI();
         });
 
         connect(logoutAction, &QAction::triggered, [=]() {

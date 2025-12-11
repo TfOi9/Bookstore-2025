@@ -156,6 +156,13 @@ std::string AccountManager::current_user() const {
     return login_stack_.back().user_id();
 }
 
+std::string AccountManager::current_username() const {
+    if (login_stack_.empty()) {
+        return "";
+    }
+    return login_stack_.back().username();
+}
+
 int AccountManager::current_previlege() const {
     if (login_stack_.empty()) {
         return 0;
