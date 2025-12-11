@@ -78,9 +78,6 @@ Validator& Validator::number_and_dot_only() {
     }
     for (int i = 0; i < str_.size(); i++) {
         if ((str_[i] < '0' || str_[i] > '9') && str_[i] != '.') {
-            if (i == 0 && str_[i] == '+') {
-                continue;
-            }
             valid_ = false;
             break;
         }
