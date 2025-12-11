@@ -58,5 +58,6 @@
 #include <QDockWidget>
 #include <QStatusBar>
 #include <QString>
+#include <QHeaderView>
 
 #endif

@@ -6,7 +6,7 @@
 #include "login_dialog.hpp"
 #include "register_dialog.hpp"
 #include "profile_dialog.hpp"
-#include <QStatusBar>
+#include "book_list_widget.hpp"
 #include <functional>
 
 class TopBar : public QWidget {

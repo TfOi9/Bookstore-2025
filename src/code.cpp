@@ -22,6 +22,7 @@ int main() {
         if (!getline(std::cin, s)) {
             break;
         }
+        // std::cout << "command> " << s << std::endl;
         std::stringstream ss(s);
         while (ss >> t) {
             tokens.push_back(t);
@@ -64,6 +65,7 @@ int main() {
                 std::string msg = current_time() + " [LOGIN]User " + user_id + " logged in.";
                 // std::clog << msg << '\n';
                 log_manager.add_log(msg);
+                // account_manager.debug();
             }
             else {
                 std::cout << "Invalid\n";
@@ -82,6 +84,7 @@ int main() {
                 std::string msg = current_time() + " [LOGOUT]User " + user_id + " logged out.";
                 // std::clog << msg << '\n';
                 log_manager.add_log(msg);
+                // account_manager.debug();
             }
             else {
                 std::cout << "Invalid\n";
@@ -208,7 +211,13 @@ int main() {
                         std::cout << "Invalid\n";
                         continue;
                     }
-                    count = std::stoi(c);
+                    try {
+                        count = std::stoi(c);
+                    }
+                    catch (...) {
+                        std::cout << "Invalid\n";
+                        continue;
+                    }
                 }
                 if (count == 0) {
                     std::cout << '\n';
@@ -309,7 +318,14 @@ int main() {
                 std::cout << "Invalid\n";
                 continue;
             }
-            int quant = std::stoi(q);
+            int quant = 0;
+            try {
+                quant = std::stoi(q);
+            }
+            catch (...) {
+                std::cout << "Invalid\n";
+                continue;
+            }
             double cost = 0.00;
             bool buy_success = book_manager.buy(string_to_array<20>(ISBN), quant, cost);
             if (buy_success) {
@@ -449,10 +465,19 @@ int main() {
                     book_manager.modify_keyword(book.ISBN_, string_to_array<60>(it->second));
                 }
                 else if (it->first == "price") {
-                    book_manager.modify_price(book.ISBN_, std::stod(it->second));
+                    double new_price = 0.00;
+                    try {
+                        new_price = std::stod(it->second);
+                    }
+                    catch (...) {
+                        modify_success = false;
+                        break;
+                    }
+                    book_manager.modify_price(book.ISBN_, new_price);
                 }
                 else {
                     modify_success = false;
+                    break;
                 }
             }
             if (modify_success) {
@@ -487,8 +512,22 @@ int main() {
                 std::cout << "Invalid\n";
                 continue;
             }
-            int quant = std::stoi(q);
-            double cost = std::stod(tc);
+            int quant = 0;
+            try {
+                quant = std::stoi(q);
+            }
+            catch (...) {
+                std::cout << "Invalid\n";
+                continue;
+            }
+            double cost = 0.00;
+            try {
+                cost = std::stod(tc);
+            }
+            catch (...) {
+                std::cout << "Invalid\n";
+                continue;
+            }
             if (quant <= 0 || cost <= 0.00) {
                 std::cout << "Invalid\n";
                 continue;
