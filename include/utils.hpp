@@ -49,4 +49,6 @@ void vector_remove(std::vector<T>& vec, T val) {
     vec.erase(it, vec.end());
 }
 
+std::vector<std::string> tokenize(const std::string& str);
+
 #endif

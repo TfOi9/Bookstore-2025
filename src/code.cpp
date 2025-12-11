@@ -23,10 +23,11 @@ int main() {
             break;
         }
         // std::cout << "command> " << s << std::endl;
-        std::stringstream ss(s);
-        while (ss >> t) {
-            tokens.push_back(t);
-        }
+        // std::stringstream ss(s);
+        // while (ss >> t) {
+        //     tokens.push_back(t);
+        // }
+        tokens = tokenize(s);
         if (tokens.empty()) {
             continue;
         }

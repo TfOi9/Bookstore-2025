@@ -49,3 +49,23 @@ bool parse_number_argument(const std::string& arg, std::string& arg1, std::strin
     arg2 = arg.substr(pos + 1, len - pos - 1);
     return true;
 }
+
+std::vector<std::string> tokenize(const std::string& str) {
+    std::vector<std::string> tokens;
+    std::string token;
+    for (const char ch : str) {
+        if (ch == ' ') {
+            if (!token.empty()) {
+                tokens.push_back(token);
+            }
+            token.clear();
+        }
+        else {
+            token += ch;
+        }
+    }
+    if (!token.empty()) {
+        tokens.push_back(token);
+    }
+    return tokens;
+}
