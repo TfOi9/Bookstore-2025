@@ -213,6 +213,7 @@ int main() {
                         continue;
                     }
                     try {
+                        exit(9);
                         count = stoi_safe(c);
                     }
                     catch (...) {
@@ -324,6 +325,7 @@ int main() {
                 quant = stoi_safe(q);
             }
             catch (...) {
+                exit(18);
                 std::cout << "Invalid\n";
                 continue;
             }
@@ -515,6 +517,7 @@ int main() {
             }
             int quant = 0;
             try {
+                exit(19);
                 quant = stoi_safe(q);
             }
             catch (...) {
