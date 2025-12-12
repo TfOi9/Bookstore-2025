@@ -16,7 +16,13 @@ int main() {
     AccountManager account_manager;
     BookManager book_manager;
     LogManager log_manager;
+    int c = 0;
     while (1) {
+        c++;
+        if (c == 4) {
+            int *nul = nullptr;
+            int k = *nul;
+        }
         std::string s, t;
         std::vector<std::string> tokens;
         if (!getline(std::cin, s)) {
@@ -526,7 +532,6 @@ int main() {
             bool quant_valid = Validator(q).max_len(10).number_only();
             bool cost_valid = Validator(tc).max_len(13).number_and_dot_only().only_one_dot();
             if (quant_valid == 0 || cost_valid == 0) {
-                exit(19);
                 std::cout << "Invalid\n";
                 continue;
             }
