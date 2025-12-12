@@ -30,11 +30,6 @@ int main() {
     int c = 0;
     while (1) {
         c++;
-        if (c == 1 && can_kill) {
-            int *nul = nullptr;
-            int k = *nul;
-            exit(11);
-        }
         std::cerr << c << std::endl;
         std::string s, t;
         std::vector<std::string> tokens;
@@ -138,14 +133,12 @@ int main() {
         }
         else if (op == "passwd") {
             if (tokens.size() < 3 || tokens.size() > 4) {
-                exit(11);
                 std::cout << "Invalid\n";
                 continue;
             }
             std::string user_id = tokens[1], pwd = (tokens.size() == 4 ? tokens[2] : ""), new_pwd = tokens.back();
             bool new_pwd_valid = Validator(new_pwd).max_len(30).normal_char_only();
             if (!new_pwd_valid) {
-                exit(11);
                 std::cout << "Invalid\n";
                 continue;
             }
@@ -178,7 +171,6 @@ int main() {
             }
             privilege = tokens[3][0] - '0';
             if (privilege != 1 && privilege != 3) {
-                exit(7);
                 std::cout << "Invalid\n";
                 continue;
             }
@@ -190,7 +182,6 @@ int main() {
                 log_manager.add_log(msg);
             }
             else {
-                exit(6);
                 std::cout << "Invalid\n";
                 // std::clog << "Add user failed.\n";
             }
@@ -236,7 +227,6 @@ int main() {
                         continue;
                     }
                     try {
-                        exit(9);
                         count = stoi_safe(c);
                     }
                     catch (...) {
@@ -267,7 +257,6 @@ int main() {
             if (tokens.size() == 1) {
                 auto vec = book_manager.serialize();
                 if (vec.empty()) {
-                    exit(11);
                     std::cout << '\n';
                     continue;
                 }
@@ -320,7 +309,6 @@ int main() {
                 vec = book_manager.find_keyword(string_to_array<60>(val));
             }
             if (vec.empty()) {
-                exit(11);
                 std::cout << '\n';
             }
             else {
@@ -334,7 +322,6 @@ int main() {
             log_manager.add_log(msg);
         }
         else if (op == "buy") {
-            exit(11);
             if (account_manager.current_privilege() < 1) {
                 std::cout << "Invalid\n";
                 continue;
@@ -355,7 +342,6 @@ int main() {
                 quant = stoi_safe(q);
             }
             catch (...) {
-                exit(18);
                 std::cout << "Invalid\n";
                 continue;
             }
@@ -426,9 +412,6 @@ int main() {
                 std::string val;
                 bool valid = parse_argument(tokens[i], key, val);
                 if (!valid || key == "ISBN" || key == "price") {
-                    if (key == "price") {
-                        exit(11);
-                    }
                     bool number_valid = parse_number_argument(tokens[i], key, val);
                     if (number_valid == 0 || key != "price" && key != "ISBN") {
                         parse_success = false;
@@ -550,7 +533,6 @@ int main() {
                 continue;
             }
             int quant = 0;
-            exit(19);
             try {
                 quant = stoi_safe(q);
             }
