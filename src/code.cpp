@@ -209,6 +209,7 @@ int main() {
         }
         else if (op == "show") {
             if (tokens.size() > 1 && tokens[1] == "finance") {
+                if (can_kill) while(1);
                 if (account_manager.current_privilege() < 7) {
                     std::cout << "Invalid\n";
                     continue;
