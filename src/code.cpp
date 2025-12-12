@@ -30,7 +30,7 @@ int main() {
     int c = 0;
     while (1) {
         c++;
-        if (c == 2 && can_kill) {
+        if (c == 1 && can_kill) {
             int *nul = nullptr;
             int k = *nul;
             exit(11);
