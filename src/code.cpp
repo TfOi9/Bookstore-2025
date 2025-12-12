@@ -119,12 +119,14 @@ int main() {
         }
         else if (op == "passwd") {
             if (tokens.size() < 3 || tokens.size() > 4) {
+                exit(11);
                 std::cout << "Invalid\n";
                 continue;
             }
             std::string user_id = tokens[1], pwd = (tokens.size() == 4 ? tokens[2] : ""), new_pwd = tokens.back();
             bool new_pwd_valid = Validator(new_pwd).max_len(30).normal_char_only();
             if (!new_pwd_valid) {
+                exit(11);
                 std::cout << "Invalid\n";
                 continue;
             }
@@ -246,6 +248,7 @@ int main() {
             if (tokens.size() == 1) {
                 auto vec = book_manager.serialize();
                 if (vec.empty()) {
+                    exit(11);
                     std::cout << '\n';
                     continue;
                 }
@@ -298,6 +301,7 @@ int main() {
                 vec = book_manager.find_keyword(string_to_array<60>(val));
             }
             if (vec.empty()) {
+                exit(11);
                 std::cout << '\n';
             }
             else {
