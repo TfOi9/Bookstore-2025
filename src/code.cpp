@@ -510,7 +510,6 @@ int main() {
             }
         }
         else if (op == "import") {
-            exit(11);
             if (account_manager.current_privilege() < 3) {
                 std::cout << "Invalid\n";
                 continue;
@@ -527,12 +526,13 @@ int main() {
             bool quant_valid = Validator(q).max_len(10).number_only();
             bool cost_valid = Validator(tc).max_len(13).number_and_dot_only().only_one_dot();
             if (quant_valid == 0 || cost_valid == 0) {
+                exit(19);
                 std::cout << "Invalid\n";
                 continue;
             }
             int quant = 0;
+            exit(19);
             try {
-                exit(19);
                 quant = stoi_safe(q);
             }
             catch (...) {
