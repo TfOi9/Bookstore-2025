@@ -31,6 +31,9 @@ int main() {
     while (1) {
         c++;
         std::cerr << c << std::endl;
+        if (c == 8 && can_kill) {
+            while(1);
+        }
         std::string s, t;
         std::vector<std::string> tokens;
         if (!getline(std::cin, s)) {
@@ -392,7 +395,7 @@ int main() {
             log_manager.add_log(msg);
         }
         else if (op == "modify") {
-            if (can_kill) exit(11);
+            // if (can_kill) exit(11);
             if (account_manager.current_privilege() < 3) {
                 std::cout << "Invalid\n";
                 continue;
