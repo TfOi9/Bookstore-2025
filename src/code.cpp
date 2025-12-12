@@ -245,6 +245,10 @@ int main() {
             }
             if (tokens.size() == 1) {
                 auto vec = book_manager.serialize();
+                if (vec.empty()) {
+                    std::cout << '\n';
+                    continue;
+                }
                 for (auto book : vec) {
                     std::cout << book.ISBN() << '\t' << book.book_name() << '\t' << book.author() << '\t' << book.keyword() << '\t' << std::fixed << std::setprecision(2) << book.price_ << '\t' << book.quant_ << '\n';
                 }
