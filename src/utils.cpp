@@ -56,6 +56,9 @@ std::vector<std::string> tokenize(const std::string& str) {
     std::string token;
     for (const char ch : str) {
         if (ch == ' ') {
+            if (ch == '\r') {
+                continue;
+            }
             if (!token.empty()) {
                 tokens.push_back(token);
             }
