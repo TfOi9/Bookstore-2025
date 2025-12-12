@@ -1,4 +1,5 @@
 #include "../include/utils.hpp"
+#include <sstream>
 
 std::string current_time() {
     auto now = std::chrono::system_clock::now();
@@ -74,12 +75,38 @@ int stoi_safe(const std::string &str) {
     if (str.size() > 10 || (str.size() > 1 && str[0] == '0')) {
         throw std::invalid_argument("Invalid integer string");
     }
-    return std::stoi(str);
+    // return std::stoi(str);
+    std::istringstream iss(str);
+    long long val;
+    iss >> val;
+    if (!iss.eof()) {
+        iss >> std::ws;
+    }
+    if (iss.fail() || !iss.eof()) {
+        throw std::invalid_argument("Invalid integer string");
+    }
+    if (val > 2147483647ll) {
+        throw std::out_of_range("Integer value out of range");
+    }
+    return int(val);
 }
 
 double stod_safe(const std::string &str) {
     if (str.size() > 13 || str[0] == '.' || (str.size() > 1 && str[0] == '0' && str[1] != '.') || (str.size() > 0 && str.back() == '.')) {
         throw std::invalid_argument("Invalid double string");
     }
-    return std::stod(str);
+    // return std::stod(str);
+    std::istringstream iss(str);
+    double val;
+    iss >> val;
+    if (!iss.eof()) {
+        iss >> std::ws;
+    }
+    if (iss.fail() || !iss.eof()) {
+        throw std::invalid_argument("Invalid double string");
+    }
+    if (val > 1e11) {
+        throw std::out_of_range("Double value out of range");
+    }
+    return val;
 }
