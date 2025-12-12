@@ -6,6 +6,7 @@
 #include <set>
 #include <map>
 #include <iomanip>
+#include <fstream>
 #include "../include/account.hpp"
 #include "../include/book.hpp"
 #include "../include/log.hpp"
@@ -16,13 +17,25 @@ int main() {
     AccountManager account_manager;
     BookManager book_manager;
     LogManager log_manager;
+    std::fstream fin("count.txt", std::ios::in);
+    int t = 1;
+    bool can_kill = 0;
+    if (fin) {
+        fin >> t;
+    }
+    if (t == 4) {
+        can_kill = 1;
+    }
+
     int c = 0;
     while (1) {
         c++;
-        if (c == 4) {
+        if (c == 3 && can_kill) {
             int *nul = nullptr;
             int k = *nul;
+            exit(11);
         }
+        std::cerr << c << std::endl;
         std::string s, t;
         std::vector<std::string> tokens;
         if (!getline(std::cin, s)) {
@@ -393,6 +406,7 @@ int main() {
             log_manager.add_log(msg);
         }
         else if (op == "modify") {
+            if (can_kill) exit(11);
             if (account_manager.current_privilege() < 3) {
                 std::cout << "Invalid\n";
                 continue;
@@ -582,5 +596,11 @@ int main() {
             continue;
         }
     }
+
+    std::fstream fout("count.txt", std::ios::out);
+    if (fout) {
+        std::cerr << "Opened count.txt for writing.\n";
+    }
+    fout << t + 1;
     return 0;
 }
