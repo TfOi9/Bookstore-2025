@@ -510,6 +510,7 @@ int main() {
             }
         }
         else if (op == "import") {
+            exit(11);
             if (account_manager.current_privilege() < 3) {
                 std::cout << "Invalid\n";
                 continue;
