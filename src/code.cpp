@@ -315,6 +315,7 @@ int main() {
             log_manager.add_log(msg);
         }
         else if (op == "buy") {
+            exit(11);
             if (account_manager.current_privilege() < 1) {
                 std::cout << "Invalid\n";
                 continue;
@@ -405,6 +406,9 @@ int main() {
                 std::string val;
                 bool valid = parse_argument(tokens[i], key, val);
                 if (!valid || key == "ISBN" || key == "price") {
+                    if (key == "price") {
+                        exit(11);
+                    }
                     bool number_valid = parse_number_argument(tokens[i], key, val);
                     if (number_valid == 0 || key != "price" && key != "ISBN") {
                         parse_success = false;
