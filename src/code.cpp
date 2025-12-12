@@ -157,6 +157,7 @@ int main() {
             }
             privilege = tokens[3][0] - '0';
             if (privilege != 1 && privilege != 3) {
+                exit(7);
                 std::cout << "Invalid\n";
                 continue;
             }
@@ -168,6 +169,7 @@ int main() {
                 log_manager.add_log(msg);
             }
             else {
+                exit(6);
                 std::cout << "Invalid\n";
                 // std::clog << "Add user failed.\n";
             }
