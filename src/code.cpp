@@ -27,13 +27,19 @@ int main() {
         can_kill = 1;
     }
 
+    /*
+    final testpoint:
+     no show finance; no buy; no import; have show;
+     > 7 lines;
+    */
+
     int c = 0;
     while (1) {
         c++;
         std::cerr << c << std::endl;
-        // if (c == 8 && can_kill) {
-        //     while(1);
-        // }
+        if (c == 12 && can_kill) {
+            while(1);
+        }
         std::string s, t;
         std::vector<std::string> tokens;
         if (!getline(std::cin, s)) {
@@ -208,7 +214,6 @@ int main() {
             }
         }
         else if (op == "show") {
-            if (can_kill) while(1);
             if (tokens.size() > 1 && tokens[1] == "finance") {
                 if (account_manager.current_privilege() < 7) {
                     std::cout << "Invalid\n";
