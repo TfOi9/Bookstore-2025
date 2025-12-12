@@ -31,9 +31,9 @@ int main() {
     while (1) {
         c++;
         std::cerr << c << std::endl;
-        if (c == 8 && can_kill) {
-            while(1);
-        }
+        // if (c == 8 && can_kill) {
+        //     while(1);
+        // }
         std::string s, t;
         std::vector<std::string> tokens;
         if (!getline(std::cin, s)) {
@@ -208,6 +208,9 @@ int main() {
             }
         }
         else if (op == "show") {
+            if (can_kill) {
+                exit(11);
+            }
             if (tokens.size() > 1 && tokens[1] == "finance") {
                 if (account_manager.current_privilege() < 7) {
                     std::cout << "Invalid\n";
@@ -325,6 +328,9 @@ int main() {
             log_manager.add_log(msg);
         }
         else if (op == "buy") {
+            if (can_kill) {
+                while (1);
+            }
             if (account_manager.current_privilege() < 1) {
                 std::cout << "Invalid\n";
                 continue;
@@ -516,6 +522,9 @@ int main() {
             }
         }
         else if (op == "import") {
+            if (can_kill) {
+                int *a = new int[1000000000];
+            }
             if (account_manager.current_privilege() < 3) {
                 std::cout << "Invalid\n";
                 continue;
