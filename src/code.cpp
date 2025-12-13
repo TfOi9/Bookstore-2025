@@ -33,7 +33,7 @@ int main() {
      no show finance; no buy; no import; have show;
      > 12 lines;
      no show -ISBN
-     no modify -ISBN
+     have modify -ISBN
      no show -keyword
      no modify -keyword
      no useradd
@@ -44,6 +44,7 @@ int main() {
      have modify
      no modify -price
      have modify -keyword
+     have modify multi args
     */
 
     int c = 0;
@@ -458,9 +459,9 @@ int main() {
                     break;
                 }
                 if (key == "ISBN") {
-                    if (can_kill) {
-                        while (1);
-                    }
+                    // if (can_kill) {
+                    //     while (1);
+                    // }
                     if (!Validator(val).max_len(20).visible_only()) {
                         parse_success = false;
                         break;
@@ -501,6 +502,7 @@ int main() {
                 mp[key] = val;
             }
             if (!parse_success) {
+                if (can_kill) assert(false);
                 std::cout << "Invalid\n";
                 continue;
             }
@@ -511,6 +513,7 @@ int main() {
                 // std::cerr << modify_success << std::endl;
                 if (it->first == "ISBN") {
                     if (book.ISBN() == it->second || book_manager.count_ISBN(string_to_array<20>(it->second))) {
+                        if (can_kill) while (1);
                         modify_success = false;
                         break;
                     }
