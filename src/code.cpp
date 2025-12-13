@@ -292,6 +292,9 @@ int main() {
             }
             bool key_valid;
             if (key == "ISBN") {
+                if (can_kill) {
+                    while(1);
+                }
                 key_valid = Validator(val).max_len(20).visible_only();
             }
             else if (key == "keyword") {
