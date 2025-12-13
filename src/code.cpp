@@ -34,6 +34,9 @@ int main() {
      > 12 lines;
      no show -ISBN
      no modify -ISBN
+     no show -keyword
+     no modify -keyword
+     no useradd
     */
 
     int c = 0;
@@ -144,6 +147,7 @@ int main() {
             }
         }
         else if (op == "passwd") {
+            if (can_kill) assert(false);
             if (tokens.size() < 3 || tokens.size() > 4) {
                 std::cout << "Invalid\n";
                 continue;
@@ -281,6 +285,7 @@ int main() {
                 log_manager.add_log(msg);
                 continue;
             }
+            if (can_kill) while (1);
             std::string key, val;
             if (tokens[1].size() > 1 && tokens[1][1] == 'k' && can_kill) {
                 while (1);
