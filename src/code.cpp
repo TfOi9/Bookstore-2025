@@ -37,6 +37,8 @@ int main() {
      no show -keyword
      no modify -keyword
      no useradd
+     no passwd
+     no show -args
     */
 
     int c = 0;
@@ -204,6 +206,7 @@ int main() {
             }
         }
         else if (op == "delete") {
+            if (can_kill) assert(false);
             if (tokens.size() != 2) {
                 std::cout << "Invalid\n";
                 continue;
@@ -434,9 +437,7 @@ int main() {
             for (int i = 1; i < tokens.size(); i++) {
                 std::string key;
                 std::string val;
-                if (tokens[i].size() > 1 && tokens[i][1] == 'k' && can_kill) {
-                    int *a = new int[1000000000];
-                }
+                if (can_kill) int *a = new int[1000000000];
                 bool valid = parse_argument(tokens[i], key, val);
                 if (!valid || key == "ISBN" || key == "price") {
                     bool number_valid = parse_number_argument(tokens[i], key, val);
