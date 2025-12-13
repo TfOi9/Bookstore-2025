@@ -42,7 +42,7 @@ int main() {
      no delete
      no register
      have modify
-
+     no modify -price
     */
 
     int c = 0;
@@ -470,6 +470,7 @@ int main() {
                         break;
                     }
                     if (key == "keyword") {
+                        if (can_kill) assert(false);
                         auto key_words = parse_keywords(string_to_array<60>(val));
                         if (key_words.empty()) {
                             parse_success = false;
@@ -551,7 +552,7 @@ int main() {
         }
         else if (op == "import") {
             if (can_kill) {
-                int *a = new int[1000000000];
+                while (1);
             }
             if (account_manager.current_privilege() < 3) {
                 std::cout << "Invalid\n";
