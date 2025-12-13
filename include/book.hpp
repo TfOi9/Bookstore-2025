@@ -23,12 +23,16 @@ struct Book {
 
     ~Book() = default;
 
+    // returns ISBN as string.
     std::string ISBN() const;
 
+    // returns book name as string.
     std::string book_name() const;
 
+    // returns author as string.
     std::string author() const;
 
+    // returns keyword as string.
     std::string keyword() const;
 
     bool operator<(const Book& oth) const;
@@ -50,36 +54,52 @@ public:
 
     ~BookManager() = default;
 
+    // returns the number of books.
     int size() const;
 
+    // finds a book by id.
     Book find(int id);
 
+    // finds books by ISBN.
     std::vector<Book> find_ISBN(const std::array<char, 20>& ISBN);
 
+    // finds books by book name.
     std::vector<Book> find_book_name(const std::array<char, 60>& book_name);
 
+    // finds books by author.
     std::vector<Book> find_author(const std::array<char, 60>& author);
 
+    // finds books by keyword.
     std::vector<Book> find_keyword(const std::array<char, 60>& keyword);
 
+    // serializes all books.
     std::vector<Book> serialize();
 
+    // adds a new book.
     void add(Book& book);
 
+    // modifies book's ISBN.
     void modify_ISBN(const std::array<char, 20>& ISBN, const std::array<char, 20>& new_ISBN);
 
+    // modifies book's name.
     void modify_book_name(const std::array<char, 20>& ISBN, const std::array<char, 60>& new_book_name);
 
+    // modifies book's author.
     void modify_author(const std::array<char, 20>& ISBN, const std::array<char, 60>& new_author);
 
+    // modifies book's keyword.
     void modify_keyword(const std::array<char, 20>& ISBN, const std::array<char, 60>& new_keyword);
 
+    // modifies book's price.
     void modify_price(const std::array<char, 20>& ISBN, double new_price);
 
+    // imports books.
     bool import(const std::array<char, 20>& ISBN, int d_quant);
 
+    // buys books.
     bool buy(const std::array<char, 20>& ISBN, int quant, double& cost);
 
+    // counts book by ISBN.
     int count_ISBN(const std::array<char, 20>& ISBN);
 
 };

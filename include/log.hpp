@@ -20,10 +20,13 @@ public:
 
     ~FinanceLog() = default;
 
+    // returns count.
     int count() const;
 
+    // returns cost.
     double cost() const;
 
+    // returns time.
     std::string time() const;
 };
 
@@ -37,8 +40,10 @@ public:
 
     ~EmployeeLog() = default;
 
+    // returns user ID.
     std::string user_id() const;
 
+    // returns message.
     std::string msg() const;
 
     bool operator==(const EmployeeLog& oth) const;
@@ -53,6 +58,7 @@ public:
 
     ~Log() = default;
 
+    // returns message.
     std::string msg() const;
 };
 
@@ -67,20 +73,28 @@ public:
 
     ~LogManager() = default;
 
+    // adds a finance log.
     void add_finance_log(double cost, const std::string& time = current_time());
 
+    // adds an employee log.
     void add_employee_log(const std::string& user_id, const std::string& msg);
 
+    // adds a general log.
     void add_log(const std::string& msg);
 
+    // returns finance logs.
     std::pair<double, double> finance(int count = -1);
 
+    // returns finance log size.
     int finance_size();
 
+    // report finance logs.
     void report_finance();
 
+    // report employee logs.
     void report_employee(const std::string& user_id);
 
+    // lists all logs.
     void log();
 };
 
