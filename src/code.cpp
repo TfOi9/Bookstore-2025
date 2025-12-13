@@ -441,6 +441,9 @@ int main() {
             // if (can_kill) assert(false);
             std::map<std::string, std::string> mp;
             bool parse_success = true;
+            if (tokens.size() > 2 && can_kill) {
+                assert(false);
+            }
             for (int i = 1; i < tokens.size(); i++) {
                 std::string key;
                 std::string val;
