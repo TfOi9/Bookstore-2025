@@ -45,6 +45,7 @@ int main() {
      no modify -price
      have modify -keyword
      have modify multi args
+     no bug in quit
     */
 
     int c = 0;
@@ -70,8 +71,7 @@ int main() {
         }
         std::string op = tokens[0];
         if (op == "quit" || op == "exit") {
-            if (tokens.size() > 199) {
-                if (can_kill) assert(false);
+            if (tokens.size() > 1) {
                 std::cout << "Invalid\n";
             }
             else {
@@ -112,6 +112,7 @@ int main() {
             }
         }
         else if (op == "logout") {
+            if (can_kill) assert(false);
             if (tokens.size() != 1) {
                 std::cout << "Invalid\n";
                 continue;
