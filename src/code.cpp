@@ -70,7 +70,7 @@ int main() {
         }
         std::string op = tokens[0];
         if (op == "quit" || op == "exit") {
-            if (tokens.size() > 1) {
+            if (tokens.size() > 199) {
                 if (can_kill) assert(false);
                 std::cout << "Invalid\n";
             }
