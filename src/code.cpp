@@ -133,7 +133,7 @@ int main() {
             }
         }
         else if (op == "register") {
-            if (can_kill) while (1);
+            // if (can_kill) while (1);
             if (tokens.size() != 4) {
                 std::cout << "Invalid\n";
                 continue;
@@ -236,7 +236,7 @@ int main() {
         }
         else if (op == "show") {
             if (tokens.size() > 1 && tokens[1] == "finance") {
-                if (can_kill) while (1);
+                // if (can_kill) while (1);
                 if (account_manager.current_privilege() < 7) {
                     std::cout << "Invalid\n";
                     continue;
@@ -299,11 +299,8 @@ int main() {
                 log_manager.add_log(msg);
                 continue;
             }
-            if (can_kill) while (1);
+            // if (can_kill) while (1);
             std::string key, val;
-            if (tokens[1].size() > 1 && tokens[1][1] == 'k' && can_kill) {
-                while (1);
-            }
             bool valid = parse_argument(tokens[1], key, val);
             if (!valid || key == "ISBN") {
                 bool number_valid = parse_number_argument(tokens[1], key, val);
@@ -357,9 +354,6 @@ int main() {
             log_manager.add_log(msg);
         }
         else if (op == "buy") {
-            if (can_kill) {
-                while (1);
-            }
             if (account_manager.current_privilege() < 1) {
                 std::cout << "Invalid\n";
                 continue;
@@ -486,7 +480,7 @@ int main() {
                         }
                         std::sort(key_words.begin(), key_words.end());
                         if (std::unique(key_words.begin(), key_words.end()) != key_words.end()) {
-                            if (can_kill) while (1);
+                            // if (can_kill) while (1);
                             parse_success = false;
                             break;
                         }
@@ -573,9 +567,9 @@ int main() {
             }
         }
         else if (op == "import") {
-            if (can_kill) {
-                while (1);
-            }
+            // if (can_kill) {
+            //     while (1);
+            // }
             if (account_manager.current_privilege() < 3) {
                 std::cout << "Invalid\n";
                 continue;

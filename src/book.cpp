@@ -53,7 +53,7 @@ std::string Book::keyword() const {
 }
 
 bool Book::operator<(const Book& oth) const {
-    return ISBN_ < oth.ISBN_;
+    return ISBN() < oth.ISBN();
 }
 
 bool Book::operator==(const Book& oth) const {
