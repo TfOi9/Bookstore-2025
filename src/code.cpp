@@ -18,54 +18,12 @@ int main() {
     AccountManager account_manager;
     BookManager book_manager;
     LogManager log_manager;
-    std::fstream fin("count.txt", std::ios::in);
-    int t = 1;
-    bool can_kill = 0;
-    if (fin) {
-        fin >> t;
-    }
-    if (t == 4) {
-        can_kill = 1;
-    }
-
-    /*
-    final testpoint:
-     no show finance; no buy; no import; have show;
-     > 12 lines;
-     no show -ISBN
-     have modify -ISBN
-     no show -keyword
-     no modify -keyword
-     no useradd
-     no passwd
-     no show -args
-     no delete
-     no register
-     have modify
-     no modify -price
-     have modify -keyword
-     have modify multi args
-     no bug in quit
-     have logout
-    */
-
-    int c = 0;
     while (1) {
-        c++;
-        std::cerr << c << std::endl;
-        // if (c == 12 && can_kill) {
-        //     while(1);
-        // }
         std::string s, t;
         std::vector<std::string> tokens;
         if (!getline(std::cin, s)) {
             break;
         }
-        // std::cout << "command> " << s << std::endl;
-        // std::stringstream ss(s);
-        // while (ss >> t) {
-        //     tokens.push_back(t);
-        // }
         tokens = tokenize(s);
         if (tokens.empty()) {
             continue;
@@ -105,7 +63,6 @@ int main() {
                 std::string msg = current_time() + " [LOGIN]User " + user_id + " logged in.";
                 // std::clog << msg << '\n';
                 log_manager.add_log(msg);
-                // account_manager.debug();
             }
             else {
                 std::cout << "Invalid\n";
@@ -113,7 +70,6 @@ int main() {
             }
         }
         else if (op == "logout") {
-            // if (can_kill) assert(false);
             if (tokens.size() != 1) {
                 std::cout << "Invalid\n";
                 continue;
@@ -125,7 +81,6 @@ int main() {
                 std::string msg = current_time() + " [LOGOUT]User " + user_id + " logged out.";
                 // std::clog << msg << '\n';
                 log_manager.add_log(msg);
-                // account_manager.debug();
             }
             else {
                 std::cout << "Invalid\n";
@@ -133,7 +88,6 @@ int main() {
             }
         }
         else if (op == "register") {
-            // if (can_kill) while (1);
             if (tokens.size() != 4) {
                 std::cout << "Invalid\n";
                 continue;
@@ -159,7 +113,6 @@ int main() {
             }
         }
         else if (op == "passwd") {
-            // if (can_kill) assert(false);
             if (tokens.size() < 3 || tokens.size() > 4) {
                 std::cout << "Invalid\n";
                 continue;
@@ -183,7 +136,6 @@ int main() {
             }
         }
         else if (op == "useradd") {
-            // if (can_kill) assert(false);
             if (tokens.size() != 5) {
                 std::cout << "Invalid\n";
                 continue;
@@ -216,7 +168,6 @@ int main() {
             }
         }
         else if (op == "delete") {
-            // if (can_kill) assert(false);
             if (tokens.size() != 2) {
                 std::cout << "Invalid\n";
                 continue;
@@ -236,7 +187,6 @@ int main() {
         }
         else if (op == "show") {
             if (tokens.size() > 1 && tokens[1] == "finance") {
-                // if (can_kill) while (1);
                 if (account_manager.current_privilege() < 7) {
                     std::cout << "Invalid\n";
                     continue;
@@ -251,7 +201,6 @@ int main() {
                 }
                 int count = -1;
                 if (tokens.size() == 3) {
-                    // std::cerr << tokens[2] << std::endl;
                     std::string c = tokens[2];
                     if (!Validator(c).max_len(10).number_only()) {
                         std::cout << "Invalid\n";
@@ -299,7 +248,6 @@ int main() {
                 log_manager.add_log(msg);
                 continue;
             }
-            // if (can_kill) while (1);
             std::string key, val;
             bool valid = parse_argument(tokens[1], key, val);
             if (!valid || key == "ISBN") {
@@ -424,7 +372,6 @@ int main() {
             log_manager.add_log(msg);
         }
         else if (op == "modify") {
-            // if (can_kill) exit(11);
             if (account_manager.current_privilege() < 3) {
                 std::cout << "Invalid\n";
                 continue;
@@ -437,7 +384,6 @@ int main() {
                 std::cout << "Invalid\n";
                 continue;
             }
-            // if (can_kill) assert(false);
             std::map<std::string, std::string> mp;
             bool parse_success = true;
             for (int i = 1; i < tokens.size(); i++) {
@@ -452,14 +398,10 @@ int main() {
                     }
                 }
                 if (mp.count(key)) {
-                    // if (can_kill) while (1);
                     parse_success = false;
                     break;
                 }
                 if (key == "ISBN") {
-                    // if (can_kill) {
-                    //     while (1);
-                    // }
                     if (!Validator(val).max_len(20).visible_only()) {
                         parse_success = false;
                         break;
@@ -471,45 +413,37 @@ int main() {
                         break;
                     }
                     if (key == "keyword") {
-                        // if (can_kill) assert(false);
                         auto key_words = parse_keywords(string_to_array<60>(val));
                         if (key_words.empty()) {
-                            // if (can_kill) assert(false);
                             parse_success = false;
                             break;
                         }
                         std::sort(key_words.begin(), key_words.end());
                         if (std::unique(key_words.begin(), key_words.end()) != key_words.end()) {
-                            // if (can_kill) while (1);
                             parse_success = false;
                             break;
                         }
                     }
                 }
                 else if (key == "price") {
-                    // if (can_kill) assert(false);
                     if (!Validator(val).max_len(13).number_and_dot_only().only_one_dot()) {
                         parse_success = false;
                         break;
                     }
                 }
                 else {
-                    // if (can_kill) assert(false);
                     parse_success = false;
                     break;
                 }
                 mp[key] = val;
             }
             if (!parse_success) {
-                // if (can_kill) assert(false);
                 std::cout << "Invalid\n";
                 continue;
             }
             bool modify_success = true;
             Book book = book_manager.find(account_manager.selected_book());
             for (auto it = mp.begin(); it != mp.end(); it++) {
-                // std::cerr << it->first << " " << it->second << std::endl;
-                // std::cerr << modify_success << std::endl;
                 if (it->first == "ISBN") {
                     if (book.ISBN() == it->second) {
                         modify_success = false;
@@ -560,9 +494,6 @@ int main() {
             }
         }
         else if (op == "import") {
-            // if (can_kill) {
-            //     while (1);
-            // }
             if (account_manager.current_privilege() < 3) {
                 std::cout << "Invalid\n";
                 continue;
@@ -617,22 +548,16 @@ int main() {
                 // std::clog << "Import book failed.\n";
             }
         }
-        // else if (op == "report") {
+        else if (op == "report") {
 
-        // }
-        // else if (op == "log") {
+        }
+        else if (op == "log") {
 
-        // }
+        }
         else {
             std::cout << "Invalid\n";
             continue;
         }
     }
-
-    std::fstream fout("count.txt", std::ios::out);
-    if (fout) {
-        std::cerr << "Opened count.txt for writing.\n";
-    }
-    fout << t + 1;
     return 0;
 }
