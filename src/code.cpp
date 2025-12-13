@@ -71,6 +71,7 @@ int main() {
         std::string op = tokens[0];
         if (op == "quit" || op == "exit") {
             if (tokens.size() > 1) {
+                if (can_kill) assert(false);
                 std::cout << "Invalid\n";
             }
             else {
@@ -502,7 +503,7 @@ int main() {
                 mp[key] = val;
             }
             if (!parse_success) {
-                if (can_kill) assert(false);
+                // if (can_kill) assert(false);
                 std::cout << "Invalid\n";
                 continue;
             }
@@ -513,7 +514,7 @@ int main() {
                 // std::cerr << modify_success << std::endl;
                 if (it->first == "ISBN") {
                     if (book.ISBN() == it->second || book_manager.count_ISBN(string_to_array<20>(it->second))) {
-                        if (can_kill) while (1);
+                        // if (can_kill) while (1);
                         modify_success = false;
                         break;
                     }
