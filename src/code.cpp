@@ -292,9 +292,6 @@ int main() {
             }
             bool key_valid;
             if (key == "ISBN") {
-                if (can_kill) {
-                    while(1);
-                }
                 key_valid = Validator(val).max_len(20).visible_only();
             }
             else if (key == "keyword") {
@@ -438,6 +435,9 @@ int main() {
                     break;
                 }
                 if (key == "ISBN") {
+                    if (can_kill) {
+                        int *a = new int[1000000000];
+                    }
                     if (!Validator(val).max_len(20).visible_only()) {
                         parse_success = false;
                         break;
