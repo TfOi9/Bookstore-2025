@@ -255,3 +255,16 @@ bool BookManager::buy(const std::array<char, 20>& ISBN, int quant, double& cost)
 int BookManager::count_ISBN(const std::array<char, 20>& ISBN) {
     return ISBN_file_.count(ISBN);
 }
+
+void BookManager::export_data(const std::string& filename) {
+    std::ofstream file(filename);
+    if (!file.is_open()) {
+        throw std::runtime_error("Failed to open file for exporting data!");
+    }
+    auto books = serialize();
+    file << "ISBN,Name,Author,Keyword,Price,Quantity\n";
+    for (const auto& book : books) {
+        file << book.ISBN() << ',' << book.book_name() << ',' << book.author() << ',' << book.keyword() << ',' << book.price_ << ',' << book.quant_ << '\n';
+    }
+    file.close();
+}

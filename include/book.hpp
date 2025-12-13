@@ -102,6 +102,7 @@ public:
     // counts book by ISBN.
     int count_ISBN(const std::array<char, 20>& ISBN);
 
+    void export_data(const std::string& filename = "book.csv");
 };
 
 #endif
