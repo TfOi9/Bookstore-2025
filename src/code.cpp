@@ -477,26 +477,26 @@ int main() {
                         break;
                     }
                     if (key == "keyword") {
-                        // if (can_kill) assert(false);
-                        // auto key_words = parse_keywords(string_to_array<60>(val));
-                        // if (key_words.empty()) {
-                        //     if (can_kill) assert(false);
-                        //     parse_success = false;
-                        //     break;
-                        // }
-                        // std::sort(key_words.begin(), key_words.end());
-                        // if (std::unique(key_words.begin(), key_words.end()) != key_words.end()) {
-                        //     if (can_kill) while (1);
-                        //     parse_success = false;
-                        //     break;
-                        // }
-                        try {
-                            auto kw = split_string(val);
-                        }
-                        catch (...) {
+                        if (can_kill) assert(false);
+                        auto key_words = parse_keywords(string_to_array<60>(val));
+                        if (key_words.empty()) {
+                            if (can_kill) assert(false);
                             parse_success = false;
                             break;
                         }
+                        std::sort(key_words.begin(), key_words.end());
+                        if (std::unique(key_words.begin(), key_words.end()) != key_words.end()) {
+                            if (can_kill) while (1);
+                            parse_success = false;
+                            break;
+                        }
+                        // try {
+                        //     auto kw = split_string(val);
+                        // }
+                        // catch (...) {
+                        //     parse_success = false;
+                        //     break;
+                        // }
                     }
                 }
                 else if (key == "price") {
@@ -507,6 +507,7 @@ int main() {
                     }
                 }
                 else {
+                    if (can_kill) assert(false);
                     parse_success = false;
                     break;
                 }
@@ -523,8 +524,11 @@ int main() {
                 // std::cerr << it->first << " " << it->second << std::endl;
                 // std::cerr << modify_success << std::endl;
                 if (it->first == "ISBN") {
-                    if (book.ISBN() == it->second || book_manager.count_ISBN(string_to_array<20>(it->second))) {
+                    if (book.ISBN() == it->second) {
                         // if (can_kill) while (1);
+                        continue;
+                    }
+                    if (book_manager.count_ISBN(string_to_array<20>(it->second))) {
                         modify_success = false;
                         break;
                     }
