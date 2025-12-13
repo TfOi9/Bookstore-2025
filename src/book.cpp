@@ -264,7 +264,7 @@ void BookManager::export_data(const std::string& filename) {
     auto books = serialize();
     file << "ISBN,Name,Author,Keyword,Price,Quantity\n";
     for (const auto& book : books) {
-        file << book.ISBN() << ',' << book.book_name() << ',' << book.author() << ',' << book.keyword() << ',' << book.price_ << ',' << book.quant_ << '\n';
+        file << "\"" << book.ISBN() << "\",\"" << book.book_name() << "\",\"" << book.author() << "\",\"" << book.keyword() << "\"," << book.price_ << ',' << book.quant_ << '\n';
     }
     file.close();
 }
