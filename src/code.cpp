@@ -39,6 +39,7 @@ int main() {
      no useradd
      no passwd
      no show -args
+     no delete
     */
 
     int c = 0;
@@ -124,6 +125,7 @@ int main() {
             }
         }
         else if (op == "register") {
+            if (can_kill) assert(false);
             if (tokens.size() != 4) {
                 std::cout << "Invalid\n";
                 continue;
@@ -432,12 +434,12 @@ int main() {
                 std::cout << "Invalid\n";
                 continue;
             }
+            if (can_kill) assert(false);
             std::map<std::string, std::string> mp;
             bool parse_success = true;
             for (int i = 1; i < tokens.size(); i++) {
                 std::string key;
                 std::string val;
-                if (can_kill) int *a = new int[1000000000];
                 bool valid = parse_argument(tokens[i], key, val);
                 if (!valid || key == "ISBN" || key == "price") {
                     bool number_valid = parse_number_argument(tokens[i], key, val);
