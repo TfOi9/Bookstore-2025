@@ -6,7 +6,7 @@
 #include "login_dialog.hpp"
 #include "register_dialog.hpp"
 #include "profile_dialog.hpp"
-#include "book_list_widget.hpp"
+#include "book_table.hpp"
 #include <functional>
 
 class TopBar : public QWidget {
@@ -219,19 +219,34 @@ public:
         topBar = new TopBar(this);
         mainLayout->addWidget(topBar);
 
-        topBar->setAuthChangedCallback([this](const QString &s){ setStatusMessage(s); });
+        topBar->setAuthChangedCallback([this](const QString &s) { setStatusMessage(s); });
 
-        QTextEdit *contentArea = new QTextEdit();
-        contentArea->setPlaceholderText("这里是内容区域...");
-        contentArea->setStyleSheet("font-size: 14px; padding: 20px;");
-        mainLayout->addWidget(contentArea, 1);
+        stackedWidget = new QStackedWidget(centralWidget);
+
+        bookTable = new BookTable(stackedWidget);
+        stackedWidget->addWidget(bookTable);
+
+        // userTable = new UserTable(stackedWidget);
+        // stackedWidget->addWidget(userTable);
+
+        stackedWidget->setCurrentWidget(bookTable);
+
+        mainLayout->addWidget(stackedWidget, 1);
 
         setCentralWidget(centralWidget);
-        
+
         statusBar()->showMessage(QStringLiteral("游客模式"));
         resize(800, 600);
         setWindowTitle("BookStore");
     }
+
+    void switchToBookTable() {
+        stackedWidget->setCurrentWidget(bookTable);
+    }
+
+    // void switchToUserTable() {
+    //     stackedWidget->setCurrentWidget(userTable);
+    // }
 
     void setStatusMessage(const QString &msg, int timeout = 0) {
         statusBar()->showMessage(msg, timeout);
@@ -239,6 +254,9 @@ public:
 
 private:
     TopBar *topBar;
+    QStackedWidget *stackedWidget;
+    BookTable *bookTable;
+    // UserTable *userTable;
 };
 
 #endif

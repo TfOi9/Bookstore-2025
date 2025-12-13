@@ -32,6 +32,7 @@
 #include <QFrame>
 #include <QScrollArea>
 #include <QTabWidget>
+#include <QTableWidget>
 #include <QStackedWidget>
 #include <QToolBox>
 #include <QVBoxLayout>
