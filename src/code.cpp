@@ -484,13 +484,6 @@ int main() {
                             parse_success = false;
                             break;
                         }
-                        // try {
-                        //     auto kw = split_string(val);
-                        // }
-                        // catch (...) {
-                        //     parse_success = false;
-                        //     break;
-                        // }
                     }
                 }
                 else if (key == "price") {
@@ -519,8 +512,8 @@ int main() {
                 // std::cerr << modify_success << std::endl;
                 if (it->first == "ISBN") {
                     if (book.ISBN() == it->second) {
-                        // if (can_kill) while (1);
-                        continue;
+                        modify_success = false;
+                        break;
                     }
                     if (book_manager.count_ISBN(string_to_array<20>(it->second))) {
                         modify_success = false;
