@@ -385,7 +385,7 @@ int main() {
                 std::string msg = current_time() + " [BUY]User " + account_manager.current_user() + " bought " + q + " book(s). ISBN:" + ISBN;
                 // std::clog << msg << '\n';
                 log_manager.add_log(msg);
-                log_manager.add_finance_log(cost);
+                log_manager.add_finance_log(cost); 
             }
             else {
                 std::cout << "Invalid\n";
@@ -617,12 +617,12 @@ int main() {
                 // std::clog << "Import book failed.\n";
             }
         }
-        else if (op == "report") {
+        // else if (op == "report") {
 
-        }
-        else if (op == "log") {
+        // }
+        // else if (op == "log") {
 
-        }
+        // }
         else {
             std::cout << "Invalid\n";
             continue;
