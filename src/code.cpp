@@ -159,7 +159,7 @@ int main() {
             }
         }
         else if (op == "passwd") {
-            if (can_kill) assert(false);
+            // if (can_kill) assert(false);
             if (tokens.size() < 3 || tokens.size() > 4) {
                 std::cout << "Invalid\n";
                 continue;
@@ -183,7 +183,7 @@ int main() {
             }
         }
         else if (op == "useradd") {
-            if (can_kill) assert(false);
+            // if (can_kill) assert(false);
             if (tokens.size() != 5) {
                 std::cout << "Invalid\n";
                 continue;
@@ -216,7 +216,7 @@ int main() {
             }
         }
         else if (op == "delete") {
-            if (can_kill) assert(false);
+            // if (can_kill) assert(false);
             if (tokens.size() != 2) {
                 std::cout << "Invalid\n";
                 continue;
@@ -477,10 +477,10 @@ int main() {
                         break;
                     }
                     if (key == "keyword") {
-                        if (can_kill) assert(false);
+                        // if (can_kill) assert(false);
                         auto key_words = parse_keywords(string_to_array<60>(val));
                         if (key_words.empty()) {
-                            if (can_kill) assert(false);
+                            // if (can_kill) assert(false);
                             parse_success = false;
                             break;
                         }
@@ -500,14 +500,14 @@ int main() {
                     }
                 }
                 else if (key == "price") {
-                    if (can_kill) assert(false);
+                    // if (can_kill) assert(false);
                     if (!Validator(val).max_len(13).number_and_dot_only().only_one_dot()) {
                         parse_success = false;
                         break;
                     }
                 }
                 else {
-                    if (can_kill) assert(false);
+                    // if (can_kill) assert(false);
                     parse_success = false;
                     break;
                 }
