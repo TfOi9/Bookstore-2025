@@ -219,7 +219,11 @@ public:
         topBar = new TopBar(this);
         mainLayout->addWidget(topBar);
 
-        topBar->setAuthChangedCallback([this](const QString &s) { setStatusMessage(s); });
+        topBar->setAuthChangedCallback([this](const QString &s) {
+            setStatusMessage(s);
+            bookTable->refreshList();
+            // userTable->refreshList();
+        });
 
         stackedWidget = new QStackedWidget(centralWidget);
 
