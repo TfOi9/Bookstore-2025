@@ -21,7 +21,7 @@ bool parse_argument(const std::string& arg, std::string& arg1, std::string& arg2
             break;
         }
     }
-    if (pos >= len - 3) {
+    if (pos >= len - 3 || pos == -1) {
         return false;
     }
     if (arg[pos + 1] != '"' || arg[len - 1] != '"') {
@@ -43,7 +43,7 @@ bool parse_number_argument(const std::string& arg, std::string& arg1, std::strin
             break;
         }
     }
-    if (pos >= len - 1) {
+    if (pos >= len - 1 || pos == -1) {
         return false;
     }
     arg1 = arg.substr(1, pos - 1);
