@@ -31,6 +31,8 @@ int main() {
     final testpoint:
      no show finance; no buy; no import; have show;
      > 12 lines;
+     no show -ISBN (valid ISBN)
+     no modify -ISBN (valid ISBN)
     */
 
     int c = 0;
@@ -278,6 +280,9 @@ int main() {
                 continue;
             }
             std::string key, val;
+            if (tokens[1].size() > 1 && tokens[1][1] == 'I' && can_kill) {
+                while (1);
+            }
             bool valid = parse_argument(tokens[1], key, val);
             if (!valid || key == "ISBN") {
                 bool number_valid = parse_number_argument(tokens[1], key, val);
@@ -422,6 +427,9 @@ int main() {
             for (int i = 1; i < tokens.size(); i++) {
                 std::string key;
                 std::string val;
+                if (tokens[i].size() > 1 && tokens[i][1] == 'I' && can_kill) {
+                    int *a = new int[1000000000];
+                }
                 bool valid = parse_argument(tokens[i], key, val);
                 if (!valid || key == "ISBN" || key == "price") {
                     bool number_valid = parse_number_argument(tokens[i], key, val);
