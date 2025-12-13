@@ -83,7 +83,8 @@ public:
     // returns the selected book's id.
     int selected_book() const;
 
-    void debug();
+    // returns the list of admins.
+    std::vector<std::string> list_admins();
 };
 
 #endif

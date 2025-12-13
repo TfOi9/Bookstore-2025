@@ -549,10 +549,38 @@ int main() {
             }
         }
         else if (op == "report") {
-
+            if (tokens.size() != 2) {
+                std::cout << "Invalid\n";
+                continue;
+            }
+            if (tokens[1] == "finance") {
+                if (account_manager.current_privilege() < 7) {
+                    std::cout << "Invalid\n";
+                    continue;
+                }
+                log_manager.report_finance();
+            }
+            else if (tokens[1] == "employee") {
+                if (account_manager.current_privilege() < 7) {
+                    std::cout << "Invalid\n";
+                    continue;
+                }
+                auto vec = account_manager.list_admins();
+                for (auto user_id : vec) {
+                    log_manager.report_employee(user_id);
+                }
+            }
+            else {
+                std::cout << "Invalid\n";
+                continue;
+            }
         }
         else if (op == "log") {
-
+            if (account_manager.current_privilege() < 7) {
+                std::cout << "Invalid\n";
+                continue;
+            }
+            log_manager.log();
         }
         else {
             std::cout << "Invalid\n";

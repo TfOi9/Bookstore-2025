@@ -1,6 +1,6 @@
 #include "../include/log.hpp"
 
-FinanceLog::FinanceLog(int count, double cost) : count_(count), cost_(cost) {}
+FinanceLog::FinanceLog(int count, double cost, const std::string& time) : count_(count), cost_(cost), time_(string_to_array<20>(time)) {}
 
 int FinanceLog::count() const {
     return count_;
@@ -8,6 +8,10 @@ int FinanceLog::count() const {
 
 double FinanceLog::cost() const {
     return cost_;
+}
+
+std::string FinanceLog::time() const {
+    return array_to_string<20>(time_);
 }
 
 EmployeeLog::EmployeeLog(const std::string& user_id, const std::string& msg) {
@@ -40,8 +44,8 @@ LogManager::LogManager() : finance_file_("finance.dat"), employee_file_("employe
     log_file_.initialise();
 }
 
-void LogManager::add_finance_log(double cost) {
-    FinanceLog finance_log(finance_file_.size(), cost);
+void LogManager::add_finance_log(double cost, const std::string& time) {
+    FinanceLog finance_log(finance_file_.size(), cost, time);
     finance_file_.write(finance_log);
 }
 
@@ -76,4 +80,40 @@ std::pair<double, double> LogManager::finance(int count) {
 
 int LogManager::finance_size() {
     return finance_file_.size();
+}
+
+void LogManager::report_finance() {
+    double total_income = 0.00, total_expenditure = 0.00;
+    for (int i = 0; i < finance_file_.size(); i++) {
+        FinanceLog finance_log;
+        finance_file_.read(finance_log, i);
+        if (finance_log.cost_ > 0) {
+            total_income += finance_log.cost_;
+        }
+        else {
+            total_expenditure -= finance_log.cost_;
+        }
+        std::cout << finance_log.count() + 1 << ' ' << finance_log.time() << ' ' << (finance_log.cost() < 0 ? '-' : '+') << ' ' << std::fixed << std::setprecision(2) << std::abs(finance_log.cost()) << '\n';
+    }
+    std::cout << "Total Income: " << std::fixed << std::setprecision(2) << total_income << '\n';
+    std::cout << "Total Expenditure: " << std::fixed << std::setprecision(2) << total_expenditure << '\n';
+}
+
+void LogManager::report_employee(const std::string& user_id) {
+    std::array<char, 30> arr = string_to_array<30>(user_id);
+    std::vector<EmployeeLog> logs = employee_file_.find(arr);
+    if (!logs.empty()) {
+        std::cout << "Employee " << user_id << ":\n";
+    }
+    for (auto log : logs) {
+        std::cout << log.msg() << '\n';
+    }
+}
+
+void LogManager::log() {
+    for (int i = 0; i < log_file_.size(); i++) {
+        Log log;
+        log_file_.read(log, i);
+        std::cout << log.msg() << '\n';
+    }
 }

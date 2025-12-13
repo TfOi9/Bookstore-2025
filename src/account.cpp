@@ -177,10 +177,13 @@ int AccountManager::selected_book() const {
     return book_stack_.back();
 }
 
-void AccountManager::debug() {
-    std::cout << "ACCOUNT*STACK*";
-    for (auto acc : login_stack_) {
-        std::cout << acc.user_id() << " ";
+std::vector<std::string> AccountManager::list_admins() {
+    std::vector<std::string> admins;
+    auto list = account_file_.serialize();
+    for (auto account : list) {
+        if (account.privilege() >= 3) {
+            admins.push_back(account.user_id());
+        }
     }
-    std::cout << std::endl;
+    return admins;
 }

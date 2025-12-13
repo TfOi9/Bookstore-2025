@@ -14,14 +14,17 @@ private:
     int count_;
     double cost_;
     // + for income, - for expenditure
+    std::array<char, 20> time_;
 public:
-    FinanceLog(int count = 0, double cost = 0.00);
+    FinanceLog(int count = 0, double cost = 0.00, const std::string& time = "");
 
     ~FinanceLog() = default;
 
     int count() const;
 
     double cost() const;
+
+    std::string time() const;
 };
 
 class EmployeeLog {
@@ -64,7 +67,7 @@ public:
 
     ~LogManager() = default;
 
-    void add_finance_log(double cost);
+    void add_finance_log(double cost, const std::string& time = current_time());
 
     void add_employee_log(const std::string& user_id, const std::string& msg);
 
