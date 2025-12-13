@@ -30,16 +30,16 @@ int main() {
     /*
     final testpoint:
      no show finance; no buy; no import; have show;
-     > 7 lines;
+     > 12 lines;
     */
 
     int c = 0;
     while (1) {
         c++;
         std::cerr << c << std::endl;
-        if (c == 12 && can_kill) {
-            while(1);
-        }
+        // if (c == 12 && can_kill) {
+        //     while(1);
+        // }
         std::string s, t;
         std::vector<std::string> tokens;
         if (!getline(std::cin, s)) {
@@ -279,7 +279,7 @@ int main() {
             }
             std::string key, val;
             bool valid = parse_argument(tokens[1], key, val);
-            if (!valid) {
+            if (!valid || key == "ISBN") {
                 bool number_valid = parse_number_argument(tokens[1], key, val);
                 if (number_valid == 0 || key != "ISBN") {
                     std::cout << "Invalid\n";
