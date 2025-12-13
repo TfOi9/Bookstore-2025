@@ -46,6 +46,7 @@ int main() {
      have modify -keyword
      have modify multi args
      no bug in quit
+     have logout
     */
 
     int c = 0;
@@ -112,7 +113,7 @@ int main() {
             }
         }
         else if (op == "logout") {
-            if (can_kill) assert(false);
+            // if (can_kill) assert(false);
             if (tokens.size() != 1) {
                 std::cout << "Invalid\n";
                 continue;
@@ -235,6 +236,7 @@ int main() {
         }
         else if (op == "show") {
             if (tokens.size() > 1 && tokens[1] == "finance") {
+                if (can_kill) while (1);
                 if (account_manager.current_privilege() < 7) {
                     std::cout << "Invalid\n";
                     continue;
@@ -476,15 +478,22 @@ int main() {
                     }
                     if (key == "keyword") {
                         // if (can_kill) assert(false);
-                        auto key_words = parse_keywords(string_to_array<60>(val));
-                        if (key_words.empty()) {
-                            if (can_kill) assert(false);
-                            parse_success = false;
-                            break;
+                        // auto key_words = parse_keywords(string_to_array<60>(val));
+                        // if (key_words.empty()) {
+                        //     if (can_kill) assert(false);
+                        //     parse_success = false;
+                        //     break;
+                        // }
+                        // std::sort(key_words.begin(), key_words.end());
+                        // if (std::unique(key_words.begin(), key_words.end()) != key_words.end()) {
+                        //     if (can_kill) while (1);
+                        //     parse_success = false;
+                        //     break;
+                        // }
+                        try {
+                            auto kw = split_string(val);
                         }
-                        std::sort(key_words.begin(), key_words.end());
-                        if (std::unique(key_words.begin(), key_words.end()) != key_words.end()) {
-                            if (can_kill) while (1);
+                        catch (...) {
                             parse_success = false;
                             break;
                         }

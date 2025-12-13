@@ -116,3 +116,34 @@ double stod_safe(const std::string &str) {
     }
     return val;
 }
+
+std::vector<std::string> split_string(const std::string& str) {
+    std::set<std::string> seen;
+    std::string s;
+    for (int i = 0; i < str.size(); i++) {
+        if (!isprint(str[i]) || str[i] == '"') {
+            throw std::invalid_argument("Invalid string to split");
+        }
+        if (str[i] == '|') {
+            if (s.empty()) {
+                throw std::invalid_argument("Invalid string to split");
+            }
+            if (seen.count(s)) {
+                throw std::invalid_argument("Duplicate keyword found");
+            }
+            seen.insert(s);
+            s = "";
+        }
+        else {
+            s += str[i];
+        }
+    }
+    if (s.empty()) {
+        throw std::invalid_argument("Invalid string to split");
+    }
+    if (seen.count(s)) {
+        throw std::invalid_argument("Duplicate keyword found");
+    }
+    seen.insert(s);
+    return std::vector<std::string>(seen.begin(), seen.end());
+}

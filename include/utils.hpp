@@ -7,6 +7,8 @@
 #include <ctime>
 #include <sstream>
 #include <vector>
+#include <set>
+#include <cctype>
 #include <algorithm>
 
 template<int StringSize>
@@ -54,5 +56,7 @@ std::vector<std::string> tokenize(const std::string& str);
 int stoi_safe(const std::string& str);
 
 double stod_safe(const std::string& str);
+
+std::vector<std::string> split_string(const std::string& str);
 
 #endif
