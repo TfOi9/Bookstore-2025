@@ -167,7 +167,7 @@ int main() {
             }
         }
         else if (op == "useradd") {
-            assert(false);
+            if (can_kill) assert(false);
             if (tokens.size() != 5) {
                 std::cout << "Invalid\n";
                 continue;
