@@ -43,6 +43,7 @@ int main() {
      no register
      have modify
      no modify -price
+     have modify -keyword
     */
 
     int c = 0;
@@ -470,14 +471,16 @@ int main() {
                         break;
                     }
                     if (key == "keyword") {
-                        if (can_kill) assert(false);
+                        // if (can_kill) assert(false);
                         auto key_words = parse_keywords(string_to_array<60>(val));
                         if (key_words.empty()) {
+                            if (can_kill) assert(false);
                             parse_success = false;
                             break;
                         }
                         std::sort(key_words.begin(), key_words.end());
                         if (std::unique(key_words.begin(), key_words.end()) != key_words.end()) {
+                            if (can_kill) while (1);
                             parse_success = false;
                             break;
                         }
