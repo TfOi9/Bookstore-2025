@@ -441,9 +441,6 @@ int main() {
             // if (can_kill) assert(false);
             std::map<std::string, std::string> mp;
             bool parse_success = true;
-            if (tokens.size() > 2 && can_kill) {
-                assert(false);
-            }
             for (int i = 1; i < tokens.size(); i++) {
                 std::string key;
                 std::string val;
@@ -456,12 +453,13 @@ int main() {
                     }
                 }
                 if (mp.count(key)) {
+                    if (can_kill) while (1);
                     parse_success = false;
                     break;
                 }
                 if (key == "ISBN") {
                     if (can_kill) {
-                        int *a = new int[1000000000];
+                        assert(false);
                     }
                     if (!Validator(val).max_len(20).visible_only()) {
                         parse_success = false;
