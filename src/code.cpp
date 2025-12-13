@@ -453,13 +453,13 @@ int main() {
                     }
                 }
                 if (mp.count(key)) {
-                    if (can_kill) while (1);
+                    // if (can_kill) while (1);
                     parse_success = false;
                     break;
                 }
                 if (key == "ISBN") {
                     if (can_kill) {
-                        assert(false);
+                        while (1);
                     }
                     if (!Validator(val).max_len(20).visible_only()) {
                         parse_success = false;
