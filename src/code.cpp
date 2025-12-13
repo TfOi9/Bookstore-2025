@@ -125,7 +125,7 @@ int main() {
             }
         }
         else if (op == "register") {
-            if (can_kill) assert(false);
+            if (can_kill) while (1);
             if (tokens.size() != 4) {
                 std::cout << "Invalid\n";
                 continue;
