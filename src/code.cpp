@@ -40,6 +40,9 @@ int main() {
      no passwd
      no show -args
      no delete
+     no register
+     have modify
+
     */
 
     int c = 0;
@@ -434,7 +437,7 @@ int main() {
                 std::cout << "Invalid\n";
                 continue;
             }
-            if (can_kill) assert(false);
+            // if (can_kill) assert(false);
             std::map<std::string, std::string> mp;
             bool parse_success = true;
             for (int i = 1; i < tokens.size(); i++) {
@@ -480,6 +483,7 @@ int main() {
                     }
                 }
                 else if (key == "price") {
+                    if (can_kill) assert(false);
                     if (!Validator(val).max_len(13).number_and_dot_only().only_one_dot()) {
                         parse_success = false;
                         break;
