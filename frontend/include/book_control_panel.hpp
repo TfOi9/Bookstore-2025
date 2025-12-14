@@ -3,6 +3,7 @@
 
 #include "qt_common.hpp"
 #include "globals.hpp"
+#include "add_book_dialog.hpp"
 
 class BookControlPanel : public QWidget {
     Q_OBJECT
@@ -10,6 +11,9 @@ public:
     BookControlPanel(QWidget *parent = nullptr);
 
     void refreshPanel();
+
+signals:
+    void bookListChanged();
 
 private slots:
     void onAddButtonClicked();

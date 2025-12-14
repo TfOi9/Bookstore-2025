@@ -67,6 +67,10 @@ public:
         mainLayout->addWidget(stackedPanel, 0);
         stackedPanel->setFixedHeight(60);
 
+        connect(bookControlPanel, &BookControlPanel::bookListChanged, this, [this]{
+            bookTable->refreshTable();
+        });
+
         statusBar()->showMessage(QStringLiteral("游客模式"));
         
         resize(800, 600);

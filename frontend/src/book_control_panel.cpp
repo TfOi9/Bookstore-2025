@@ -1,5 +1,5 @@
 #include "book_control_panel.hpp"
-#include "globals.hpp"
+#include "add_book_dialog.hpp"
 
 BookControlPanel::BookControlPanel(QWidget *parent) : QWidget(parent) {
     addButton = new QPushButton("添加", this);
@@ -31,6 +31,9 @@ BookControlPanel::BookControlPanel(QWidget *parent) : QWidget(parent) {
 
 void BookControlPanel::onAddButtonClicked() {
     qDebug() << "Add button clicked";
+    AddBookDialog dialog(this);
+    dialog.exec();
+    emit bookListChanged();
 }
 
 void BookControlPanel::onBuyButtonClicked() {
