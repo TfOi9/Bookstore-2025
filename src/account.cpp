@@ -187,3 +187,7 @@ std::vector<std::string> AccountManager::list_admins() {
     }
     return admins;
 }
+
+std::vector<Account> AccountManager::serialize() {
+    return account_file_.serialize();
+}

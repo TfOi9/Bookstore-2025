@@ -15,8 +15,9 @@ public:
     void setAuthChangedCallback(const std::function<void(const QString &)> &cb) { authChangedCallback = cb; }
 
 signals:
+    void accountButtonClicked();
     void bookButtonClicked();
-    
+    void logButtonClicked();
     void authChanged(const QString &message);
 
 private slots:

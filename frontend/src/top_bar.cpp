@@ -84,6 +84,7 @@ void TopBar::onProfileButtonClicked() {
 
 void TopBar::onAccountButtonClicked() {
     qDebug() << "账户管理按钮被点击";
+    emit accountButtonClicked();
 }
 
 void TopBar::onBookButtonClicked() {
@@ -93,6 +94,7 @@ void TopBar::onBookButtonClicked() {
 
 void TopBar::onLogButtonClicked() {
     qDebug() << "日志管理按钮被点击";
+    emit logButtonClicked();
 }
 
 void TopBar::refreshBar() {

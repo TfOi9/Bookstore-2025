@@ -1,7 +1,5 @@
 #include "book_control_panel.hpp"
 #include "globals.hpp"
-#include <QtCore/qnamespace.h>
-#include <QtWidgets/qwidget.h>
 
 BookControlPanel::BookControlPanel(QWidget *parent) : QWidget(parent) {
     addButton = new QPushButton("添加", this);

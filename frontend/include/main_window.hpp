@@ -6,6 +6,8 @@
 #include "login_dialog.hpp"
 #include "register_dialog.hpp"
 #include "profile_dialog.hpp"
+#include "account_table.hpp"
+#include "account_control_panel.hpp"
 #include "book_table.hpp"
 #include "book_control_panel.hpp"
 #include "top_bar.hpp"
@@ -23,13 +25,23 @@ public:
         mainLayout->addWidget(topBar);
 
         connect(topBar, &TopBar::authChanged, this, [this](const QString &s){
+            stackedTable->setCurrentWidget(bookTable);
+            stackedPanel->setCurrentWidget(bookControlPanel);
             bookTable->refreshTable();
             bookControlPanel->refreshPanel();
             setStatusMessage(s);
         });
+
+        connect(topBar, &TopBar::accountButtonClicked, this, [this]{
+            stackedTable->setCurrentWidget(accountTable);
+            stackedPanel->setCurrentWidget(accountControlPanel);
+            accountTable->refreshTable();
+            accountControlPanel->refreshPanel();
+        });
         
         connect(topBar, &TopBar::bookButtonClicked, this, [this]{
             stackedTable->setCurrentWidget(bookTable);
+            stackedPanel->setCurrentWidget(bookControlPanel);
             bookTable->refreshTable();
             bookControlPanel->refreshPanel();
         });
@@ -37,14 +49,17 @@ public:
         stackedTable = new QStackedWidget(centralWidget);
         stackedPanel = new QStackedWidget(centralWidget);
 
+        accountTable = new AccountTable(stackedTable);
         bookTable = new BookTable(stackedTable);
-        // userTable = new UserTable(stackedTable);
+
+        accountControlPanel = new AccountControlPanel(stackedPanel);
         bookControlPanel = new BookControlPanel(stackedPanel);
 
+        stackedTable->addWidget(accountTable);
         stackedTable->addWidget(bookTable);
-        // stackedTable->addWidget(userTable);
         stackedTable->setCurrentWidget(bookTable);
 
+        stackedPanel->addWidget(accountControlPanel);
         stackedPanel->addWidget(bookControlPanel);
         stackedPanel->setCurrentWidget(bookControlPanel);
 
@@ -69,10 +84,13 @@ public:
 
 private:
     TopBar *topBar;
+
     QStackedWidget *stackedTable;
+    AccountTable *accountTable;
     BookTable *bookTable;
-    // UserTable *userTable;
+
     QStackedWidget *stackedPanel;
+    AccountControlPanel *accountControlPanel;
     BookControlPanel *bookControlPanel;
 
 };

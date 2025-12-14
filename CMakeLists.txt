@@ -33,6 +33,8 @@ add_executable(
     src/account.cpp src/book.cpp src/log.cpp
     src/utils.cpp src/validator.cpp
     frontend/src/globals.cpp
+    frontend/include/account_table.hpp frontend/src/account_table.cpp
+    frontend/include/account_control_panel.hpp frontend/src/account_control_panel.cpp
     frontend/include/book_table.hpp frontend/src/book_table.cpp
     frontend/include/book_control_panel.hpp frontend/src/book_control_panel.cpp 
     frontend/include/top_bar.hpp frontend/src/top_bar.cpp

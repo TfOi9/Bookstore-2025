@@ -85,6 +85,10 @@ public:
 
     // returns the list of admins.
     std::vector<std::string> list_admins();
+
+    // serializes all accounts.
+    std::vector<Account> serialize();
+    
 };
 
 #endif
