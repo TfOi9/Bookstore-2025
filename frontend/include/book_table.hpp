@@ -9,7 +9,7 @@ class BookTable : public QTableWidget {
 public:
     BookTable(QWidget* parent = nullptr);
 
-    void refreshList();
+    void refreshTable();
 
 };
 

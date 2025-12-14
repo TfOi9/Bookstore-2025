@@ -17,7 +17,7 @@ BookTable::BookTable(QWidget* parent) : QTableWidget(parent) {
     setSelectionMode(QAbstractItemView::SingleSelection);
 }
 
-void BookTable::refreshList() {
+void BookTable::refreshTable() {
     clearContents();
     if (account_manager->current_privilege() < 1) {
         setRowCount(0);

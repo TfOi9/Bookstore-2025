@@ -3,7 +3,6 @@
 
 #include "qt_common.hpp"
 #include "globals.hpp"
-#include "book.hpp"
 
 class BookControlPanel : public QWidget {
     Q_OBJECT
