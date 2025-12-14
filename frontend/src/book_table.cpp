@@ -9,8 +9,8 @@ BookTable::BookTable(QWidget* parent) : QTableWidget(parent) {
     setColumnWidth(1, 150);
     setColumnWidth(2, 150);
     setColumnWidth(3, 150);
-    setColumnWidth(4, 100);
-    setColumnWidth(5, 100);
+    setColumnWidth(4, 99);
+    setColumnWidth(5, 99);
     verticalHeader()->setVisible(false);
     setEditTriggers(QAbstractItemView::NoEditTriggers);
     setSelectionBehavior(QAbstractItemView::SelectRows);

@@ -7,6 +7,7 @@
 #include "register_dialog.hpp"
 #include "profile_dialog.hpp"
 #include "book_table.hpp"
+#include "book_control_panel.hpp"
 #include <functional>
 
 class TopBar : public QWidget {
@@ -20,18 +21,13 @@ private:
     void setupUI() {
         QHBoxLayout *layout = new QHBoxLayout(this);
         layout->setContentsMargins(20, 10, 20, 10);
-        layout->setSpacing(0);
+        layout->setSpacing(5);
 
         titleLabel = new QLabel("BookStore", this);
-
         loginButton = new QPushButton("登录", this);
-        
         registerButton = new QPushButton("注册", this);
-
         accountButton = new QPushButton("账户管理", this);
-
         bookButton = new QPushButton("图书管理", this);
-
         logButton = new QPushButton("日志管理", this);
 
         userButton = new QPushButton(this);
@@ -211,56 +207,58 @@ private:
 class MainWindow : public QMainWindow {
 public:
     MainWindow(QWidget *parent = nullptr) : QMainWindow(parent) {
-        QWidget *centralWidget = new QWidget(this);
-        QVBoxLayout *mainLayout = new QVBoxLayout(centralWidget);
-        mainLayout->setContentsMargins(0, 0, 0, 0);
-        mainLayout->setSpacing(0);
+    QWidget *centralWidget = new QWidget(this);
+    QVBoxLayout *mainLayout = new QVBoxLayout(centralWidget);
+    mainLayout->setContentsMargins(0, 0, 0, 0);
+    mainLayout->setSpacing(0);
 
-        topBar = new TopBar(this);
-        mainLayout->addWidget(topBar);
+    topBar = new TopBar(this);
+    mainLayout->addWidget(topBar);
 
-        topBar->setAuthChangedCallback([this](const QString &s) {
-            setStatusMessage(s);
-            bookTable->refreshList();
-            // userTable->refreshList();
-        });
+    topBar->setAuthChangedCallback([this](const QString &s) {
+        bookTable->refreshList();
+        bookControlPanel->refreshPanel();
+        setStatusMessage(s);
+    });
 
-        stackedWidget = new QStackedWidget(centralWidget);
+    stackedTable = new QStackedWidget(centralWidget);
+    stackedPanel = new QStackedWidget(centralWidget);
 
-        bookTable = new BookTable(stackedWidget);
-        stackedWidget->addWidget(bookTable);
+    bookTable = new BookTable(stackedTable);
+    // userTable = new UserTable(stackedTable);
+    bookControlPanel = new BookControlPanel(stackedPanel);
 
-        // userTable = new UserTable(stackedWidget);
-        // stackedWidget->addWidget(userTable);
+    stackedTable->addWidget(bookTable);
+    // stackedTable->addWidget(userTable);
+    stackedTable->setCurrentWidget(bookTable);
 
-        stackedWidget->setCurrentWidget(bookTable);
+    stackedPanel->addWidget(bookControlPanel);
+    stackedPanel->setCurrentWidget(bookControlPanel);
 
-        mainLayout->addWidget(stackedWidget, 1);
+    mainLayout->addWidget(stackedTable, 1);
+    mainLayout->addWidget(stackedPanel, 0);
+    stackedPanel->setFixedHeight(60);
 
-        setCentralWidget(centralWidget);
+    statusBar()->showMessage(QStringLiteral("游客模式"));
+    
+    resize(800, 600);
+    setWindowTitle("BookStore");
 
-        statusBar()->showMessage(QStringLiteral("游客模式"));
-        resize(800, 600);
-        setWindowTitle("BookStore");
-    }
-
-    void switchToBookTable() {
-        stackedWidget->setCurrentWidget(bookTable);
-    }
-
-    // void switchToUserTable() {
-    //     stackedWidget->setCurrentWidget(userTable);
-    // }
-
+    setCentralWidget(centralWidget);
+}
     void setStatusMessage(const QString &msg, int timeout = 0) {
         statusBar()->showMessage(msg, timeout);
     }
 
+
 private:
     TopBar *topBar;
-    QStackedWidget *stackedWidget;
+    QStackedWidget *stackedTable;
     BookTable *bookTable;
     // UserTable *userTable;
+    QStackedWidget *stackedPanel;
+    BookControlPanel *bookControlPanel;
+
 };
 
 #endif
