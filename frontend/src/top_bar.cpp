@@ -111,11 +111,18 @@ void TopBar::refreshBar() {
         registerButton->show();
     }
     int pri = account_manager->current_privilege();
-    if (pri >= 3) {
+    if (pri == 7) {
         accountButton->show();
         bookButton->setText("书籍管理");
         bookButton->show();
         logButton->show();
+        userButton->show();
+    }
+    else if (pri == 3) {
+        accountButton->show();
+        bookButton->setText("书籍管理");
+        bookButton->show();
+        logButton->hide();
         userButton->show();
     }
     else if (pri == 1) {
