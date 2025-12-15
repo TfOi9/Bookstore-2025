@@ -11,6 +11,12 @@ public:
 
     void refreshTable();
 
+signals:
+    void bookSelected(const QString& ISBN);
+
+private slots:
+    void handleSelectionChanged();
+
 };
 
 #endif

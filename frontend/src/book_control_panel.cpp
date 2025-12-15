@@ -1,5 +1,6 @@
 #include "book_control_panel.hpp"
 #include "add_book_dialog.hpp"
+#include "buy_dialog.hpp"
 
 BookControlPanel::BookControlPanel(QWidget *parent) : QWidget(parent) {
     addButton = new QPushButton("添加", this);
@@ -29,6 +30,11 @@ BookControlPanel::BookControlPanel(QWidget *parent) : QWidget(parent) {
     refreshPanel();
 }
 
+void BookControlPanel::onBookSelected(const QString& ISBN) {
+    qDebug() << "Book selected:" << ISBN;
+    currentSelectedISBN = ISBN;
+}
+
 void BookControlPanel::onAddButtonClicked() {
     qDebug() << "Add button clicked";
     AddBookDialog dialog(this);
@@ -38,6 +44,13 @@ void BookControlPanel::onAddButtonClicked() {
 
 void BookControlPanel::onBuyButtonClicked() {
     qDebug() << "Buy button clicked";
+    if (currentSelectedISBN.isEmpty()) {
+        QMessageBox::warning(this, "错误", "请先选择图书！");
+        return;
+    }
+    BuyDialog dialog(currentSelectedISBN, this);
+    dialog.exec();
+    emit bookListChanged();
 }
 
 void BookControlPanel::onModifyButtonClicked() {
@@ -95,4 +108,8 @@ void BookControlPanel::applyStyle() {
             color: #333333;
         }
     )");
+}
+
+QString BookControlPanel::selectedISBN() const {
+    return currentSelectedISBN;
 }

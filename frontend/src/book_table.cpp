@@ -1,5 +1,6 @@
 #include "book_table.hpp"
 #include "globals.hpp"
+#include <QDateTime>
 
 BookTable::BookTable(QWidget* parent) : QTableWidget(parent) {
     setColumnCount(6);
@@ -15,6 +16,7 @@ BookTable::BookTable(QWidget* parent) : QTableWidget(parent) {
     setEditTriggers(QAbstractItemView::NoEditTriggers);
     setSelectionBehavior(QAbstractItemView::SelectRows);
     setSelectionMode(QAbstractItemView::SingleSelection);
+    connect(this, &QTableWidget::itemSelectionChanged, this, &BookTable::handleSelectionChanged);
 }
 
 void BookTable::refreshTable() {
@@ -35,4 +37,16 @@ void BookTable::refreshTable() {
         setItem(i, 5, new QTableWidgetItem(QString::number(book.quant_)));
     }
     resizeRowsToContents();
+}
+
+void BookTable::handleSelectionChanged() {
+    auto items = selectedItems();
+    if (items.isEmpty()) {
+        return;
+    }
+    int row = items.first()->row();
+    QTableWidgetItem* ISBNItem = item(row, 0);
+    if (!ISBNItem) return;
+    QString ISBN = ISBNItem->text();
+    emit bookSelected(ISBN);
 }

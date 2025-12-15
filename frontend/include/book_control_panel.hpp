@@ -22,6 +22,9 @@ private slots:
     void onImportButtonClicked();
     void onSearchButtonClicked();
 
+public slots:
+    void onBookSelected(const QString& ISBN);
+
 private:
     QPushButton *addButton;
     QPushButton *buyButton;
@@ -30,6 +33,11 @@ private:
     QPushButton *searchButton;
 
     void applyStyle();
+    
+    QString currentSelectedISBN;
+
+public:
+    QString selectedISBN() const;
 
 };
 
