@@ -8,6 +8,8 @@ int main(int argc, char *argv[]) {
     log_manager = new LogManager();
 
     QApplication app(argc, argv);
+
+    // qRegisterMetaType<std::vector<Book>>("std::vector<Book>");
     
     MainWindow window;
     window.show();

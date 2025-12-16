@@ -17,6 +17,8 @@ public:
 signals:
     void bookListChanged();
 
+    void searchedBooks(const std::vector<Book>& books);
+
 private slots:
     void onAddButtonClicked();
     void onBuyButtonClicked();

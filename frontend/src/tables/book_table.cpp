@@ -1,6 +1,7 @@
 #include "book_table.hpp"
 #include "globals.hpp"
 #include <QDateTime>
+#include <QtCore/qlogging.h>
 
 BookTable::BookTable(QWidget* parent) : QTableWidget(parent) {
     setColumnCount(6);
@@ -17,15 +18,19 @@ BookTable::BookTable(QWidget* parent) : QTableWidget(parent) {
     setSelectionBehavior(QAbstractItemView::SelectRows);
     setSelectionMode(QAbstractItemView::SingleSelection);
     connect(this, &QTableWidget::itemSelectionChanged, this, &BookTable::handleSelectionChanged);
+    books_ = book_manager->serialize();
 }
 
-void BookTable::refreshTable() {
+void BookTable::refreshTable(bool update) {
     clearContents();
     if (account_manager->current_privilege() < 1) {
         setRowCount(0);
         return;
     }
-    const auto& books = book_manager->serialize();
+    std::vector<Book> books;
+    if (update) books = book_manager->serialize();
+    else books = books_;
+    books_ = books;
     setRowCount(books.size());
     for (int i = 0; i < books.size(); i++) {
         const auto& book = books[i];
@@ -49,4 +54,16 @@ void BookTable::handleSelectionChanged() {
     if (!ISBNItem) return;
     QString ISBN = ISBNItem->text();
     emit bookSelected(ISBN);
+}
+
+void BookTable::updateBooks(const std::vector<Book>& books) {
+    qDebug() << "Updating books in BookTable, new size:" << books.size();
+    books_ = books;
+    refreshTable();
+}
+
+void BookTable::handleSearch(const std::vector<Book>& books) {
+    qDebug() << "Handling search in BookTable, result size:" << books.size();
+    books_ = books;
+    refreshTable(0);
 }

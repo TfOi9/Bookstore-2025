@@ -73,6 +73,8 @@ public:
             bookTable->refreshTable();
         });
 
+        connect(bookControlPanel, &BookControlPanel::searchedBooks, bookTable, &BookTable::handleSearch);
+
         statusBar()->showMessage(QStringLiteral("游客模式"));
         
         resize(800, 600);

@@ -3,6 +3,7 @@
 #include "buy_dialog.hpp"
 #include "globals.hpp"
 #include "modify_book_dialog.hpp"
+#include "search_book_dialog.hpp"
 #include "utils.hpp"
 
 BookControlPanel::BookControlPanel(QWidget *parent) : QWidget(parent) {
@@ -81,6 +82,8 @@ void BookControlPanel::onImportButtonClicked() {
 
 void BookControlPanel::onSearchButtonClicked() {
     qDebug() << "Search button clicked";
+    SearchBookDialog dialog(this);
+    dialog.exec();
 }
 
 void BookControlPanel::refreshPanel() {
