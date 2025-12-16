@@ -222,6 +222,10 @@ int main() {
                     std::cout << "Invalid\n";
                     continue;
                 }
+                // std::clog << "Show finance success.\n";
+                std::string msg = current_time() + " [FIND]User " + account_manager.current_user() + " showed finance.";
+                // std::clog << msg << '\n';
+                log_manager.add_log(msg);
                 auto p = log_manager.finance(count);
                 std::cout << "+ " << std::fixed << std::setprecision(2) << p.first << " - " << std::fixed << std::setprecision(2) << p.second << '\n';
                 continue;
@@ -558,6 +562,10 @@ int main() {
                     std::cout << "Invalid\n";
                     continue;
                 }
+                // std::clog << "Report finance success.\n";
+                std::string msg = current_time() + " [REPORT]User " + account_manager.current_user() + " reported finance.";
+                // std::clog << msg << '\n';
+                log_manager.add_log(msg);
                 log_manager.report_finance();
             }
             else if (tokens[1] == "employee") {
@@ -565,6 +573,10 @@ int main() {
                     std::cout << "Invalid\n";
                     continue;
                 }
+                // std::clog << "Report employee success.\n";
+                std::string msg = current_time() + " [REPORT]User " + account_manager.current_user() + " reported employee.";
+                // std::clog << msg << '\n';
+                log_manager.add_log(msg);
                 auto vec = account_manager.list_admins();
                 for (auto user_id : vec) {
                     log_manager.report_employee(user_id);
@@ -580,6 +592,10 @@ int main() {
                 std::cout << "Invalid\n";
                 continue;
             }
+            // std::clog << "Log success.\n";
+            std::string msg = current_time() + " [REPORT]User " + account_manager.current_user() + " viewed logs.";
+            // std::clog << msg << '\n';
+            log_manager.add_log(msg);
             log_manager.log();
         }
         else {
