@@ -1,5 +1,6 @@
 #include "account_control_panel.hpp"
 #include "account.hpp"
+#include "add_account_dialog.hpp"
 #include "globals.hpp"
 
 AccountControlPanel::AccountControlPanel(QWidget *parent) : QWidget(parent) {
@@ -14,8 +15,8 @@ AccountControlPanel::AccountControlPanel(QWidget *parent) : QWidget(parent) {
     layout->addWidget(addButton);
     layout->addWidget(passwordButton);
     layout->addWidget(deleteButton);
-    layout->addWidget(searchButton);
     layout->addWidget(loginButton);
+    layout->addWidget(searchButton);
     
     setLayout(layout);
 
@@ -32,6 +33,9 @@ AccountControlPanel::AccountControlPanel(QWidget *parent) : QWidget(parent) {
 
 void AccountControlPanel::onAddButtonClicked() {
     qDebug() << "Add account button clicked";
+    AddAccountDialog dialog(this);
+    dialog.exec();
+    emit accountListChanged();
 }
 
 void AccountControlPanel::onPasswordButtonClicked() {

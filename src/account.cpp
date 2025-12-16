@@ -149,6 +149,11 @@ bool AccountManager::select_book(int id) {
     return true;
 }
 
+bool AccountManager::count_userID(const std::string& user_id) {
+    std::array<char, 30> arr = string_to_array<30>(user_id);
+    return account_file_.count(arr);
+}
+
 std::string AccountManager::current_user() const {
     if (login_stack_.empty()) {
         return "";
@@ -189,5 +194,9 @@ std::vector<std::string> AccountManager::list_admins() {
 }
 
 std::vector<Account> AccountManager::serialize() {
-    return account_file_.serialize();
+    auto serial = account_file_.serialize();
+    std::sort(serial.begin(), serial.end(), [](const Account& a, const Account& b) {
+        return a.user_id() < b.user_id();
+    });
+    return serial;
 }

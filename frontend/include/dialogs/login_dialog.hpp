@@ -41,6 +41,9 @@ public:
                 return;
             }
 
+            std::string msg = current_time() + " [LOGIN]User " + userID.toStdString() + " logged in.";
+            log_manager->add_log(msg);
+
             accept();
         });
         

@@ -9,7 +9,21 @@ class AccountTable : public QTableWidget {
 public:
     AccountTable(QWidget* parent = nullptr);
 
-    void refreshTable();
+    void refreshTable(bool update = 1);
+
+    void handleSearch(const std::vector<Account>& accounts);
+
+signals:
+    void accountSelected(const QString& user_id);
+
+public slots:
+    void updateAccounts(const std::vector<Account>& accounts);
+
+private slots:
+    void handleSelectionChanged();
+
+private:
+    std::vector<Account> accounts_;
 
 };
 

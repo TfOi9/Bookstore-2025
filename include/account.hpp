@@ -4,6 +4,7 @@
 #include <string>
 #include <array>
 #include <vector>
+#include <algorithm>
 #include "hash_map.hpp"
 #include "utils.hpp"
 
@@ -70,6 +71,9 @@ public:
 
     // selects book for the current account. requires privilege 3.
     bool select_book(int id);
+
+    // counts the number of accounts with the given user ID.
+    bool count_userID(const std::string& user_id);
 
     // returns the current user's id.
     std::string current_user() const;

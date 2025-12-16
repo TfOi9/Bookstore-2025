@@ -48,6 +48,11 @@ public:
                 errorLabel->show();
                 return;
             }
+            
+            qDebug() << "密码修改成功!";
+
+            std::string msg = current_time() + " [PASSWORD]User " + account_manager->current_user() + " changed password.";
+            log_manager->add_log(msg);
 
             accept();
         });

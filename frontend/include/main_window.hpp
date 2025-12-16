@@ -69,6 +69,10 @@ public:
         mainLayout->addWidget(stackedPanel, 0);
         stackedPanel->setFixedHeight(60);
 
+        connect(accountControlPanel, &AccountControlPanel::accountListChanged, this, [this]{
+            accountTable->refreshTable();
+        });
+
         connect(bookControlPanel, &BookControlPanel::bookListChanged, this, [this]{
             bookTable->refreshTable();
         });

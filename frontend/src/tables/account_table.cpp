@@ -15,13 +15,15 @@ AccountTable::AccountTable(QWidget* parent) : QTableWidget(parent) {
     setSelectionMode(QAbstractItemView::SingleSelection);
 }
 
-void AccountTable::refreshTable() {
+void AccountTable::refreshTable(bool update) {
     clearContents();
     if (account_manager->current_privilege() < 3) {
         setRowCount(0);
         return;
     }
-    const auto& accounts = account_manager->serialize();
+    std::vector<Account> accounts;
+    if (update) accounts = account_manager->serialize();
+    else accounts = accounts_;
     setRowCount(accounts.size());
     for (int i = 0; i < accounts.size(); i++) {
         const auto& account = accounts[i];
@@ -48,4 +50,28 @@ void AccountTable::refreshTable() {
         setItem(i, 2, new QTableWidgetItem(priv));
     }
     resizeRowsToContents();
+}
+
+void AccountTable::handleSelectionChanged() {
+    auto items = selectedItems();
+    if (items.isEmpty()) {
+        return;
+    }
+    int row = items.first()->row();
+    QTableWidgetItem* userIdItem = item(row, 0);
+    if (!userIdItem) return;
+    QString user_id = userIdItem->text();
+    emit accountSelected(user_id);
+}
+
+void AccountTable::updateAccounts(const std::vector<Account>& accounts) {
+    qDebug() << "Updating accounts in AccountTable, new size:" << accounts.size();
+    accounts_ = accounts;
+    refreshTable();
+}
+
+void AccountTable::handleSearch(const std::vector<Account>& accounts) {
+    qDebug() << "Handling search in AccountTable, result size:" << accounts.size();
+    accounts_ = accounts;
+    refreshTable(0);
 }

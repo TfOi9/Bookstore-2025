@@ -66,9 +66,12 @@ void TopBar::onRegisterButtonClicked() {
 
 void TopBar::onLogoutButtonClicked() {
     qDebug() << "注销按钮被点击";
+    std::string user_id = account_manager->current_user();
     bool ok = account_manager->logout();
     if (ok) {
         QMessageBox::information(this, "注销", "已成功注销");
+        std::string msg = current_time() + " [LOGOUT]User " + user_id + " logged out.";
+        log_manager->add_log(msg);
     } else {
         QMessageBox::warning(this, "注销失败", "当前没有登录的用户");
     }

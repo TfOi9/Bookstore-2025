@@ -11,6 +11,9 @@ public:
 
     void refreshPanel();
 
+signals:
+    void accountListChanged();
+
 private slots:
     void onAddButtonClicked();
     void onPasswordButtonClicked();
