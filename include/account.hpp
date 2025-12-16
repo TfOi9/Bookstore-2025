@@ -101,7 +101,9 @@ public:
 
     // serializes all accounts.
     std::vector<Account> serialize();
-    
+
+    // exports data to a CSV file.
+    void export_data(const std::string& filename = "account.csv");
 };
 
 #endif

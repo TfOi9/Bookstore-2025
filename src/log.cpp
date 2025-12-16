@@ -127,3 +127,20 @@ std::vector<Log> LogManager::serialize() {
     }
     return logs;
 }
+
+void LogManager::export_data(const std::string& filename) {
+    std::ofstream file(filename);
+    if (!file.is_open()) {
+        throw std::runtime_error("Failed to open file for exporting data!");
+    }
+    auto logs = serialize();
+    file << "Time,Content\n";
+    for (const auto& log : logs) {
+        std::string log_msg = log.msg();
+        int delimiter_pos = log_msg.find('[');
+        std::string time_str = log_msg.substr(0, delimiter_pos - 1);
+        std::string content_str = log_msg.substr(delimiter_pos);
+        file << "\"" << time_str << "\",\"" << content_str << "\"\n";
+    }
+    file.close();
+}

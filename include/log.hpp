@@ -99,6 +99,9 @@ public:
 
     // returns serialized logs.
     std::vector<Log> serialize();
+
+    // exports data to a CSV file.
+    void export_data(const std::string& filename = "log.csv");
 };
 
 #endif

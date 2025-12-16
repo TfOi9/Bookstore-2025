@@ -227,3 +227,16 @@ std::vector<Account> AccountManager::serialize() {
     });
     return serial;
 }
+
+void AccountManager::export_data(const std::string& filename) {
+    std::ofstream file(filename);
+    if (!file.is_open()) {
+        throw std::runtime_error("Failed to open file for exporting data!");
+    }
+    auto accounts = serialize();
+    file << "UserID,Username,Previlege\n";
+    for (const auto& account : accounts) {
+        file << account.user_id() << ',' << account.username() << ',' << account.privilege() << '\n';
+    }
+    file.close();
+}
