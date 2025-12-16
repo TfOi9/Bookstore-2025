@@ -182,6 +182,11 @@ int AccountManager::selected_book() const {
     return book_stack_.back();
 }
 
+std::vector<Account> AccountManager::find(const std::string& user_id) {
+    std::array<char, 30> arr = string_to_array<30>(user_id);
+    return account_file_.find(arr);
+}
+
 std::vector<std::string> AccountManager::list_admins() {
     std::vector<std::string> admins;
     auto list = account_file_.serialize();

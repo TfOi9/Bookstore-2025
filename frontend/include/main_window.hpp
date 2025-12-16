@@ -24,13 +24,7 @@ public:
         topBar = new TopBar(this);
         mainLayout->addWidget(topBar);
 
-        connect(topBar, &TopBar::authChanged, this, [this](const QString &s){
-            stackedTable->setCurrentWidget(bookTable);
-            stackedPanel->setCurrentWidget(bookControlPanel);
-            bookTable->refreshTable();
-            bookControlPanel->refreshPanel();
-            setStatusMessage(s);
-        });
+        connect(topBar, &TopBar::authChanged, this, &MainWindow::handleAuthChanged);
 
         connect(topBar, &TopBar::accountButtonClicked, this, [this]{
             stackedTable->setCurrentWidget(accountTable);
@@ -81,6 +75,11 @@ public:
 
         connect(bookControlPanel, &BookControlPanel::searchedBooks, bookTable, &BookTable::handleSearch);
 
+        connect(accountControlPanel, &AccountControlPanel::loginSucceeded, this, [this](const QString &userId){
+            topBar->refreshBar();
+            handleAuthChanged(QStringLiteral("已登录: ") + userId);
+        });
+
         statusBar()->showMessage(QStringLiteral("游客模式"));
         
         resize(800, 600);
@@ -95,8 +94,15 @@ public:
         statusBar()->showMessage(msg, timeout);
     }
 
-
 private:
+    void handleAuthChanged(const QString &msg) {
+        stackedTable->setCurrentWidget(bookTable);
+        stackedPanel->setCurrentWidget(bookControlPanel);
+        bookTable->refreshTable();
+        bookControlPanel->refreshPanel();
+        setStatusMessage(msg);
+    }
+
     TopBar *topBar;
 
     QStackedWidget *stackedTable;

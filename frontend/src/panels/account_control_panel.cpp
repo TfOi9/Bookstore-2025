@@ -4,6 +4,7 @@
 #include "modify_password_dialog.hpp"
 #include "delete_account_dialog.hpp"
 #include "globals.hpp"
+#include "login_account_dialog.hpp"
 
 AccountControlPanel::AccountControlPanel(QWidget *parent) : QWidget(parent) {
     addButton = new QPushButton("添加", this);
@@ -64,6 +65,10 @@ void AccountControlPanel::onSearchButtonClicked() {
 
 void AccountControlPanel::onLoginButtonClicked() {
     qDebug() << "Login button clicked";
+    LoginAccountDialog dialog(currentSelectedUserID, this);
+    if (dialog.exec() == QDialog::Accepted) {
+        emit loginSucceeded(currentSelectedUserID);
+    }
 }
 
 void AccountControlPanel::refreshPanel() {

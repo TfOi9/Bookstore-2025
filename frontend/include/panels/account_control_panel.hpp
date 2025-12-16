@@ -18,6 +18,8 @@ signals:
 
     void searchedAccounts(const std::vector<Account>& accounts);
 
+    void loginSucceeded(const QString& user_id);
+
 private slots:
     void onAddButtonClicked();
     void onPasswordButtonClicked();

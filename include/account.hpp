@@ -87,6 +87,9 @@ public:
     // returns the selected book's id.
     int selected_book() const;
 
+    // find an account by user ID.
+    std::vector<Account> find(const std::string& user_id);
+
     // returns the list of admins.
     std::vector<std::string> list_admins();
 
