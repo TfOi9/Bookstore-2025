@@ -1,5 +1,6 @@
 #include "log_control_panel.hpp"
 #include "finance_query_dialog.hpp"
+#include "report_finance_dialog.hpp"
 
 LogControlPanel::LogControlPanel(QWidget *parent) : QWidget(parent) {
     refreshButton = new QPushButton("刷新", this);
@@ -43,6 +44,8 @@ void LogControlPanel::onFinanceQueryButtonClicked() {
 
 void LogControlPanel::onReportFinanceButtonClicked() {
     qDebug() << "Report finance button clicked";
+    ReportFinanceDialog dialog(this);
+    dialog.exec();
 }
 
 void LogControlPanel::onReportEmployeeButtonClicked() {

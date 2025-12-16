@@ -82,7 +82,7 @@ int LogManager::finance_size() {
     return finance_file_.size();
 }
 
-void LogManager::report_finance() {
+void LogManager::report_finance(std::ostream& os) {
     double total_income = 0.00, total_expenditure = 0.00;
     for (int i = 0; i < finance_file_.size(); i++) {
         FinanceLog finance_log;
@@ -93,28 +93,28 @@ void LogManager::report_finance() {
         else {
             total_expenditure -= finance_log.cost_;
         }
-        std::cout << finance_log.count() + 1 << ' ' << finance_log.time() << ' ' << (finance_log.cost() < 0 ? '-' : '+') << ' ' << std::fixed << std::setprecision(2) << std::abs(finance_log.cost()) << '\n';
+        os << finance_log.count() + 1 << ' ' << finance_log.time() << ' ' << (finance_log.cost() < 0 ? '-' : '+') << ' ' << std::fixed << std::setprecision(2) << std::abs(finance_log.cost()) << '\n';
     }
-    std::cout << "Total Income: " << std::fixed << std::setprecision(2) << total_income << '\n';
-    std::cout << "Total Expenditure: " << std::fixed << std::setprecision(2) << total_expenditure << '\n';
+    os << "Total Income: " << std::fixed << std::setprecision(2) << total_income << '\n';
+    os << "Total Expenditure: " << std::fixed << std::setprecision(2) << total_expenditure << '\n';
 }
 
-void LogManager::report_employee(const std::string& user_id) {
+void LogManager::report_employee(const std::string& user_id, std::ostream& os) {
     std::array<char, 30> arr = string_to_array<30>(user_id);
     std::vector<EmployeeLog> logs = employee_file_.find(arr);
     if (!logs.empty()) {
-        std::cout << "Employee " << user_id << ":\n";
+        os << "Employee " << user_id << ":\n";
     }
     for (auto log : logs) {
-        std::cout << log.msg() << '\n';
+        os << log.msg() << '\n';
     }
 }
 
-void LogManager::log() {
+void LogManager::log(std::ostream& os) {
     for (int i = 0; i < log_file_.size(); i++) {
         Log log;
         log_file_.read(log, i);
-        std::cout << log.msg() << '\n';
+        os << log.msg() << '\n';
     }
 }
 

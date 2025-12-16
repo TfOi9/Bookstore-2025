@@ -4,6 +4,7 @@
 #include <array>
 #include <vector>
 #include <utility>
+#include <iostream>
 #include "memory_river.hpp"
 #include "hash_map.hpp"
 #include "utils.hpp"
@@ -89,13 +90,13 @@ public:
     int finance_size();
 
     // report finance logs.
-    void report_finance();
+    void report_finance(std::ostream& os = std::cout);
 
     // report employee logs.
-    void report_employee(const std::string& user_id);
+    void report_employee(const std::string& user_id, std::ostream& os = std::cout);
 
     // lists all logs.
-    void log();
+    void log(std::ostream& os = std::cout);
 
     // returns serialized logs.
     std::vector<Log> serialize();
