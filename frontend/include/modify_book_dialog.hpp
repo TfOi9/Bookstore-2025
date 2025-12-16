@@ -1,25 +1,32 @@
-#ifndef ADD_BOOK_DIALOG_HPP
-#define ADD_BOOK_DIALOG_HPP
+#ifndef MODIFY_BOOK_DIALOG_HPP
+#define MODIFY_BOOK_DIALOG_HPP
 
-#include <algorithm>
 #include "qt_common.hpp"
 #include "globals.hpp"
 #include "utils.hpp"
 #include "validator.hpp"
 
-class AddBookDialog : public QDialog {
+class ModifyBookDialog : public QDialog {
 public:
-    AddBookDialog(QWidget *parent = nullptr) : QDialog(parent) {
+    ModifyBookDialog(const Book &book, QWidget *parent = nullptr) : QDialog(parent) {
         setupUI();
         applyStyle();
-        connect(buttonBox, &QDialogButtonBox::accepted, [this]() {
+
+        // Pre-fill fields with existing book data
+        ISBNEdit->setText(QString::fromStdString(book.ISBN()));
+        nameEdit->setText(QString::fromStdString(book.book_name()));
+        authorEdit->setText(QString::fromStdString(book.author()));
+        keywordEdit->setText(QString::fromStdString(book.keyword()));
+        priceEdit->setText(QString::number(book.price_, 'f', 2));
+
+        connect(buttonBox, &QDialogButtonBox::accepted, [this, book]() {
             QString ISBN = ISBNEdit->text();
             QString name = nameEdit->text();
             QString author = authorEdit->text();
             QString keyword = keywordEdit->text();
             QString priceStr = priceEdit->text();
 
-            qDebug() << "添加图书信息";
+            qDebug() << "修改图书信息";
             qDebug() << "ISBN:" << ISBN;
             qDebug() << "书名:" << name;
             qDebug() << "作者:" << author;
@@ -40,7 +47,7 @@ public:
                 return;
             }
 
-            if (book_manager->count_ISBN(string_to_array<20>(ISBN.toStdString()))) {
+            if (ISBN.toStdString() != book.ISBN() && book_manager->count_ISBN(string_to_array<20>(ISBN.toStdString()))) {
                 qDebug() << "错误: ISBN已存在!";
                 errorLabel->setText("错误: ISBN已存在!");
                 errorLabel->show();
@@ -62,21 +69,6 @@ public:
             }
 
             if (!Validator(keyword.toStdString()).max_len(60).visible_only().no_quotes()) {
-                qDebug() << "错误: 关键词格式不正确!";
-                errorLabel->setText("错误: 关键词格式不正确!");
-                errorLabel->show();
-                return;
-            }
-
-            auto key_words = parse_keywords(string_to_array<60>(keyword.toStdString()));
-            if (key_words.empty()) {
-                qDebug() << "错误: 关键词格式不正确!";
-                errorLabel->setText("错误: 关键词格式不正确!");
-                errorLabel->show();
-                return;
-            }
-            std::sort(key_words.begin(), key_words.end());
-            if (std::unique(key_words.begin(), key_words.end()) != key_words.end()) {
                 qDebug() << "错误: 关键词格式不正确!";
                 errorLabel->setText("错误: 关键词格式不正确!");
                 errorLabel->show();
@@ -108,20 +100,32 @@ public:
                 return;
             }
 
-            Book new_book(ISBN.toStdString(), name.toStdString(), author.toStdString(), keyword.toStdString(), price, 0, book_manager->size());
-            book_manager->add(new_book);
+            std::array<char, 20> cur_ISBN = book.ISBN_;
+            if (ISBN.toStdString() != book.ISBN()) {
+                book_manager->modify_ISBN(cur_ISBN, string_to_array<20>(ISBN.toStdString()));
+                cur_ISBN = string_to_array<20>(ISBN.toStdString());
+            }
+            if (name.toStdString() != book.book_name()) {
+                book_manager->modify_book_name(cur_ISBN, string_to_array<60>(name.toStdString()));
+            }
+            if (author.toStdString() != book.author()) {
+                book_manager->modify_author(cur_ISBN, string_to_array<60>(author.toStdString()));
+            }
+            if (keyword.toStdString() != book.keyword()) {
+                book_manager->modify_keyword(cur_ISBN, string_to_array<60>(keyword.toStdString()));
+            }
+            if (price != book.price_) {
+                book_manager->modify_price(cur_ISBN, price);
+            }
 
-            std::string msg = current_time() + " [SELECT]User " + account_manager->current_user() + " selected book " + ISBN.toStdString() + '.';
-            log_manager->add_log(msg);
+            qDebug() << "图书修改成功!";
 
-            msg = current_time() + " [MODIFY]User " + account_manager->current_user() + " modified book " + ISBN.toStdString() + '.';
+            std::string msg = current_time() + " [MODIFY]User " + account_manager->current_user() + " modified book " + book.ISBN() + '.';
             log_manager->add_log(msg);
             log_manager->add_employee_log(account_manager->current_user(), msg);
-
+            
             accept();
         });
-
-        connect(buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
     }
 
 private:
@@ -134,7 +138,7 @@ private:
     QLabel *errorLabel;
 
     void setupUI() {
-        setWindowTitle("添加图书");
+        setWindowTitle("修改图书");
         setFixedSize(400, 300);
         
         QVBoxLayout *mainLayout = new QVBoxLayout(this);
@@ -160,7 +164,7 @@ private:
         buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
 
         connect(buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
-
+    
         mainLayout->addLayout(formLayout);
         mainLayout->addWidget(errorLabel);
         mainLayout->addWidget(buttonBox);

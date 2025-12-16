@@ -1,6 +1,9 @@
 #include "book_control_panel.hpp"
 #include "add_book_dialog.hpp"
 #include "buy_dialog.hpp"
+#include "globals.hpp"
+#include "modify_book_dialog.hpp"
+#include "utils.hpp"
 
 BookControlPanel::BookControlPanel(QWidget *parent) : QWidget(parent) {
     addButton = new QPushButton("添加", this);
@@ -55,6 +58,14 @@ void BookControlPanel::onBuyButtonClicked() {
 
 void BookControlPanel::onModifyButtonClicked() {
     qDebug() << "Modify button clicked";
+    if (currentSelectedISBN.isEmpty()) {
+        QMessageBox::warning(this, "错误", "请先选择图书！");
+        return;
+    }
+    Book selectedBook = book_manager->find_ISBN(string_to_array<20>(currentSelectedISBN.toStdString()))[0];
+    ModifyBookDialog dialog(selectedBook, this);
+    dialog.exec();
+    emit bookListChanged();
 }
 
 void BookControlPanel::onImportButtonClicked() {
