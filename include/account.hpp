@@ -90,6 +90,12 @@ public:
     // find an account by user ID.
     std::vector<Account> find(const std::string& user_id);
 
+    // find accounts by username.
+    std::vector<Account> find_username(const std::string& username);
+
+    // find accounts by privilege.
+    std::vector<Account> find_privilege(int privilege);
+
     // returns the list of admins.
     std::vector<std::string> list_admins();
 

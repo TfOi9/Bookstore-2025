@@ -1,82 +1,72 @@
-#ifndef SEARCH_BOOK_DIALOG_HPP
-#define SEARCH_BOOK_DIALOG_HPP
+#ifndef SEARCH_ACCOUNT_DIALOG_HPP
+#define SEARCH_ACCOUNT_DIALOG_HPP
 
 #include "qt_common.hpp"
 #include "globals.hpp"
 #include "utils.hpp"
 #include "validator.hpp"
-#include "book_control_panel.hpp"
+#include "account_control_panel.hpp"
 
-class SearchBookDialog : public QDialog {
+class SearchAccountDialog : public QDialog {
 public:
-    SearchBookDialog(QWidget *parent = nullptr) : QDialog(parent) {
+    SearchAccountDialog(QWidget *parent = nullptr) : QDialog(parent) {
         setupUI();
         applyStyle();
-        connect(buttonBox, &QDialogButtonBox::accepted, [this, p = qobject_cast<BookControlPanel*>(parent)]() {
+        connect(buttonBox, &QDialogButtonBox::accepted, [this, p = qobject_cast<AccountControlPanel*>(parent)]() {
             QString searchType = comboBox->currentText();
             QString searchContent = searchEdit->text();
-            qDebug() << "搜索图书信息";
+            qDebug() << "搜索账户信息";
             qDebug() << "搜索类型:" << searchType;
             qDebug() << "搜索内容:" << searchContent;
 
-            if (searchType != "全部图书" && searchContent.isEmpty()) {
+            if (searchType != "全部账户" && searchContent.isEmpty()) {
                 qDebug() << "错误: 搜索内容不能为空!";
                 errorLabel->setText("错误: 搜索内容不能为空!");
                 errorLabel->show();
                 return;
             }
 
-            if (searchType == "全部图书") {
+            if (searchType == "全部账户") {
                 if (p) {
-                    emit p->searchedBooks(book_manager->serialize());
+                    emit p->searchedAccounts(account_manager->serialize());
                 }
             }
-            else if (searchType == "ISBN") {
-                if (!Validator(searchContent.toStdString()).max_len(20).visible_only()) {
-                    qDebug() << "错误: ISBN格式不正确!";
-                    errorLabel->setText("错误: ISBN格式不正确!");
+            else if (searchType == "用户ID") {
+                if (!Validator(searchContent.toStdString()).max_len(30).normal_char_only()) {
+                    qDebug() << "错误: 用户ID格式不正确!";
+                    errorLabel->setText("错误: 用户ID格式不正确!");
                     errorLabel->show();
                     return;
                 }
                 if (p) {
-                    auto books = book_manager->find_ISBN(string_to_array<20>(searchContent.toStdString()));
-                    emit p->searchedBooks(books);
+                    auto accounts = account_manager->find(searchContent.toStdString());
+                    emit p->searchedAccounts(accounts);
                 }
             }
-            else if (searchType == "书名") {
-                if (!Validator(searchContent.toStdString()).max_len(60).visible_only().no_quotes()) {
-                    qDebug() << "错误: 书名格式不正确!";
-                    errorLabel->setText("错误: 书名格式不正确!");
+            else if (searchType == "用户名") {
+                if (!Validator(searchContent.toStdString()).max_len(30).visible_only()) {
+                    qDebug() << "错误: 用户名格式不正确!";
+                    errorLabel->setText("错误: 用户名格式不正确!");
                     errorLabel->show();
                     return;
                 }
                 if (p) {
-                    auto books = book_manager->find_book_name(string_to_array<60>(searchContent.toStdString()));
-                    emit p->searchedBooks(books);
+                    auto accounts = account_manager->find_username(searchContent.toStdString());
+                    emit p->searchedAccounts(accounts);
                 }
             }
-            else if (searchType == "作者") {
-                if (!Validator(searchContent.toStdString()).max_len(60).visible_only().no_quotes()) {
-                    qDebug() << "错误: 作者格式不正确!";
-                    errorLabel->setText("错误: 作者格式不正确!");
+            else if (searchType == "权限等级") {
+                bool ok;
+                int privilege = searchContent.toInt(&ok);
+                if (!ok || privilege != 1 && privilege != 3 && privilege != 7) {
+                    qDebug() << "错误: 权限等级格式不正确!";
+                    errorLabel->setText("错误: 权限等级格式不正确!");
                     errorLabel->show();
                     return;
                 }
                 if (p) {
-                    auto books = book_manager->find_author(string_to_array<60>(searchContent.toStdString()));
-                    emit p->searchedBooks(books);
-                }
-            }
-            else if (searchType == "关键词") {
-                if (!Validator(searchContent.toStdString()).max_len(60).visible_only().no_quotes().no_pipes()) {
-                    qDebug() << "错误: 关键词格式不正确!";
-                    errorLabel->setText("错误: 关键词格式不正确!");
-                    errorLabel->show();
-                    return;
-                }
-                if (p) {
-                    auto books = book_manager->find_keyword(string_to_array<60>(searchContent.toStdString()));
-                    emit p->searchedBooks(books);
+                    auto accounts = account_manager->find_privilege(privilege);
+                    emit p->searchedAccounts(accounts);
                 }
             }
 
@@ -91,18 +81,19 @@ private:
     QLineEdit *searchEdit;
     QDialogButtonBox *buttonBox;
     QLabel *errorLabel;
+
     void setupUI() {
-        setWindowTitle("搜索图书");
+        setWindowTitle("搜索账户");
         setFixedSize(300, 200);
         
         QVBoxLayout *mainLayout = new QVBoxLayout(this);
         QFormLayout *formLayout = new QFormLayout();
         
         comboBox = new QComboBox();
-        comboBox->addItems({"全部图书","ISBN", "书名", "作者", "关键词"});
+        comboBox->addItems({"全部账户","用户ID", "用户名","权限等级"});
 
         connect(comboBox, &QComboBox::currentTextChanged, this, [this](const QString &text){
-            if (text == "全部图书") {
+            if (text == "全部账户") {
                 searchEdit->setEnabled(false);
             } else {
                 searchEdit->setEnabled(true);
@@ -151,6 +142,7 @@ private:
             }
         )");
     }
-    
+
 };
+
 #endif

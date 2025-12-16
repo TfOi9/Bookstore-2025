@@ -187,6 +187,28 @@ std::vector<Account> AccountManager::find(const std::string& user_id) {
     return account_file_.find(arr);
 }
 
+std::vector<Account> AccountManager::find_username(const std::string& username) {
+    std::vector<Account> result;
+    auto list = account_file_.serialize();
+    for (auto account : list) {
+        if (account.username() == username) {
+            result.push_back(account);
+        }
+    }
+    return result;
+}
+
+std::vector<Account> AccountManager::find_privilege(int privilege) {
+    std::vector<Account> result;
+    auto list = account_file_.serialize();
+    for (auto account : list) {
+        if (account.privilege() == privilege) {
+            result.push_back(account);
+        }
+    }
+    return result;
+}
+
 std::vector<std::string> AccountManager::list_admins() {
     std::vector<std::string> admins;
     auto list = account_file_.serialize();

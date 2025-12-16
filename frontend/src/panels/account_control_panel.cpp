@@ -5,6 +5,7 @@
 #include "delete_account_dialog.hpp"
 #include "globals.hpp"
 #include "login_account_dialog.hpp"
+#include "search_account_dialog.hpp"
 
 AccountControlPanel::AccountControlPanel(QWidget *parent) : QWidget(parent) {
     addButton = new QPushButton("添加", this);
@@ -61,6 +62,8 @@ void AccountControlPanel::onDeleteButtonClicked() {
 
 void AccountControlPanel::onSearchButtonClicked() {
     qDebug() << "Search account button clicked";
+    SearchAccountDialog dialog(this);
+    dialog.exec();
 }
 
 void AccountControlPanel::onLoginButtonClicked() {

@@ -73,6 +73,8 @@ public:
             bookTable->refreshTable();
         });
 
+        connect(accountControlPanel, &AccountControlPanel::searchedAccounts, accountTable, &AccountTable::handleSearch);
+
         connect(bookControlPanel, &BookControlPanel::searchedBooks, bookTable, &BookTable::handleSearch);
 
         connect(accountControlPanel, &AccountControlPanel::loginSucceeded, this, [this](const QString &userId){
