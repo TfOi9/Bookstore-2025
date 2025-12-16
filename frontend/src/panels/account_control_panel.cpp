@@ -2,6 +2,7 @@
 #include "account.hpp"
 #include "add_account_dialog.hpp"
 #include "modify_password_dialog.hpp"
+#include "delete_account_dialog.hpp"
 #include "globals.hpp"
 
 AccountControlPanel::AccountControlPanel(QWidget *parent) : QWidget(parent) {
@@ -52,6 +53,9 @@ void AccountControlPanel::onPasswordButtonClicked() {
 
 void AccountControlPanel::onDeleteButtonClicked() {
     qDebug() << "Delete account button clicked";
+    DeleteAccountDialog dialog(currentSelectedUserID, this);
+    dialog.exec();
+    emit accountListChanged();
 }
 
 void AccountControlPanel::onSearchButtonClicked() {

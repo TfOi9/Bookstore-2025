@@ -29,9 +29,23 @@ public:
                 return;
             }
 
+            if (account_manager->count_userID(userID.toStdString()) == 0) {
+                qDebug() << "错误: 该用户不存在!";
+                errorLabel->setText("错误: 该用户不存在!");
+                errorLabel->show();
+                return;
+            }
+
             if (!Validator(newPassword.toStdString()).min_len(4).max_len(30).normal_char_only()) {
                 qDebug() << "错误: 新密码格式不正确!";
                 errorLabel->setText("错误: 新密码格式不正确!");
+                errorLabel->show();
+                return;
+            }
+
+            if (newPassword != newPasswordConfirm) {
+                qDebug() << "错误: 两次输入的新密码不匹配!";
+                errorLabel->setText("错误: 两次输入的新密码不匹配!");
                 errorLabel->show();
                 return;
             }
