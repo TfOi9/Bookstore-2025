@@ -4,6 +4,8 @@
 #include "qt_common.hpp"
 #include "globals.hpp"
 #include "add_book_dialog.hpp"
+#include "buy_dialog.hpp"
+#include "import_dialog.hpp"
 
 class BookControlPanel : public QWidget {
     Q_OBJECT

@@ -1,83 +1,107 @@
-#ifndef BUY_DIALOG_HPP
-#define BUY_DIALOG_HPP
+#ifndef IMPORT_DIALOG_HPP
+#define IMPORT_DIALOG_HPP
 
 #include "qt_common.hpp"
 #include "globals.hpp"
 #include "utils.hpp"
 #include "validator.hpp"
 
-class BuyDialog : public QDialog {
+class ImportDialog : public QDialog {
 public:
-    BuyDialog(const QString& ISBN, QWidget *parent = nullptr) : QDialog(parent) {
+    ImportDialog(const QString& ISBN, QWidget *parent = nullptr) : QDialog(parent) {
         setupUI();
         applyStyle();
         Book book = book_manager->find_ISBN(string_to_array<20>(ISBN.toStdString()))[0];
         ISBNLabel->setText(ISBN);
         nameLabel->setText(QString::fromStdString(book.book_name()));
-        unitPrice_ = book.price_;
         quantityEdit->setValue(1);
-        updateTotalPrice();
         connect(buttonBox, &QDialogButtonBox::accepted, [this, ISBN]() {
             int quantity = quantityEdit->value();
             if (quantity <= 0) {
-                qDebug() << "错误: 购买数量必须大于0!";
-                errorLabel->setText("错误: 购买数量必须大于0!");
+                qDebug() << "错误: 进货数量必须大于0!";
+                errorLabel->setText("错误: 进货数量必须大于0!");
                 errorLabel->show();
                 return;
             }
 
-            Book book = book_manager->find_ISBN(string_to_array<20>(ISBN.toStdString()))[0];
-            if (book.quant_ < quantity) {
-                qDebug() << "错误: 库存不足!";
-                errorLabel->setText("错误: 库存不足!");
+            QString costStr = costEdit->text();
+            if (!Validator(costStr.toStdString()).max_len(13).number_and_dot_only().only_one_dot()) {
+                qDebug() << "错误: 总价格式不正确!";
+                errorLabel->setText("错误: 总价格式不正确!");
                 errorLabel->show();
                 return;
             }
 
+
+            qDebug() << "进货总价字符串:" << costStr;
             double cost = 0.00;
-            book_manager->buy(string_to_array<20>(ISBN.toStdString()), quantity, cost);
+            try {
+                cost = std::stod(costStr.toStdString());
+            }
+            catch (...) {
+                qDebug() << "错误: 总价格式不正确!";
+                errorLabel->setText("错误: 总价格式不正确!");
+                errorLabel->show();
+                return;
+            }
 
-            std::string msg = current_time() + " [BUY]User " + account_manager->current_user() + " bought " + quantityEdit->text().toStdString() + " book(s). ISBN:" + ISBN.toStdString();
+            if (cost <= 0.00) {
+                qDebug() << "错误: 总价格必须大于0!";
+                errorLabel->setText("错误: 总价格必须大于0!");
+                errorLabel->show();
+                return;
+            }
+
+            if (cost > 2147483647.99) {
+                qDebug() << "错误: 总价格超过上限!";
+                errorLabel->setText("错误: 总价格超过上限!");
+                errorLabel->show();
+                return;
+            }
+
+            book_manager->import(string_to_array<20>(ISBN.toStdString()), quantity);
+
+            std::string msg = current_time() + " [SELECT]User " + account_manager->current_user() + " selected book " + ISBN.toStdString() + '.';
             log_manager->add_log(msg);
-            log_manager->add_finance_log(cost);
 
-            qDebug() << "购买成功! 总价:" << QString::number(cost, 'f', 2);
-            QMessageBox::information(this, "购买成功", "购买成功! 总价: " + QString::number(cost, 'f', 2));
-            
+            msg = current_time() + " [IMPORT]User " + account_manager->current_user() + " imported book " + ISBN.toStdString() + ' ' + quantityEdit->text().toStdString() + " copies, costing " + costStr.toStdString() + '.';
+            log_manager->add_log(msg);
+            log_manager->add_employee_log(account_manager->current_user(), msg);
+            log_manager->add_finance_log(-cost);
+
+            qDebug() << "进货成功! 总价:" << QString::number(cost, 'f', 2);
+            QMessageBox::information(this, "进货成功", "进货成功! 总价: " + QString::number(cost, 'f', 2));
+
             accept();
         });
-
-        connect(buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
     }
 
 private:
     QLabel *ISBNLabel;
     QLabel *nameLabel;
     QSpinBox *quantityEdit;
-    QLabel *priceLabel;
+    QLineEdit *costEdit;
     QDialogButtonBox *buttonBox;
     QLabel *errorLabel;
-    double unitPrice_ = 0.0;
-
+    
     void setupUI() {
-        setWindowTitle("购买图书");
+        setWindowTitle("进货");
         setFixedSize(300, 250);
-        
+
         QVBoxLayout *mainLayout = new QVBoxLayout(this);
         QFormLayout *formLayout = new QFormLayout();
-        
+
         ISBNLabel = new QLabel();
         nameLabel = new QLabel();
         quantityEdit = new QSpinBox();
-        quantityEdit->setRange(1, 1000000);
+        quantityEdit->setMinimum(1);
         quantityEdit->setValue(1);
-        priceLabel = new QLabel();
-        priceLabel->setObjectName("priceLabel");
-
+        costEdit = new QLineEdit();
+        
         formLayout->addRow("ISBN:", ISBNLabel);
         formLayout->addRow("书名:", nameLabel);
         formLayout->addRow("数量:", quantityEdit);
-        formLayout->addRow("总价:", priceLabel);
+        formLayout->addRow("总价:", costEdit);
 
         errorLabel = new QLabel();
         errorLabel->setStyleSheet("color: red; font-size: 12px");
@@ -87,7 +111,7 @@ private:
         buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
 
         connect(buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
-        connect(quantityEdit, QOverload<int>::of(&QSpinBox::valueChanged), this, [this](int){ updateTotalPrice(); });
+        connect(quantityEdit, QOverload<int>::of(&QSpinBox::valueChanged), this, [this](int){});
 
         mainLayout->addLayout(formLayout);
         mainLayout->addWidget(errorLabel);
@@ -121,12 +145,6 @@ private:
                 color: #333333;
             }
         )");
-    }
-
-    void updateTotalPrice() {
-        int qty = quantityEdit->value();
-        double total = unitPrice_ * qty;
-        priceLabel->setText(QString::number(total, 'f', 2));
     }
 
 };

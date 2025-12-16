@@ -111,6 +111,13 @@ public:
             Book new_book(ISBN.toStdString(), name.toStdString(), author.toStdString(), keyword.toStdString(), price, 0, book_manager->size());
             book_manager->add(new_book);
 
+            std::string msg = current_time() + " [SELECT]User " + account_manager->current_user() + " selected book " + ISBN.toStdString() + '.';
+            log_manager->add_log(msg);
+
+            msg = current_time() + " [MODIFY]User " + account_manager->current_user() + " modified book " + ISBN.toStdString() + '.';
+            log_manager->add_log(msg);
+            log_manager->add_employee_log(account_manager->current_user(), msg);
+
             accept();
         });
 

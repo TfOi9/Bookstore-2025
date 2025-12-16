@@ -483,7 +483,7 @@ int main() {
             }
             if (modify_success) {
                 // std::clog << "Modify book success.\n";
-                std::string msg = current_time() + " [MODIFY]User " + account_manager.current_user() + " modified book " + book.ISBN();
+                std::string msg = current_time() + " [MODIFY]User " + account_manager.current_user() + " modified book " + book.ISBN() + '.';
                 // std::clog << msg << '\n';
                 log_manager.add_log(msg);
                 log_manager.add_employee_log(account_manager.current_user(), msg);

@@ -59,6 +59,13 @@ void BookControlPanel::onModifyButtonClicked() {
 
 void BookControlPanel::onImportButtonClicked() {
     qDebug() << "Import button clicked";
+    if (currentSelectedISBN.isEmpty()) {
+        QMessageBox::warning(this, "错误", "请先选择图书！");
+        return;
+    }
+    ImportDialog dialog(currentSelectedISBN, this);
+    dialog.exec();
+    emit bookListChanged();
 }
 
 void BookControlPanel::onSearchButtonClicked() {
