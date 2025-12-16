@@ -14,6 +14,8 @@ public:
 
     void refreshPanel();
 
+    QString selectedISBN() const;
+
 signals:
     void bookListChanged();
 
@@ -39,9 +41,6 @@ private:
     void applyStyle();
     
     QString currentSelectedISBN;
-
-public:
-    QString selectedISBN() const;
 
 };
 

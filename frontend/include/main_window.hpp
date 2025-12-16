@@ -55,6 +55,8 @@ public:
         accountControlPanel = new AccountControlPanel(stackedPanel);
         bookControlPanel = new BookControlPanel(stackedPanel);
 
+        connect(accountTable, &AccountTable::accountSelected, accountControlPanel, &AccountControlPanel::onAccountSelected);
+
         connect(bookTable, &BookTable::bookSelected, bookControlPanel, &BookControlPanel::onBookSelected);
 
         stackedTable->addWidget(accountTable);

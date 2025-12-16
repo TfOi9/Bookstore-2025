@@ -13,6 +13,8 @@ AccountTable::AccountTable(QWidget* parent) : QTableWidget(parent) {
     setEditTriggers(QAbstractItemView::NoEditTriggers);
     setSelectionBehavior(QAbstractItemView::SelectRows);
     setSelectionMode(QAbstractItemView::SingleSelection);
+    connect(this, &QTableWidget::itemSelectionChanged, this, &AccountTable::handleSelectionChanged);
+    accounts_ = account_manager->serialize();
 }
 
 void AccountTable::refreshTable(bool update) {

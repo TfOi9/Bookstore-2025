@@ -1,6 +1,7 @@
 #include "account_control_panel.hpp"
 #include "account.hpp"
 #include "add_account_dialog.hpp"
+#include "modify_password_dialog.hpp"
 #include "globals.hpp"
 
 AccountControlPanel::AccountControlPanel(QWidget *parent) : QWidget(parent) {
@@ -31,6 +32,11 @@ AccountControlPanel::AccountControlPanel(QWidget *parent) : QWidget(parent) {
     refreshPanel();
 }
 
+void AccountControlPanel::onAccountSelected(const QString& user_id) {
+    qDebug() << "Account selected:" << user_id;
+    currentSelectedUserID = user_id;
+}
+
 void AccountControlPanel::onAddButtonClicked() {
     qDebug() << "Add account button clicked";
     AddAccountDialog dialog(this);
@@ -40,6 +46,8 @@ void AccountControlPanel::onAddButtonClicked() {
 
 void AccountControlPanel::onPasswordButtonClicked() {
     qDebug() << "Change password button clicked";
+    ModifyPasswordDialog dialog(currentSelectedUserID, this);
+    dialog.exec();
 }
 
 void AccountControlPanel::onDeleteButtonClicked() {
@@ -95,4 +103,8 @@ void AccountControlPanel::applyStyle() {
             color: #333333;
         }
     )");
+}
+
+QString AccountControlPanel::selectedUserID() const {
+    return currentSelectedUserID;
 }

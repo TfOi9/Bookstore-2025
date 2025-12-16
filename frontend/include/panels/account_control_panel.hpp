@@ -11,8 +11,12 @@ public:
 
     void refreshPanel();
 
+    QString selectedUserID() const;
+
 signals:
     void accountListChanged();
+
+    void searchedAccounts(const std::vector<Account>& accounts);
 
 private slots:
     void onAddButtonClicked();
@@ -20,6 +24,9 @@ private slots:
     void onDeleteButtonClicked();
     void onSearchButtonClicked();
     void onLoginButtonClicked();
+
+public slots:
+    void onAccountSelected(const QString& user_id);
 
 private:
     QPushButton *addButton;
@@ -29,6 +36,8 @@ private:
     QPushButton *loginButton;
 
     void applyStyle();
+
+    QString currentSelectedUserID;
 
 };
 
