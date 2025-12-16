@@ -117,3 +117,13 @@ void LogManager::log() {
         std::cout << log.msg() << '\n';
     }
 }
+
+std::vector<Log> LogManager::serialize() {
+    std::vector<Log> logs;
+    for (int i = 0; i < log_file_.size(); i++) {
+        Log log;
+        log_file_.read(log, i);
+        logs.push_back(log);
+    }
+    return logs;
+}

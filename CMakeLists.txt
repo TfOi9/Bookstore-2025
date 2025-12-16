@@ -35,8 +35,10 @@ add_executable(
     frontend/src/globals.cpp
     frontend/include/tables/account_table.hpp frontend/src/tables/account_table.cpp
     frontend/include/tables/book_table.hpp frontend/src/tables/book_table.cpp
+    frontend/include/tables/log_table.hpp frontend/src/tables/log_table.cpp
     frontend/include/panels/account_control_panel.hpp frontend/src/panels/account_control_panel.cpp
-    frontend/include/panels/book_control_panel.hpp frontend/src/panels/book_control_panel.cpp 
+    frontend/include/panels/book_control_panel.hpp frontend/src/panels/book_control_panel.cpp
+    frontend/include/panels/log_control_panel.hpp frontend/src/panels/log_control_panel.cpp
     frontend/include/top_bar.hpp frontend/src/top_bar.cpp
     frontend/src/main.cpp
 )

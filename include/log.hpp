@@ -96,6 +96,9 @@ public:
 
     // lists all logs.
     void log();
+
+    // returns serialized logs.
+    std::vector<Log> serialize();
 };
 
 #endif

@@ -1,6 +1,7 @@
 #ifndef MAIN_WINDOW_HPP
 #define MAIN_WINDOW_HPP
 
+#include "log.hpp"
 #include "qt_common.hpp"
 #include "globals.hpp"
 #include "login_dialog.hpp"
@@ -10,6 +11,8 @@
 #include "account_control_panel.hpp"
 #include "book_table.hpp"
 #include "book_control_panel.hpp"
+#include "log_table.hpp"
+#include "log_control_panel.hpp"
 #include "top_bar.hpp"
 #include <functional>
 
@@ -40,14 +43,22 @@ public:
             bookControlPanel->refreshPanel();
         });
 
+        connect(topBar, &TopBar::logButtonClicked, this, [this]{
+            stackedTable->setCurrentWidget(logTable);
+            stackedPanel->setCurrentWidget(logControlPanel);
+            logTable->refreshTable();
+        });
+
         stackedTable = new QStackedWidget(centralWidget);
         stackedPanel = new QStackedWidget(centralWidget);
 
         accountTable = new AccountTable(stackedTable);
         bookTable = new BookTable(stackedTable);
+        logTable = new LogTable(stackedTable);
 
         accountControlPanel = new AccountControlPanel(stackedPanel);
         bookControlPanel = new BookControlPanel(stackedPanel);
+        logControlPanel = new LogControlPanel(stackedPanel);
 
         connect(accountTable, &AccountTable::accountSelected, accountControlPanel, &AccountControlPanel::onAccountSelected);
 
@@ -55,10 +66,12 @@ public:
 
         stackedTable->addWidget(accountTable);
         stackedTable->addWidget(bookTable);
+        stackedTable->addWidget(logTable);
         stackedTable->setCurrentWidget(bookTable);
 
         stackedPanel->addWidget(accountControlPanel);
         stackedPanel->addWidget(bookControlPanel);
+        stackedPanel->addWidget(logControlPanel);
         stackedPanel->setCurrentWidget(bookControlPanel);
 
         mainLayout->addWidget(stackedTable, 1);
@@ -73,9 +86,15 @@ public:
             bookTable->refreshTable();
         });
 
+        connect(logControlPanel, &LogControlPanel::refreshLogs, this, [this]{
+            logTable->refreshTable(true);
+        });
+
         connect(accountControlPanel, &AccountControlPanel::searchedAccounts, accountTable, &AccountTable::handleSearch);
 
         connect(bookControlPanel, &BookControlPanel::searchedBooks, bookTable, &BookTable::handleSearch);
+
+        connect(logControlPanel, &LogControlPanel::searchedLogs, logTable, &LogTable::handleSearch);
 
         connect(accountControlPanel, &AccountControlPanel::loginSucceeded, this, [this](const QString &userId){
             topBar->refreshBar();
@@ -110,10 +129,12 @@ private:
     QStackedWidget *stackedTable;
     AccountTable *accountTable;
     BookTable *bookTable;
+    LogTable *logTable;
 
     QStackedWidget *stackedPanel;
     AccountControlPanel *accountControlPanel;
     BookControlPanel *bookControlPanel;
+    LogControlPanel *logControlPanel;
 
 };
 
