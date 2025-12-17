@@ -1,20 +1,20 @@
-#ifndef REPORT_FINANCE_DIALOG_HPP
-#define REPORT_FINANCE_DIALOG_HPP
+#ifndef REPORT_EMPLOYEE_DIALOG_HPP
+#define REPORT_EMPLOYEE_DIALOG_HPP
 
 #include <fstream>
 #include "qt_common.hpp"
 #include "globals.hpp"
 #include "utils.hpp"
 
-class ReportFinanceDialog : public QDialog {
+class ReportEmployeeDialog : public QDialog {
 public:
-    ReportFinanceDialog(QWidget *parent = nullptr) : QDialog(parent) {
+    ReportEmployeeDialog(QWidget *parent = nullptr) : QDialog(parent) {
         setupUI();
         applyStyle();
         connect(buttonBox, &QDialogButtonBox::accepted, [this]() {
             QString fileName = fileNameEdit->text().trimmed();
             if (fileName.isEmpty()) {
-                fileName = "FinanceReport.txt";
+                fileName = "EmployeeReport.txt";
             }
             if (!fileName.endsWith(".txt")) {
                 fileName += ".txt";
@@ -28,14 +28,17 @@ public:
                 return;
             }
 
-            log_manager->report_finance(file);
+            auto vec = account_manager->list_admins();
+            for (auto user_id : vec) {
+                log_manager->report_employee(user_id, file);
+            }
             file.close();
 
-            std::string msg = current_time() + " [REPORT]User " + account_manager->current_user() + " reported finance.";
+            std::string msg = current_time() + " [REPORT]User " + account_manager->current_user() + " reported employee.";
             log_manager->add_log(msg);
 
-            qDebug() << "财务报表已生成:" << fileName;
-            QMessageBox::information(this, "成功", "财务报表已生成: " + fileName);
+            qDebug() << "员工报表已生成:" << fileName;
+            QMessageBox::information(this, "成功", "员工报表已生成: " + fileName);
             accept();
         });
     }
@@ -46,14 +49,14 @@ private:
     QLabel *errorLabel;
 
     void setupUI() {
-        setWindowTitle("生成财务报表");
+        setWindowTitle("生成员工报表");
         setFixedSize(300, 150);
         
         QVBoxLayout *mainLayout = new QVBoxLayout(this);
         QFormLayout *formLayout = new QFormLayout();
         
         fileNameEdit = new QLineEdit();
-        fileNameEdit->setPlaceholderText("FinanceReport.txt");
+        fileNameEdit->setPlaceholderText("EmployeeReport.txt");
 
         formLayout->addRow("文件名:", fileNameEdit);
 
@@ -63,8 +66,6 @@ private:
         errorLabel->hide();
 
         buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
-
-        connect(buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
 
         mainLayout->addLayout(formLayout);
         mainLayout->addWidget(errorLabel);

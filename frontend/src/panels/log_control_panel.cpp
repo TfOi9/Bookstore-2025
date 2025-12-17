@@ -1,6 +1,8 @@
 #include "log_control_panel.hpp"
 #include "finance_query_dialog.hpp"
 #include "report_finance_dialog.hpp"
+#include "report_employee_dialog.hpp"
+#include "export_csv_dialog.hpp"
 
 LogControlPanel::LogControlPanel(QWidget *parent) : QWidget(parent) {
     refreshButton = new QPushButton("刷新", this);
@@ -50,10 +52,14 @@ void LogControlPanel::onReportFinanceButtonClicked() {
 
 void LogControlPanel::onReportEmployeeButtonClicked() {
     qDebug() << "Report employee button clicked";
+    ReportEmployeeDialog dialog(this);
+    dialog.exec();
 }
 
 void LogControlPanel::onExportCSVButtonClicked() {
     qDebug() << "Export CSV button clicked";
+    ExportCSVDialog dialog(this);
+    dialog.exec();
 }
 
 void LogControlPanel::onSearchButtonClicked() {
