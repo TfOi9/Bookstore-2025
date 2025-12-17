@@ -61,5 +61,7 @@
 #include <QString>
 #include <QHeaderView>
 #include <QIcon>
+#include <QStandardPaths>
+#include <QDir>
 
 #endif

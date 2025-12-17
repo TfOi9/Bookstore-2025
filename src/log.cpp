@@ -44,6 +44,14 @@ LogManager::LogManager() : finance_file_("finance.dat"), employee_file_("employe
     log_file_.initialise();
 }
 
+LogManager::LogManager(const std::string& base_dir)
+        : finance_file_(base_dir + "/finance.dat"),
+            employee_file_(base_dir + "/employee.dat"),
+            log_file_(base_dir + "/log.dat") {
+        finance_file_.initialise();
+        log_file_.initialise();
+}
+
 void LogManager::add_finance_log(double cost, const std::string& time) {
     FinanceLog finance_log(finance_file_.size(), cost, time);
     finance_file_.write(finance_log);

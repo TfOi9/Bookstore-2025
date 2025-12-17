@@ -72,6 +72,8 @@ private:
 public:
     LogManager();
 
+    LogManager(const std::string& base_dir);
+
     ~LogManager() = default;
 
     // adds a finance log.

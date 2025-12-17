@@ -69,6 +69,15 @@ BookManager::BookManager() : ISBN_file_("ISBN.dat"), book_name_file_("book_name.
     book_file_.initialise();
 }
 
+BookManager::BookManager(const std::string& base_dir)
+        : ISBN_file_(base_dir + "/ISBN.dat"),
+            book_name_file_(base_dir + "/book_name.dat"),
+            author_file_(base_dir + "/author.dat"),
+            keyword_file_(base_dir + "/keyword.dat"),
+            book_file_(base_dir + "/book.dat") {
+        book_file_.initialise();
+}
+
 int BookManager::size() const {
     return book_file_.size();
 }

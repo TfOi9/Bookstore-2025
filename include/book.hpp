@@ -52,6 +52,8 @@ private:
 public:
     BookManager();
 
+    BookManager(const std::string& base_dir);
+
     ~BookManager() = default;
 
     // returns the number of books.

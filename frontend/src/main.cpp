@@ -3,11 +3,18 @@
 #include "main_window.hpp"
 
 int main(int argc, char *argv[]) {
-    account_manager = new AccountManager();
-    book_manager = new BookManager();
-    log_manager = new LogManager();
-
     QApplication app(argc, argv);
+
+    QString dataDir = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+    if (dataDir.isEmpty()) {
+        dataDir = QDir::homePath() + "/.BookStore";
+    }
+    QDir().mkpath(dataDir);
+    std::string base = dataDir.toStdString();
+
+    account_manager = new AccountManager(base + "/account.dat");
+    book_manager = new BookManager(base);
+    log_manager = new LogManager(base);
 
 #ifdef Q_OS_MAC
     {
