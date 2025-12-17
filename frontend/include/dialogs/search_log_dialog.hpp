@@ -28,6 +28,8 @@ public:
 
             if (searchType == "全部日志") {
                 if (p) {
+                    std::string msg = current_time() + " [FIND]User " + account_manager->current_user() + " found all logs.";
+                    log_manager->add_log(msg);
                     emit p->searchedLogs(log_manager->serialize());
                 }
             }
@@ -43,6 +45,8 @@ public:
                             filteredLogs.push_back(log);
                         }
                     }
+                    std::string msg = current_time() + " [FIND]User " + account_manager->current_user() + " found logs by time.";
+                    log_manager->add_log(msg);
                     emit p->searchedLogs(filteredLogs);
                 }
             }
@@ -55,6 +59,8 @@ public:
                             filteredLogs.push_back(log);
                         }
                     }
+                    std::string msg = current_time() + " [FIND]User " + account_manager->current_user() + " found logs by content.";
+                    log_manager->add_log(msg);
                     emit p->searchedLogs(filteredLogs);
                 }
             }
