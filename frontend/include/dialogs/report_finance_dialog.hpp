@@ -2,6 +2,8 @@
 #define REPORT_FINANCE_DIALOG_HPP
 
 #include <fstream>
+#include <QFileDialog>
+#include <QDir>
 #include "qt_common.hpp"
 #include "globals.hpp"
 #include "utils.hpp"
@@ -12,18 +14,24 @@ public:
         setupUI();
         applyStyle();
         connect(buttonBox, &QDialogButtonBox::accepted, [this]() {
+            const QString dir = QFileDialog::getExistingDirectory(this, "选择导出目录", QDir::homePath());
+            if (dir.isEmpty()) {
+                return; // user cancelled
+            }
+
             QString fileName = fileNameEdit->text().trimmed();
             if (fileName.isEmpty()) {
                 fileName = "FinanceReport.txt";
             }
-            if (!fileName.endsWith(".txt")) {
+            if (!fileName.endsWith(".txt", Qt::CaseInsensitive)) {
                 fileName += ".txt";
             }
 
-            std::fstream file(fileName.toStdString(), std::ios::out);
+            const QString fullPath = QDir(dir).filePath(fileName);
+            std::fstream file(fullPath.toStdString(), std::ios::out);
             if (!file.is_open()) {
-                qDebug() << "错误: 无法创建文件!";
-                errorLabel->setText("错误: 无法创建文件!");
+                qDebug() << "错误: 无法创建文件!" << fullPath;
+                errorLabel->setText("错误: 无法创建文件! " + fullPath);
                 errorLabel->show();
                 return;
             }
@@ -31,11 +39,11 @@ public:
             log_manager->report_finance(file);
             file.close();
 
-            std::string msg = current_time() + " [REPORT]User " + account_manager->current_user() + " reported finance.";
+            const std::string msg = current_time() + " [REPORT]User " + account_manager->current_user() + " reported finance to " + fullPath.toStdString() + ".";
             log_manager->add_log(msg);
 
-            qDebug() << "财务报表已生成:" << fileName;
-            QMessageBox::information(this, "成功", "财务报表已生成: " + fileName);
+            qDebug() << "财务报表已生成:" << fullPath;
+            QMessageBox::information(this, "成功", "财务报表已生成: " + fullPath);
             accept();
         });
     }
