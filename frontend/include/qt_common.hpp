@@ -63,5 +63,6 @@
 #include <QIcon>
 #include <QStandardPaths>
 #include <QDir>
+#include <QFileInfo>
 
 #endif

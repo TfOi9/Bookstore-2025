@@ -17,112 +17,20 @@
 #include <functional>
 
 class MainWindow : public QMainWindow {
+    Q_OBJECT
 public:
-    MainWindow(QWidget *parent = nullptr) : QMainWindow(parent) {
-        QWidget *centralWidget = new QWidget(this);
-        QVBoxLayout *mainLayout = new QVBoxLayout(centralWidget);
-        mainLayout->setContentsMargins(0, 0, 0, 0);
-        mainLayout->setSpacing(0);
-
-        topBar = new TopBar(this);
-        mainLayout->addWidget(topBar);
-
-        connect(topBar, &TopBar::authChanged, this, &MainWindow::handleAuthChanged);
-
-        connect(topBar, &TopBar::accountButtonClicked, this, [this]{
-            stackedTable->setCurrentWidget(accountTable);
-            stackedPanel->setCurrentWidget(accountControlPanel);
-            accountTable->refreshTable();
-            accountControlPanel->refreshPanel();
-        });
-        
-        connect(topBar, &TopBar::bookButtonClicked, this, [this]{
-            stackedTable->setCurrentWidget(bookTable);
-            stackedPanel->setCurrentWidget(bookControlPanel);
-            bookTable->refreshTable();
-            bookControlPanel->refreshPanel();
-        });
-
-        connect(topBar, &TopBar::logButtonClicked, this, [this]{
-            stackedTable->setCurrentWidget(logTable);
-            stackedPanel->setCurrentWidget(logControlPanel);
-            logTable->refreshTable();
-        });
-
-        stackedTable = new QStackedWidget(centralWidget);
-        stackedPanel = new QStackedWidget(centralWidget);
-
-        accountTable = new AccountTable(stackedTable);
-        bookTable = new BookTable(stackedTable);
-        logTable = new LogTable(stackedTable);
-
-        accountControlPanel = new AccountControlPanel(stackedPanel);
-        bookControlPanel = new BookControlPanel(stackedPanel);
-        logControlPanel = new LogControlPanel(stackedPanel);
-
-        connect(accountTable, &AccountTable::accountSelected, accountControlPanel, &AccountControlPanel::onAccountSelected);
-
-        connect(bookTable, &BookTable::bookSelected, bookControlPanel, &BookControlPanel::onBookSelected);
-
-        stackedTable->addWidget(accountTable);
-        stackedTable->addWidget(bookTable);
-        stackedTable->addWidget(logTable);
-        stackedTable->setCurrentWidget(bookTable);
-
-        stackedPanel->addWidget(accountControlPanel);
-        stackedPanel->addWidget(bookControlPanel);
-        stackedPanel->addWidget(logControlPanel);
-        stackedPanel->setCurrentWidget(bookControlPanel);
-
-        mainLayout->addWidget(stackedTable, 1);
-        mainLayout->addWidget(stackedPanel, 0);
-        stackedPanel->setFixedHeight(60);
-
-        connect(accountControlPanel, &AccountControlPanel::accountListChanged, this, [this]{
-            accountTable->refreshTable();
-        });
-
-        connect(bookControlPanel, &BookControlPanel::bookListChanged, this, [this]{
-            bookTable->refreshTable();
-        });
-
-        connect(logControlPanel, &LogControlPanel::refreshLogs, this, [this]{
-            logTable->refreshTable(true);
-        });
-
-        connect(accountControlPanel, &AccountControlPanel::searchedAccounts, accountTable, &AccountTable::handleSearch);
-
-        connect(bookControlPanel, &BookControlPanel::searchedBooks, bookTable, &BookTable::handleSearch);
-
-        connect(logControlPanel, &LogControlPanel::searchedLogs, logTable, &LogTable::handleSearch);
-
-        connect(accountControlPanel, &AccountControlPanel::loginSucceeded, this, [this](const QString &userId){
-            topBar->refreshBar();
-            handleAuthChanged(QStringLiteral("已登录: ") + userId);
-        });
-
-        statusBar()->showMessage(QStringLiteral("游客模式"));
-        
-        resize(800, 600);
-        setWindowTitle("BookStore");
-
-        topBar->refreshBar();
-
-        setCentralWidget(centralWidget);
-    }
+    MainWindow(QWidget *parent = nullptr);
 
     void setStatusMessage(const QString &msg, int timeout = 0) {
         statusBar()->showMessage(msg, timeout);
     }
 
+private slots:
+    void initializeComponents();
+
 private:
-    void handleAuthChanged(const QString &msg) {
-        stackedTable->setCurrentWidget(bookTable);
-        stackedPanel->setCurrentWidget(bookControlPanel);
-        bookTable->refreshTable();
-        bookControlPanel->refreshPanel();
-        setStatusMessage(msg);
-    }
+    void initializeUI();
+    void handleAuthChanged(const QString &msg);
 
     TopBar *topBar;
 
@@ -135,7 +43,8 @@ private:
     AccountControlPanel *accountControlPanel;
     BookControlPanel *bookControlPanel;
     LogControlPanel *logControlPanel;
-
+    
+    bool initialized_;
 };
 
 #endif

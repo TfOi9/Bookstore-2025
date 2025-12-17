@@ -40,6 +40,7 @@ add_executable(
     frontend/include/panels/book_control_panel.hpp frontend/src/panels/book_control_panel.cpp
     frontend/include/panels/log_control_panel.hpp frontend/src/panels/log_control_panel.cpp
     frontend/include/top_bar.hpp frontend/src/top_bar.cpp
+    frontend/include/main_window.hpp frontend/src/main_window.cpp
     frontend/src/main.cpp
 )
 
@@ -56,6 +57,7 @@ if(APPLE)
         MACOSX_BUNDLE_INFO_PLIST "${CMAKE_SOURCE_DIR}/frontend/Info.plist.in"
         OUTPUT_NAME "BookStore"
     )
+    target_sources(gui PRIVATE frontend/icons/icons.qrc)
 elseif(WIN32)
     target_sources(gui PRIVATE frontend/icons/app_icon.rc frontend/icons/icons.qrc)
     set_target_properties(gui PROPERTIES WIN32_EXECUTABLE TRUE OUTPUT_NAME "BookStore")
