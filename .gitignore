@@ -1,6 +1,7 @@
 .DS_Store
 .clangd
 build/*
+build-release/*
 temp/*
 test/*
 tools/*
