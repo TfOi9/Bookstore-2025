@@ -3,6 +3,7 @@
 #include "report_finance_dialog.hpp"
 #include "report_employee_dialog.hpp"
 #include "export_csv_dialog.hpp"
+#include "search_log_dialog.hpp"
 
 LogControlPanel::LogControlPanel(QWidget *parent) : QWidget(parent) {
     refreshButton = new QPushButton("刷新", this);
@@ -64,6 +65,8 @@ void LogControlPanel::onExportCSVButtonClicked() {
 
 void LogControlPanel::onSearchButtonClicked() {
     qDebug() << "Search logs button clicked";
+    SearchLogDialog dialog(this);
+    dialog.exec();
 }
 
 void LogControlPanel::applyStyle() {

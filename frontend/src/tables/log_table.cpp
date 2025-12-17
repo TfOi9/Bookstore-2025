@@ -37,9 +37,7 @@ void LogTable::refreshTable(bool update) {
 }
 
 void LogTable::updateLogs(const std::vector<Log>& logs) {
-    qDebug() << "Updating logs in LogTable, new size:" << logs.size();
-    logs_ = logs;
-    refreshTable(false);
+    handleSearch(logs);
 }
 
 void LogTable::handleSearch(const std::vector<Log>& logs) {
