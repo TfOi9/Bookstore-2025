@@ -9,8 +9,18 @@ int main(int argc, char *argv[]) {
 
     QApplication app(argc, argv);
 
-    // qRegisterMetaType<std::vector<Book>>("std::vector<Book>");
-    
+#ifdef Q_OS_MAC
+    {
+        QString iconPath = QCoreApplication::applicationDirPath() + "/../Resources/BookShelf.icns";
+        app.setWindowIcon(QIcon(iconPath));
+    }
+#endif
+#ifdef Q_OS_WIN
+    {
+        app.setWindowIcon(QIcon(QLatin1String(":/icons/BookShelf.ico")));
+    }
+#endif
+
     MainWindow window;
     window.show();
     

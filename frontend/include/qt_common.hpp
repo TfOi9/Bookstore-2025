@@ -60,5 +60,6 @@
 #include <QStatusBar>
 #include <QString>
 #include <QHeaderView>
+#include <QIcon>
 
 #endif

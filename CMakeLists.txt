@@ -46,3 +46,17 @@ add_executable(
 target_link_libraries(gui PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 
 set_target_properties(gui PROPERTIES AUTOMOC ON)
+
+if(APPLE)
+    set_source_files_properties(frontend/icons/BookShelf.icns PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
+    target_sources(gui PRIVATE frontend/icons/BookShelf.icns)
+    set_target_properties(gui PROPERTIES
+        MACOSX_BUNDLE TRUE
+        MACOSX_BUNDLE_ICON_FILE "BookShelf"
+        MACOSX_BUNDLE_INFO_PLIST "${CMAKE_SOURCE_DIR}/frontend/Info.plist.in"
+        OUTPUT_NAME "BookStore"
+    )
+elseif(WIN32)
+    target_sources(gui PRIVATE frontend/icons/app_icon.rc frontend/icons/icons.qrc)
+    set_target_properties(gui PROPERTIES WIN32_EXECUTABLE TRUE OUTPUT_NAME "BookStore")
+endif()
