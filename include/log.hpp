@@ -5,6 +5,7 @@
 #include <vector>
 #include <utility>
 #include <iostream>
+#include <iomanip>
 #include "memory_river.hpp"
 #include "hash_map.hpp"
 #include "utils.hpp"
