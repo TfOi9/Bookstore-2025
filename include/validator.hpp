@@ -9,6 +9,8 @@
 
 bool is_ascii(char32_t cp);
 
+bool is_visible_ascii(char32_t cp);
+
 bool is_han(char32_t cp);
 
 bool is_special(char32_t cp);

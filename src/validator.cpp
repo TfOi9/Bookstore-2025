@@ -4,6 +4,10 @@ bool is_ascii(char32_t cp) {
     return cp <= 0x7F;
 }
 
+bool is_visible_ascii(char32_t cp) {
+    return cp >= 33 && cp <= 126;
+}
+
 bool is_han(char32_t cp) {
     return
         (cp >= 0x4E00 && cp <= 0x9FFF) ||       // CJK Unified Ideographs
@@ -148,7 +152,7 @@ Validator& Validator::han() {
         return *this;
     }
     for (int i = 0; i < utf32_str_.size(); i++) {
-        if (!is_ascii(utf32_str_[i]) && !is_han(utf32_str_[i]) && !is_special(utf32_str_[i])) {
+        if (!is_visible_ascii(utf32_str_[i]) && !is_han(utf32_str_[i]) && !is_special(utf32_str_[i])) {
             valid_ = false;
             break;
         }
