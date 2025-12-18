@@ -93,7 +93,7 @@ private:
             errorLabel->show();
             return false;
         }
-        const std::string msg = current_time() + " [EXPORT]User " + account_manager->current_user() + " exported " + label.toStdString() + " to CSV.";
+        const std::string msg = current_time() + " [EXPORT]User " + account_manager->current_user() + " exported CSV.";
         log_manager->add_log(msg);
         qDebug() << label << "已导出为CSV:" << path;
         QMessageBox::information(this, "成功", label + "已导出为CSV: " + path);

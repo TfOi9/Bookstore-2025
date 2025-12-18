@@ -39,7 +39,7 @@ public:
             log_manager->report_finance(file);
             file.close();
 
-            const std::string msg = current_time() + " [REPORT]User " + account_manager->current_user() + " reported finance to " + fullPath.toStdString() + ".";
+            const std::string msg = current_time() + " [REPORT]User " + account_manager->current_user() + " reported finance.";
             log_manager->add_log(msg);
 
             qDebug() << "财务报表已生成:" << fullPath;
