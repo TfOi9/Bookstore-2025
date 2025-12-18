@@ -51,7 +51,7 @@ public:
                 }
             }
             else if (searchType == "用户名") {
-                if (!Validator(searchContent.toStdString()).max_len(30).visible_only()) {
+                if (!ChineseValidator(searchContent.toStdString()).max_len(30).han()) {
                     qDebug() << "错误: 用户名格式不正确!";
                     errorLabel->setText("错误: 用户名格式不正确!");
                     errorLabel->show();
