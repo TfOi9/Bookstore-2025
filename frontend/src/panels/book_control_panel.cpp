@@ -2,6 +2,8 @@
 #include "add_book_dialog.hpp"
 #include "buy_dialog.hpp"
 #include "globals.hpp"
+#include "import_dialog.hpp"
+#include "delete_book_dialog.hpp"
 #include "modify_book_dialog.hpp"
 #include "search_book_dialog.hpp"
 #include "utils.hpp"
@@ -10,6 +12,7 @@ BookControlPanel::BookControlPanel(QWidget *parent) : QWidget(parent) {
     addButton = new QPushButton("添加", this);
     buyButton = new QPushButton("购买", this);
     modifyButton = new QPushButton("修改", this);
+    deleteButton = new QPushButton("删除", this);
     importButton = new QPushButton("进货", this);
     searchButton = new QPushButton("搜索", this);
 
@@ -18,6 +21,7 @@ BookControlPanel::BookControlPanel(QWidget *parent) : QWidget(parent) {
     layout->addWidget(addButton);
     layout->addWidget(buyButton);
     layout->addWidget(modifyButton);
+    layout->addWidget(deleteButton);
     layout->addWidget(importButton);
     layout->addWidget(searchButton);
     
@@ -28,6 +32,7 @@ BookControlPanel::BookControlPanel(QWidget *parent) : QWidget(parent) {
     connect(addButton, &QPushButton::clicked, this, &BookControlPanel::onAddButtonClicked);
     connect(buyButton, &QPushButton::clicked, this, &BookControlPanel::onBuyButtonClicked);
     connect(modifyButton, &QPushButton::clicked, this, &BookControlPanel::onModifyButtonClicked);
+    connect(deleteButton, &QPushButton::clicked, this, &BookControlPanel::onDeleteButtonClicked);
     connect(importButton, &QPushButton::clicked, this, &BookControlPanel::onImportButtonClicked);
     connect(searchButton, &QPushButton::clicked, this, &BookControlPanel::onSearchButtonClicked);
     
@@ -69,6 +74,18 @@ void BookControlPanel::onModifyButtonClicked() {
     emit bookListChanged();
 }
 
+void BookControlPanel::onDeleteButtonClicked() {
+    qDebug() << "Delete button clicked";
+    if (currentSelectedISBN.isEmpty()) {
+        QMessageBox::warning(this, "错误", "请先选择图书！");
+        return;
+    }
+    Book selectedBook = book_manager->find_ISBN(string_to_array<20>(currentSelectedISBN.toStdString()))[0];
+    DeleteBookDialog dialog(currentSelectedISBN, this);
+    dialog.exec();
+    emit bookListChanged();
+}
+
 void BookControlPanel::onImportButtonClicked() {
     qDebug() << "Import button clicked";
     if (currentSelectedISBN.isEmpty()) {
@@ -92,6 +109,7 @@ void BookControlPanel::refreshPanel() {
             addButton->hide();
             buyButton->hide();
             modifyButton->hide();
+            deleteButton->hide();
             importButton->hide();
             searchButton->hide();
             break;
@@ -99,14 +117,23 @@ void BookControlPanel::refreshPanel() {
             addButton->hide();
             buyButton->show();
             modifyButton->hide();
+            deleteButton->hide();
             importButton->hide();
             searchButton->show();
             break;
         case 3:
+            addButton->show();
+            buyButton->show();
+            modifyButton->show();
+            deleteButton->hide();
+            importButton->show();
+            searchButton->show();
+            break;
         case 7:
             addButton->show();
             buyButton->show();
             modifyButton->show();
+            deleteButton->show();
             importButton->show();
             searchButton->show();
             break;

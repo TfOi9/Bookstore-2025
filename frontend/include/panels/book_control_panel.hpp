@@ -25,6 +25,7 @@ private slots:
     void onAddButtonClicked();
     void onBuyButtonClicked();
     void onModifyButtonClicked();
+    void onDeleteButtonClicked();
     void onImportButtonClicked();
     void onSearchButtonClicked();
 
@@ -35,6 +36,7 @@ private:
     QPushButton *addButton;
     QPushButton *buyButton;
     QPushButton *modifyButton;
+    QPushButton *deleteButton;
     QPushButton *importButton;
     QPushButton *searchButton;
 

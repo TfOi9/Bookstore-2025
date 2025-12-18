@@ -75,7 +75,7 @@ BookManager::BookManager(const std::string& base_dir)
             author_file_(base_dir + "/author.dat"),
             keyword_file_(base_dir + "/keyword.dat"),
             book_file_(base_dir + "/book.dat") {
-        book_file_.initialise();
+    book_file_.initialise();
 }
 
 int BookManager::size() const {
@@ -137,6 +137,9 @@ std::vector<Book> BookManager::serialize() {
     for (int i = 0; i < book_file_.size(); i++) {
         Book book;
         book_file_.read(book, i);
+        if (book.ISBN_[0] == 0) {
+            continue;
+        }
         ret.push_back(book);
     }
     std::sort(ret.begin(), ret.end());
@@ -276,4 +279,23 @@ void BookManager::export_data(const std::string& filename) {
         file << "\"" << book.ISBN() << "\",\"" << book.book_name() << "\",\"" << book.author() << "\",\"" << book.keyword() << "\"," << book.price_ << ',' << book.quant_ << '\n';
     }
     file.close();
+}
+
+bool BookManager::delete_book(const std::array<char, 20>& ISBN) {
+    auto vec = ISBN_file_.find(ISBN);
+    if (vec.empty()) {
+        return false;
+    }
+    int id = vec[0];
+    Book book, empty_book;
+    book_file_.read(book, id);
+    book_file_.update(empty_book, id);
+    ISBN_file_.erase(ISBN, id);
+    book_name_file_.erase(book.book_name_, id);
+    author_file_.erase(book.author_, id);
+    auto kws = parse_keywords(book.keyword_);
+    for (auto kw : kws) {
+        keyword_file_.erase(kw, id);
+    }
+    return true;
 }

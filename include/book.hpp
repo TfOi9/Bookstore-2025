@@ -106,6 +106,9 @@ public:
 
     // exports data to a CSV file.
     void export_data(const std::string& filename = "book.csv");
+
+    // deletes a book.
+    bool delete_book(const std::array<char, 20>& ISBN);
 };
 
 #endif
