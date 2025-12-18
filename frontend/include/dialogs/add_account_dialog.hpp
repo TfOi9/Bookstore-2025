@@ -42,7 +42,8 @@ public:
                 return;
             }
 
-            if (!UnicodeValidator(username.toStdString()).max_len(30).han()) {
+            if (!UnicodeValidator(username.toStdString()).max_len(30).han() &&
+                !UnicodeValidator(username.toStdString()).max_len(30).japanese()) {
                 qDebug() << "错误: 用户名格式不正确!";
                 errorLabel->setText("错误: 用户名格式不正确!");
                 errorLabel->show();

@@ -7,6 +7,27 @@
 #include <vector>
 #include "utils.hpp"
 
+enum class UnicodeScript {
+    Unknown = 0,
+    Ascii,
+    Latin,
+    Han,
+    Hiragana,
+    Katagana,
+    Hangul,
+    Greek,
+    Cyrillic,
+    Hebrew,
+    Arabic,
+    Devanagari,
+    Thai,
+    CSpecialSymbol,
+    JSpecialSymbol,
+    Emoji,
+};
+
+UnicodeScript detect_script(char32_t cp);
+
 class Validator {
 private:
     std::string str_;
@@ -43,7 +64,9 @@ bool is_visible_ascii(char32_t cp);
 
 bool is_han(char32_t cp);
 
-bool is_special(char32_t cp);
+bool is_cspecial(char32_t cp);
+
+bool is_jspecial(char32_t cp);
 
 class UnicodeValidator {
 private:
@@ -73,6 +96,8 @@ public:
     UnicodeValidator& no_pipes();
 
     UnicodeValidator& han();
+
+    UnicodeValidator& japanese();
 
     operator bool() const;
 };

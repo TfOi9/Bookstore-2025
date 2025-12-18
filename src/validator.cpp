@@ -1,5 +1,53 @@
 #include "../include/validator.hpp"
 
+UnicodeScript detect_script(char32_t cp) {
+    if (is_ascii(cp)) {
+        return UnicodeScript::Ascii;
+    }
+    else if ((cp >= 0x00C0 && cp <= 0x024F) || (cp >= 0x1E00 && cp <= 0x1EFF)) {
+        return UnicodeScript::Latin;
+    }
+    else if (is_han(cp)) {
+        return UnicodeScript::Han;
+    }
+    else if (cp >= 0x3040 && cp <= 0x309F) {
+        return UnicodeScript::Hiragana;
+    }
+    else if (cp >= 0x30A0 && cp <= 0x30FF) {
+        return UnicodeScript::Katagana;
+    }
+    else if (cp >= 0xAC00 && cp <= 0xD7AF) {
+        return UnicodeScript::Hangul;
+    }
+    else if (cp >= 0x0370 && cp <= 0x03FF) {
+        return UnicodeScript::Greek;
+    }
+    else if (cp >= 0x0400 && cp <= 0x04FF) {
+        return UnicodeScript::Cyrillic;
+    }
+    else if (cp >= 0x0590 && cp <= 0x05FF) {
+        return UnicodeScript::Hebrew;
+    }
+    else if (cp >= 0x0600 && cp <= 0x06FF) {
+        return UnicodeScript::Arabic;
+    }
+    else if (cp >= 0x0900 && cp <= 0x097F) {
+        return UnicodeScript::Devanagari;
+    }
+    else if (cp >= 0x0E00 && cp <= 0x0E7F) {
+        return UnicodeScript::Thai;
+    }
+    else if (is_cspecial(cp)) {
+        return UnicodeScript::CSpecialSymbol;
+    }
+    else if (is_jspecial(cp)) {
+        return UnicodeScript::JSpecialSymbol;
+    }
+    else {
+        return UnicodeScript::Unknown;
+    }
+}
+
 Validator::Validator(const std::string& str, bool valid) : str_(str), valid_(valid) {}
 
 Validator& Validator::max_len(int len) {
@@ -141,13 +189,29 @@ bool is_han(char32_t cp) {
         (cp >= 0x30000 && cp <= 0x3134F);       // Extension G
 }
 
-bool is_special(char32_t cp) {
+bool is_cspecial(char32_t cp) {
     return
         (cp == 0x00B7) ||       // 「·」
         (cp == 0x2014) ||       // 「—」
         (cp == 0xFF08) ||       // 「（」
         (cp == 0xFF09) ||       // 「）」
         (cp == 0xFF1A);         // 「：」
+}
+
+bool is_jspecial(char32_t cp) {
+    return
+        (cp == 0x301C) ||       // 「〜」
+        (cp == 0x30FC) ||       // 「ー」
+        (cp == 0x30FB) ||       // 「・」
+        (cp == 0xFF1A) ||       // 「：」
+        (cp == 0xFF0F) ||       // 「／」
+        (cp == 0x2026) ||       // 「…」
+        (cp == 0xFF01) ||       // 「！」
+        (cp == 0xFF1F) ||       // 「？」
+        (cp == 0x3001) ||       // 「、」
+        (cp == 0x3002) ||       // 「。」
+        (cp == 0x2605) ||       // 「★」
+        (cp == 0x2606);         // 「☆」
 }
 
 UnicodeValidator::UnicodeValidator(const std::string& str, bool valid) : utf32_str_(utf8_to_utf32(str)), valid_(valid) {}
@@ -273,7 +337,25 @@ UnicodeValidator& UnicodeValidator::han() {
         return *this;
     }
     for (int i = 0; i < utf32_str_.size(); i++) {
-        if (!is_visible_ascii(utf32_str_[i]) && !is_han(utf32_str_[i]) && !is_special(utf32_str_[i])) {
+        UnicodeScript script = detect_script(utf32_str_[i]);
+        if (script != UnicodeScript::Ascii && script != UnicodeScript::Han &&
+            !is_cspecial(utf32_str_[i])) {
+            valid_ = false;
+            break;
+        }
+    }
+    return *this;
+}
+
+UnicodeValidator& UnicodeValidator::japanese() {
+    if (!valid_) {
+        return *this;
+    }
+    for (int i = 0; i < utf32_str_.size(); i++) {
+        UnicodeScript script = detect_script(utf32_str_[i]);
+        if (script != UnicodeScript::Ascii && script != UnicodeScript::Hiragana &&
+            script != UnicodeScript::Katagana && script != UnicodeScript::Han &&
+             !is_jspecial(utf32_str_[i])) {
             valid_ = false;
             break;
         }
