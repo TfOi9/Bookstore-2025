@@ -116,3 +116,45 @@ double stod_safe(const std::string &str) {
     }
     return val;
 }
+
+std::vector<char32_t> utf8_to_utf32(const std::string& str) {
+    std::vector<char32_t> result;
+    int i = 0;
+    while (i < str.size()) {
+        unsigned char ch = str[i];
+        char32_t cp = 0;
+        int len = 0;
+        if (ch <= 0x7F) {
+            cp = ch;
+            len = 1;
+        }
+        else if ((ch & 0xE0) == 0xC0) {
+            cp = ch & 0x1F;
+            len = 2;
+        }
+        else if ((ch & 0xF0) == 0xE0) {
+            cp = ch & 0x0F;
+            len = 3;
+        }
+        else if ((ch & 0xF8) == 0xF0) {
+            cp = ch & 0x07;
+            len = 4;
+        }
+        else {
+            throw "Invalid UTF-8 leading byte";
+        }
+        if (i + len > str.size()) {
+            throw "Truncated UTF-8";
+        }
+        for (int j = 1; j < len; j++) {
+            unsigned char cc = str[i + j];
+            if ((cc & 0xC0) != 0x80) {
+                throw "Invalid UTF-8 continuation byte";
+            }
+            cp = (cp << 6) | (cc & 0x3F);
+        }
+        result.push_back(cp);
+        i += len;
+    }
+    return result;
+}

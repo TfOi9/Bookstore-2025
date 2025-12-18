@@ -3,10 +3,20 @@
 
 #include <iostream>
 #include <string>
+#include <cstdint>
+#include <vector>
+#include "utils.hpp"
+
+bool is_ascii(char32_t cp);
+
+bool is_han(char32_t cp);
+
+bool is_special(char32_t cp);
+
 
 class Validator {
 private:
-    std::string str_;
+    std::vector<char32_t> utf32_str_;
     bool valid_;
 public:
     Validator(const std::string& str, bool valid = true);
@@ -30,6 +40,8 @@ public:
     Validator& only_one_dot();
 
     Validator& no_pipes();
+
+    Validator& han();
 
     operator bool() const;
 };
