@@ -36,7 +36,7 @@ public:
                 return;
             }
 
-            if (!ChineseValidator(username.toStdString()).min_len(1).max_len(30).han()) {
+            if (!UnicodeValidator(username.toStdString()).min_len(1).max_len(30).han()) {
                 qDebug() << "错误: 用户名格式不正确!";
                 errorLabel->setText("错误: 用户名格式不正确!");
                 errorLabel->show();

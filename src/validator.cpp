@@ -150,23 +150,23 @@ bool is_special(char32_t cp) {
         (cp == 0xFF1A);         // 「：」
 }
 
-ChineseValidator::ChineseValidator(const std::string& str, bool valid) : utf32_str_(utf8_to_utf32(str)), valid_(valid) {}
+UnicodeValidator::UnicodeValidator(const std::string& str, bool valid) : utf32_str_(utf8_to_utf32(str)), valid_(valid) {}
 
-ChineseValidator& ChineseValidator::max_len(int len) {
+UnicodeValidator& UnicodeValidator::max_len(int len) {
     if (utf32_str_.size() > len) {
         valid_ = false;
     }
     return *this;
 }
 
-ChineseValidator& ChineseValidator::min_len(int len) {
+UnicodeValidator& UnicodeValidator::min_len(int len) {
     if (utf32_str_.size() < len) {
         valid_ = false;
     }
     return *this;
 }
 
-ChineseValidator& ChineseValidator::visible_only() {
+UnicodeValidator& UnicodeValidator::visible_only() {
     if (!valid_) {
         return *this;
     }
@@ -180,7 +180,7 @@ ChineseValidator& ChineseValidator::visible_only() {
     return *this;
 }
 
-ChineseValidator& ChineseValidator::normal_char_only() {
+UnicodeValidator& UnicodeValidator::normal_char_only() {
     if (!valid_) {
         return *this;
     }
@@ -197,7 +197,7 @@ ChineseValidator& ChineseValidator::normal_char_only() {
     return *this;
 }
 
-ChineseValidator& ChineseValidator::no_quotes() {
+UnicodeValidator& UnicodeValidator::no_quotes() {
     if (!valid_) {
         return *this;
     }
@@ -210,7 +210,7 @@ ChineseValidator& ChineseValidator::no_quotes() {
     return *this;
 }
 
-ChineseValidator& ChineseValidator::number_only() {
+UnicodeValidator& UnicodeValidator::number_only() {
     if (!valid_) {
         return *this;
     }
@@ -223,7 +223,7 @@ ChineseValidator& ChineseValidator::number_only() {
     return *this;
 }
 
-ChineseValidator& ChineseValidator::number_and_dot_only() {
+UnicodeValidator& UnicodeValidator::number_and_dot_only() {
     if (!valid_) {
         return *this;
     }
@@ -236,7 +236,7 @@ ChineseValidator& ChineseValidator::number_and_dot_only() {
     return *this;
 }
 
-ChineseValidator& ChineseValidator::only_one_dot() {
+UnicodeValidator& UnicodeValidator::only_one_dot() {
     if (!valid_) {
         return *this;
     }
@@ -255,7 +255,7 @@ ChineseValidator& ChineseValidator::only_one_dot() {
     return *this;
 }
 
-ChineseValidator& ChineseValidator::no_pipes() {
+UnicodeValidator& UnicodeValidator::no_pipes() {
     if (!valid_) {
         return *this;
     }
@@ -268,7 +268,7 @@ ChineseValidator& ChineseValidator::no_pipes() {
     return *this;
 }
 
-ChineseValidator& ChineseValidator::han() {
+UnicodeValidator& UnicodeValidator::han() {
     if (!valid_) {
         return *this;
     }
@@ -281,6 +281,6 @@ ChineseValidator& ChineseValidator::han() {
     return *this;
 }
 
-ChineseValidator::operator bool() const {
+UnicodeValidator::operator bool() const {
     return valid_;
 }

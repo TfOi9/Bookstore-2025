@@ -45,34 +45,34 @@ bool is_han(char32_t cp);
 
 bool is_special(char32_t cp);
 
-class ChineseValidator {
+class UnicodeValidator {
 private:
     std::vector<char32_t> utf32_str_;
     bool valid_;
 public:
-    ChineseValidator(const std::string& str, bool valid = true);
+    UnicodeValidator(const std::string& str, bool valid = true);
 
-    ~ChineseValidator() = default;
+    ~UnicodeValidator() = default;
 
-    ChineseValidator& max_len(int len);
+    UnicodeValidator& max_len(int len);
 
-    ChineseValidator& min_len(int len);
+    UnicodeValidator& min_len(int len);
 
-    ChineseValidator& visible_only();
+    UnicodeValidator& visible_only();
 
-    ChineseValidator& normal_char_only();
+    UnicodeValidator& normal_char_only();
 
-    ChineseValidator& no_quotes();
+    UnicodeValidator& no_quotes();
 
-    ChineseValidator& number_only();
+    UnicodeValidator& number_only();
 
-    ChineseValidator& number_and_dot_only();
+    UnicodeValidator& number_and_dot_only();
 
-    ChineseValidator& only_one_dot();
+    UnicodeValidator& only_one_dot();
 
-    ChineseValidator& no_pipes();
+    UnicodeValidator& no_pipes();
 
-    ChineseValidator& han();
+    UnicodeValidator& han();
 
     operator bool() const;
 };

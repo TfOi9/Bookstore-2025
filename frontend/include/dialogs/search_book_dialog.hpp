@@ -44,7 +44,7 @@ public:
                 }
             }
             else if (searchType == "书名") {
-                if (!ChineseValidator(searchContent.toStdString()).max_len(60).han().no_quotes()) {
+                if (!UnicodeValidator(searchContent.toStdString()).max_len(60).han().no_quotes()) {
                     qDebug() << "错误: 书名格式不正确!";
                     errorLabel->setText("错误: 书名格式不正确!");
                     errorLabel->show();
@@ -56,7 +56,7 @@ public:
                 }
             }
             else if (searchType == "作者") {
-                if (!ChineseValidator(searchContent.toStdString()).max_len(60).han().no_quotes()) {
+                if (!UnicodeValidator(searchContent.toStdString()).max_len(60).han().no_quotes()) {
                     qDebug() << "错误: 作者格式不正确!";
                     errorLabel->setText("错误: 作者格式不正确!");
                     errorLabel->show();
@@ -68,7 +68,7 @@ public:
                 }
             }
             else if (searchType == "关键词") {
-                if (!ChineseValidator(searchContent.toStdString()).max_len(60).han().no_quotes().no_pipes()) {
+                if (!UnicodeValidator(searchContent.toStdString()).max_len(60).han().no_quotes().no_pipes()) {
                     qDebug() << "错误: 关键词格式不正确!";
                     errorLabel->setText("错误: 关键词格式不正确!");
                     errorLabel->show();

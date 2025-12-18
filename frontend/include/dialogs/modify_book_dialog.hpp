@@ -54,21 +54,21 @@ public:
                 return;
             }
 
-            if (!ChineseValidator(name.toStdString()).max_len(60).han().no_quotes()) {
+            if (!UnicodeValidator(name.toStdString()).max_len(60).han().no_quotes()) {
                 qDebug() << "错误: 书名格式不正确!";
                 errorLabel->setText("错误: 书名格式不正确!");
                 errorLabel->show();
                 return;
             }
 
-            if (!ChineseValidator(author.toStdString()).max_len(60).han().no_quotes()) {
+            if (!UnicodeValidator(author.toStdString()).max_len(60).han().no_quotes()) {
                 qDebug() << "错误: 作者格式不正确!";
                 errorLabel->setText("错误: 作者格式不正确!");
                 errorLabel->show();
                 return;
             }
 
-            if (!ChineseValidator(keyword.toStdString()).max_len(60).han().no_quotes()) {
+            if (!UnicodeValidator(keyword.toStdString()).max_len(60).han().no_quotes()) {
                 qDebug() << "错误: 关键词格式不正确!";
                 errorLabel->setText("错误: 关键词格式不正确!");
                 errorLabel->show();
