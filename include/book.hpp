@@ -9,13 +9,13 @@
 #include "memory_river.hpp"
 #include "utils.hpp"
 
-std::vector<std::array<char, 60>> parse_keywords(const std::array<char, 60>& keyword);
+std::vector<std::array<char, 240>> parse_keywords(const std::array<char, 240>& keyword);
 
 struct Book {
     std::array<char, 20> ISBN_;
-    std::array<char, 60> book_name_;
-    std::array<char, 60> author_;
-    std::array<char, 60> keyword_;
+    std::array<char, 240> book_name_;
+    std::array<char, 240> author_;
+    std::array<char, 240> keyword_;
     double price_;
     int quant_;
     int id_;
@@ -45,9 +45,9 @@ struct Book {
 class BookManager {
 private:
     HashMap<std::array<char, 20>, int> ISBN_file_;
-    HashMap<std::array<char, 60>, int> book_name_file_;
-    HashMap<std::array<char, 60>, int> author_file_;
-    HashMap<std::array<char, 60>, int> keyword_file_;
+    HashMap<std::array<char, 240>, int> book_name_file_;
+    HashMap<std::array<char, 240>, int> author_file_;
+    HashMap<std::array<char, 240>, int> keyword_file_;
     MemoryRiver<Book> book_file_;
 public:
     BookManager();
@@ -66,13 +66,13 @@ public:
     std::vector<Book> find_ISBN(const std::array<char, 20>& ISBN);
 
     // finds books by book name.
-    std::vector<Book> find_book_name(const std::array<char, 60>& book_name);
+    std::vector<Book> find_book_name(const std::array<char, 240>& book_name);
 
     // finds books by author.
-    std::vector<Book> find_author(const std::array<char, 60>& author);
+    std::vector<Book> find_author(const std::array<char, 240>& author);
 
     // finds books by keyword.
-    std::vector<Book> find_keyword(const std::array<char, 60>& keyword);
+    std::vector<Book> find_keyword(const std::array<char, 240>& keyword);
 
     // serializes all books.
     std::vector<Book> serialize();
@@ -84,13 +84,13 @@ public:
     void modify_ISBN(const std::array<char, 20>& ISBN, const std::array<char, 20>& new_ISBN);
 
     // modifies book's name.
-    void modify_book_name(const std::array<char, 20>& ISBN, const std::array<char, 60>& new_book_name);
+    void modify_book_name(const std::array<char, 20>& ISBN, const std::array<char, 240>& new_book_name);
 
     // modifies book's author.
-    void modify_author(const std::array<char, 20>& ISBN, const std::array<char, 60>& new_author);
+    void modify_author(const std::array<char, 20>& ISBN, const std::array<char, 240>& new_author);
 
     // modifies book's keyword.
-    void modify_keyword(const std::array<char, 20>& ISBN, const std::array<char, 60>& new_keyword);
+    void modify_keyword(const std::array<char, 20>& ISBN, const std::array<char, 240>& new_keyword);
 
     // modifies book's price.
     void modify_price(const std::array<char, 20>& ISBN, double new_price);

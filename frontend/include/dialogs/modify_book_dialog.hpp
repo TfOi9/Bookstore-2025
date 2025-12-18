@@ -106,13 +106,13 @@ public:
                 cur_ISBN = string_to_array<20>(ISBN.toStdString());
             }
             if (name.toStdString() != book.book_name()) {
-                book_manager->modify_book_name(cur_ISBN, string_to_array<60>(name.toStdString()));
+                book_manager->modify_book_name(cur_ISBN, string_to_array<240>(name.toStdString()));
             }
             if (author.toStdString() != book.author()) {
-                book_manager->modify_author(cur_ISBN, string_to_array<60>(author.toStdString()));
+                book_manager->modify_author(cur_ISBN, string_to_array<240>(author.toStdString()));
             }
             if (keyword.toStdString() != book.keyword()) {
-                book_manager->modify_keyword(cur_ISBN, string_to_array<60>(keyword.toStdString()));
+                book_manager->modify_keyword(cur_ISBN, string_to_array<240>(keyword.toStdString()));
             }
             if (price != book.price_) {
                 book_manager->modify_price(cur_ISBN, price);

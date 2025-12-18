@@ -12,7 +12,7 @@ class Account {
     friend class AccountManager;
 private:
     std::array<char, 30> user_id_;
-    std::array<char, 30> username_;
+    std::array<char, 120> username_;
     std::array<char, 30> password_;
     int privilege_;
     // privileges: 0 - tourist, 1 - customer, 3 - administrator, 7 - root.

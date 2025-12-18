@@ -51,7 +51,7 @@ public:
                     return;
                 }
                 if (p) {
-                    auto books = book_manager->find_book_name(string_to_array<60>(searchContent.toStdString()));
+                    auto books = book_manager->find_book_name(string_to_array<240>(searchContent.toStdString()));
                     emit p->searchedBooks(books);
                 }
             }
@@ -63,7 +63,7 @@ public:
                     return;
                 }
                 if (p) {
-                    auto books = book_manager->find_author(string_to_array<60>(searchContent.toStdString()));
+                    auto books = book_manager->find_author(string_to_array<240>(searchContent.toStdString()));
                     emit p->searchedBooks(books);
                 }
             }
@@ -75,7 +75,7 @@ public:
                     return;
                 }
                 if (p) {
-                    auto books = book_manager->find_keyword(string_to_array<60>(searchContent.toStdString()));
+                    auto books = book_manager->find_keyword(string_to_array<240>(searchContent.toStdString()));
                     emit p->searchedBooks(books);
                 }
             }

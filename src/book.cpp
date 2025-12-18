@@ -1,16 +1,16 @@
 #include "../include/book.hpp"
 #include "../include/utils.hpp"
 
-std::vector<std::array<char, 60>> parse_keywords(const std::array<char, 60>& keyword) {
-    std::vector<std::array<char, 60>> vec;
+std::vector<std::array<char, 240>> parse_keywords(const std::array<char, 240>& keyword) {
+    std::vector<std::array<char, 240>> vec;
     int pos = 0;
-    for (int i = 0; i <= 60; i++) {
-        if (i == 60 || keyword[i] == '|' || keyword[i] == 0) {
+    for (int i = 0; i <= 240; i++) {
+        if (i == 240 || keyword[i] == '|' || keyword[i] == 0) {
             if (i == pos) {
-                return std::vector<std::array<char, 60>>();
+                return std::vector<std::array<char, 240>>();
             }
-            std::array<char, 60> arr;
-            for (int j = 0; j < 60; j++) {
+            std::array<char, 240> arr;
+            for (int j = 0; j < 240; j++) {
                 arr[j] = 0;
             }
             for (int j = pos; j < i; j++) {
@@ -18,7 +18,7 @@ std::vector<std::array<char, 60>> parse_keywords(const std::array<char, 60>& key
             }
             vec.push_back(arr);
             pos = i + 1;
-            if (i == 60 || keyword[i] == 0) {
+            if (i == 240 || keyword[i] == 0) {
                 break;
             }
         }
@@ -28,9 +28,9 @@ std::vector<std::array<char, 60>> parse_keywords(const std::array<char, 60>& key
 
 Book::Book(const std::string& ISBN, const std::string& book_name, const std::string& author, const std::string keyword, double price, int quant, int id) {
     ISBN_ = string_to_array<20>(ISBN);
-    book_name_ = string_to_array<60>(book_name);
-    author_ = string_to_array<60>(author);
-    keyword_ = string_to_array<60>(keyword);
+    book_name_ = string_to_array<240>(book_name);
+    author_ = string_to_array<240>(author);
+    keyword_ = string_to_array<240>(keyword);
     price_ = price;
     quant_ = quant;
     id_ = id;
@@ -41,15 +41,15 @@ std::string Book::ISBN() const {
 }
 
 std::string Book::book_name() const {
-    return array_to_string<60>(book_name_);
+    return array_to_string<240>(book_name_);
 }
 
 std::string Book::author() const {
-    return array_to_string<60>(author_);
+    return array_to_string<240>(author_);
 }
 
 std::string Book::keyword() const {
-    return array_to_string<60>(keyword_);
+    return array_to_string<240>(keyword_);
 }
 
 bool Book::operator<(const Book& oth) const {
@@ -99,7 +99,7 @@ std::vector<Book> BookManager::find_ISBN(const std::array<char, 20>& ISBN) {
     return ret;
 }
 
-std::vector<Book> BookManager::find_book_name(const std::array<char, 60>& book_name) {
+std::vector<Book> BookManager::find_book_name(const std::array<char, 240>& book_name) {
     auto vec = book_name_file_.find(book_name);
     std::vector<Book> ret;
     for (int id : vec) {
@@ -110,7 +110,7 @@ std::vector<Book> BookManager::find_book_name(const std::array<char, 60>& book_n
     return ret;
 }
 
-std::vector<Book> BookManager::find_author(const std::array<char, 60>& author) {
+std::vector<Book> BookManager::find_author(const std::array<char, 240>& author) {
     auto vec = author_file_.find(author);
     std::vector<Book> ret;
     for (int id : vec) {
@@ -121,7 +121,7 @@ std::vector<Book> BookManager::find_author(const std::array<char, 60>& author) {
     return ret;
 }
 
-std::vector<Book> BookManager::find_keyword(const std::array<char, 60>& keyword) {
+std::vector<Book> BookManager::find_keyword(const std::array<char, 240>& keyword) {
     auto vec = keyword_file_.find(keyword);
     std::vector<Book> ret;
     for (int id : vec) {
@@ -168,7 +168,7 @@ void BookManager::modify_ISBN(const std::array<char, 20>& ISBN, const std::array
     ISBN_file_.insert(new_ISBN, id);
 }
 
-void BookManager::modify_book_name(const std::array<char, 20>& ISBN, const std::array<char, 60>& new_book_name) {
+void BookManager::modify_book_name(const std::array<char, 20>& ISBN, const std::array<char, 240>& new_book_name) {
     auto vec = ISBN_file_.find(ISBN);
     if (vec.empty()) {
         return;
@@ -182,7 +182,7 @@ void BookManager::modify_book_name(const std::array<char, 20>& ISBN, const std::
     book_name_file_.insert(new_book_name, id);
 }
 
-void BookManager::modify_author(const std::array<char, 20>& ISBN, const std::array<char, 60>& new_author) {
+void BookManager::modify_author(const std::array<char, 20>& ISBN, const std::array<char, 240>& new_author) {
     auto vec = ISBN_file_.find(ISBN);
     if (vec.empty()) {
         return;
@@ -196,7 +196,7 @@ void BookManager::modify_author(const std::array<char, 20>& ISBN, const std::arr
     author_file_.insert(new_author, id);
 }
 
-void BookManager::modify_keyword(const std::array<char, 20>& ISBN, const std::array<char, 60>& new_keyword) {
+void BookManager::modify_keyword(const std::array<char, 20>& ISBN, const std::array<char, 240>& new_keyword) {
     auto vec = ISBN_file_.find(ISBN);
     if (vec.empty()) {
         return;

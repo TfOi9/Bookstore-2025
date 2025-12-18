@@ -68,7 +68,7 @@ public:
                 return;
             }
 
-            auto key_words = parse_keywords(string_to_array<60>(keyword.toStdString()));
+            auto key_words = parse_keywords(string_to_array<240>(keyword.toStdString()));
             if (key_words.empty()) {
                 qDebug() << "错误: 关键词格式不正确!";
                 errorLabel->setText("错误: 关键词格式不正确!");

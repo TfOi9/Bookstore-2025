@@ -284,13 +284,13 @@ int main() {
                 vec = book_manager.find_ISBN(string_to_array<20>(val));
             }
             else if (key == "name") {
-                vec = book_manager.find_book_name(string_to_array<60>(val));
+                vec = book_manager.find_book_name(string_to_array<240>(val));
             }
             else if (key == "author") {
-                vec = book_manager.find_author(string_to_array<60>(val));
+                vec = book_manager.find_author(string_to_array<240>(val));
             }
             else if (key == "keyword") {
-                vec = book_manager.find_keyword(string_to_array<60>(val));
+                vec = book_manager.find_keyword(string_to_array<240>(val));
             }
             if (vec.empty()) {
                 std::cout << '\n';
@@ -417,7 +417,7 @@ int main() {
                         break;
                     }
                     if (key == "keyword") {
-                        auto key_words = parse_keywords(string_to_array<60>(val));
+                        auto key_words = parse_keywords(string_to_array<240>(val));
                         if (key_words.empty()) {
                             parse_success = false;
                             break;
@@ -461,13 +461,13 @@ int main() {
                     book.ISBN_ = string_to_array<20>(it->second);
                 }
                 else if (it->first == "name") {
-                    book_manager.modify_book_name(book.ISBN_, string_to_array<60>(it->second));
+                    book_manager.modify_book_name(book.ISBN_, string_to_array<240>(it->second));
                 }
                 else if (it->first == "author") {
-                    book_manager.modify_author(book.ISBN_, string_to_array<60>(it->second));
+                    book_manager.modify_author(book.ISBN_, string_to_array<240>(it->second));
                 }
                 else if (it->first == "keyword") {
-                    book_manager.modify_keyword(book.ISBN_, string_to_array<60>(it->second));
+                    book_manager.modify_keyword(book.ISBN_, string_to_array<240>(it->second));
                 }
                 else if (it->first == "price") {
                     double new_price = 0.00;

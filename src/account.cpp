@@ -2,7 +2,7 @@
 
 Account::Account(const std::string& user_id, int privilege, const std::string& username, const std::string& password) {
     user_id_ = string_to_array<30>(user_id);
-    username_ = string_to_array<30>(username);
+    username_ = string_to_array<120>(username);
     password_ = string_to_array<30>(password);
     privilege_ = privilege;
 }
@@ -12,7 +12,7 @@ bool Account::verify_password(const std::string& password) const {
 }
 
 std::string Account::username() const {
-    return array_to_string<30>(username_);
+    return array_to_string<120>(username_);
 }
 
 std::string Account::password() const {
