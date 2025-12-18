@@ -270,10 +270,10 @@ int main() {
                 key_valid = Validator(val).max_len(20).visible_only();
             }
             else if (key == "keyword") {
-                key_valid = Validator(val).max_len(60).visible_only().no_quotes().no_pipes();
+                key_valid = Validator(val).max_len(60).han().no_quotes().no_pipes();
             }
             else {
-                key_valid = Validator(val).max_len(60).visible_only().no_quotes();
+                key_valid = Validator(val).max_len(60).han().no_quotes();
             }
             if (!key_valid) {
                 std::cout << "Invalid\n";
@@ -412,7 +412,7 @@ int main() {
                     }
                 }
                 else if (key == "name" || key == "author" || key == "keyword") {
-                    if (!Validator(val).max_len(60).visible_only().no_quotes()) {
+                    if (!Validator(val).max_len(60).han().no_quotes()) {
                         parse_success = false;
                         break;
                     }
