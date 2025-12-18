@@ -13,8 +13,9 @@ public:
         connect(buttonBox, &QDialogButtonBox::accepted, [this]() {
             QString password = passwordEdit->text();
             errorLabel->hide();
+            userID_ = userIDEdit->text();
 
-            if (userID_.isEmpty()) {
+            if (userIDEdit->text().isEmpty()) {
                 errorLabel->setText("错误: 未选择账户!");
                 errorLabel->show();
                 return;
@@ -68,7 +69,6 @@ private:
 
         userIDEdit = new QLineEdit();
         userIDEdit->setText(userID_);
-        userIDEdit->setReadOnly(true);
 
         passwordEdit = new QLineEdit();
         passwordEdit->setEchoMode(QLineEdit::Password);
