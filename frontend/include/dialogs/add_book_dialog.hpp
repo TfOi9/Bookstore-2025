@@ -26,9 +26,16 @@ public:
             qDebug() << "关键词:" << keyword;
             qDebug() << "价格:" << priceStr;
 
-            if (ISBN.isEmpty() || name.isEmpty() || author.isEmpty() || keyword.isEmpty() || priceStr.isEmpty()) {
-                qDebug() << "错误: 所有字段均为必填项!";
-                errorLabel->setText("错误: 所有字段均为必填项!");
+            if (ISBN.isEmpty()) {
+                qDebug() << "错误: ISBN为必填项!";
+                errorLabel->setText("错误: ISBN为必填项!");
+                errorLabel->show();
+                return;
+            }
+
+            if (priceStr.isEmpty()) {
+                qDebug() << "错误: 价格为必填项!";
+                errorLabel->setText("错误: 价格为必填项!");
                 errorLabel->show();
                 return;
             }
@@ -71,19 +78,21 @@ public:
                 return;
             }
 
-            auto key_words = parse_keywords(string_to_array<240>(keyword.toStdString()));
-            if (key_words.empty()) {
-                qDebug() << "错误: 关键词格式不正确!";
-                errorLabel->setText("错误: 关键词格式不正确!");
-                errorLabel->show();
-                return;
-            }
-            std::sort(key_words.begin(), key_words.end());
-            if (std::unique(key_words.begin(), key_words.end()) != key_words.end()) {
-                qDebug() << "错误: 关键词格式不正确!";
-                errorLabel->setText("错误: 关键词格式不正确!");
-                errorLabel->show();
-                return;
+            if (keyword.size()) {
+                auto key_words = parse_keywords(string_to_array<240>(keyword.toStdString()));
+                if (keyword.isEmpty() != 0 && key_words.empty()) {
+                    qDebug() << "错误: 关键词格式不正确!";
+                    errorLabel->setText("错误: 关键词格式不正确!");
+                    errorLabel->show();
+                    return;
+                }
+                std::sort(key_words.begin(), key_words.end());
+                if (keyword.isEmpty() != 0 && std::unique(key_words.begin(), key_words.end()) != key_words.end()) {
+                    qDebug() << "错误: 关键词格式不正确!";
+                    errorLabel->setText("错误: 关键词格式不正确!");
+                    errorLabel->show();
+                    return;
+                }
             }
 
             if (!Validator(priceStr.toStdString()).max_len(13).number_and_dot_only().only_one_dot()) {
