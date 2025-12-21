@@ -52,8 +52,14 @@ public:
                     return;
                 }
                 if (p) {
-                    auto books = book_manager->find_book_name(string_to_array<240>(searchContent.toStdString()));
-                    emit p->searchedBooks(books);
+                    if (exactMatchCheckBox->isChecked()) {
+                        auto books = book_manager->find_book_name(string_to_array<240>(searchContent.toStdString()));
+                        emit p->searchedBooks(books);
+                    }
+                    else {
+                        auto books = book_manager->find_book_name_partial(searchContent.toStdString());
+                        emit p->searchedBooks(books);
+                    }
                 }
             }
             else if (searchType == "作者") {
@@ -94,21 +100,35 @@ private:
     QLineEdit *searchEdit;
     QDialogButtonBox *buttonBox;
     QLabel *errorLabel;
+    QVBoxLayout *mainLayout;
+    QFormLayout *formLayout;
+    QCheckBox *exactMatchCheckBox;
+
     void setupUI() {
         setWindowTitle("搜索图书");
         setFixedSize(300, 200);
         
-        QVBoxLayout *mainLayout = new QVBoxLayout(this);
-        QFormLayout *formLayout = new QFormLayout();
+        mainLayout = new QVBoxLayout(this);
+        formLayout = new QFormLayout();
         
         comboBox = new QComboBox();
         comboBox->addItems({"全部图书","ISBN", "书名", "作者", "关键词"});
 
+        exactMatchCheckBox = new QCheckBox();
+
         connect(comboBox, &QComboBox::currentTextChanged, this, [this](const QString &text){
             if (text == "全部图书") {
                 searchEdit->setEnabled(false);
-            } else {
+            }
+            else {
                 searchEdit->setEnabled(true);
+            }
+
+            if (text == "书名") {
+                formLayout->addRow("精确匹配:", exactMatchCheckBox);
+            }
+            else {
+                formLayout->removeRow(exactMatchCheckBox);
             }
         });
         

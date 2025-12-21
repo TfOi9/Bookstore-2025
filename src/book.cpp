@@ -299,3 +299,20 @@ bool BookManager::delete_book(const std::array<char, 20>& ISBN) {
     }
     return true;
 }
+
+std::vector<Book> BookManager::find_book_name_partial(const std::string& partial_name) {
+    std::vector<Book> ret;
+    for (int i = 0; i < book_file_.size(); i++) {
+        Book book;
+        book_file_.read(book, i);
+        if (book.ISBN_[0] == 0) {
+            continue;
+        }
+        std::string book_name_str = array_to_string<240>(book.book_name_);
+        if (book_name_str.find(partial_name) != std::string::npos) {
+            ret.push_back(book);
+        }
+    }
+    std::sort(ret.begin(), ret.end());
+    return ret;
+}

@@ -109,6 +109,9 @@ public:
 
     // deletes a book.
     bool delete_book(const std::array<char, 20>& ISBN);
+
+    // finds books by book name, allowing partial matches.
+    std::vector<Book> find_book_name_partial(const std::string& partial_name);
 };
 
 #endif
