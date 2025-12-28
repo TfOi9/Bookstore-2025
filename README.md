@@ -2,8 +2,6 @@
 
 SJTU ACM 班 2025 级程序设计课程大作业
 
-如需安装，请下载 release 中对应系统的最新版本，按安装手册操作。
-
 ## 目录
 
 - [书店管理系统](#书店管理系统)
@@ -180,7 +178,7 @@ Online Judge（以下简称 OJ）提交方式为提交 git repo 链接，提交�
 
 ### Bonus
 
-见 [bonus 文档](bonus.md)。
+见 [Bonus 文档](docs/Bonus.md)。
 
 ### 扣分
 
