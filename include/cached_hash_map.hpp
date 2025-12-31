@@ -11,13 +11,7 @@
 #include <functional>
 #include <algorithm>
 #include "memory_river.hpp"
-
-template<typename HashType>
-struct MemoryHash {
-    size_t operator()(const HashType& obj) const {
-        return std::hash<std::string>{}(std::string(reinterpret_cast<const char *>(&obj), sizeof(HashType)));
-    }
-};
+#include "hash_map.hpp"
 
 template<typename KeyType, typename ValueType, typename Hasher = MemoryHash<KeyType>, int BlockCapacity = 50, int HashSize = 1007, int CacheThreshold = 524288>
 class CachedHashMap {

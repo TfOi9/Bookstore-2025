@@ -7,7 +7,6 @@
 #include <iostream>
 #include <iomanip>
 #include "memory_river.hpp"
-// #include "hash_map.hpp"
 #include "cached_hash_map.hpp"
 #include "utils.hpp"
 
