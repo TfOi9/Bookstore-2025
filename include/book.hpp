@@ -5,7 +5,8 @@
 #include <string>
 #include <vector>
 #include <algorithm>
-#include "hash_map.hpp"
+// #include "hash_map.hpp"
+#include "cached_hash_map.hpp"
 #include "memory_river.hpp"
 #include "utils.hpp"
 
@@ -44,10 +45,10 @@ struct Book {
 
 class BookManager {
 private:
-    HashMap<std::array<char, 20>, int> ISBN_file_;
-    HashMap<std::array<char, 240>, int> book_name_file_;
-    HashMap<std::array<char, 240>, int> author_file_;
-    HashMap<std::array<char, 240>, int> keyword_file_;
+    CachedHashMap<std::array<char, 20>, int> ISBN_file_;
+    CachedHashMap<std::array<char, 240>, int> book_name_file_;
+    CachedHashMap<std::array<char, 240>, int> author_file_;
+    CachedHashMap<std::array<char, 240>, int> keyword_file_;
     MemoryRiver<Book> book_file_;
 public:
     BookManager();

@@ -5,7 +5,8 @@
 #include <array>
 #include <vector>
 #include <algorithm>
-#include "hash_map.hpp"
+// #include "hash_map.hpp"
+#include "cached_hash_map.hpp"
 #include "utils.hpp"
 
 class Account {
@@ -42,7 +43,7 @@ public:
 
 class AccountManager {
 private:
-    HashMap<std::array<char, 30>, Account> account_file_;
+    CachedHashMap<std::array<char, 30>, Account> account_file_;
     int account_count_;
     std::vector<Account> login_stack_;
     std::vector<int> book_stack_;

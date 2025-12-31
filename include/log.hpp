@@ -7,7 +7,8 @@
 #include <iostream>
 #include <iomanip>
 #include "memory_river.hpp"
-#include "hash_map.hpp"
+// #include "hash_map.hpp"
+#include "cached_hash_map.hpp"
 #include "utils.hpp"
 
 class FinanceLog {
@@ -67,7 +68,7 @@ public:
 class LogManager {
 private:
     MemoryRiver<FinanceLog> finance_file_;
-    HashMap<std::array<char, 30>, EmployeeLog> employee_file_;
+    CachedHashMap<std::array<char, 30>, EmployeeLog> employee_file_;
     MemoryRiver<Log> log_file_;
     // int current_count_;
 public:
