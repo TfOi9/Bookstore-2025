@@ -19,7 +19,7 @@ struct MemoryHash {
     }
 };
 
-template<typename KeyType, typename ValueType, typename Hasher = MemoryHash<KeyType>, int BlockCapacity = 50, int HashSize = 1007>
+template<typename KeyType, typename ValueType, typename Hasher = MemoryHash<KeyType>, int BlockCapacity = 50, int HashSize = 1007, int CacheThreshold = 524288>
 class CachedHashMap {
 private:
     struct Bucket {
@@ -62,7 +62,7 @@ private:
 
     Hasher hasher_;
 
-    constexpr static int block_threshold_ = 8388608;
+    constexpr static int block_threshold_ = CacheThreshold;
 
     int new_block() {
         Block block;
