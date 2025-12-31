@@ -62,7 +62,7 @@ private:
 
     Hasher hasher_;
 
-    constexpr static int block_threshold_ = 524288;
+    constexpr static int block_threshold_ = 8388608;
 
     int new_block() {
         Block block;
